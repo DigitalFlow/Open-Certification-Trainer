@@ -1,0 +1,32 @@
+{
+  "name": "open-certification-trainer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "copyHtml": "cpx src/html/index.html dist/",
+    "deploy": "gh-pages -d dist",
+    "publish": "npm run build && npm run copyHtml && npm run deploy"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/react": "^15.0.36",
+    "@types/react-dom": "^15.5.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
+  "devDependencies": {
+    "@types/react-bootstrap": "0.0.52",
+    "@types/react-select": "^1.0.48",
+    "awesome-typescript-loader": "^3.2.1",
+    "base64url": "^2.0.0",
+    "cpx": "^1.5.0",
+    "gh-pages": "^1.0.0",
+    "react-bootstrap": "^0.31.5",
+    "react-select": "^1.0.0-rc.5",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.4.1"
+  }
+}

@@ -4,14 +4,26 @@ import Question from "../model/Question";
 import AnswerView from "./AnswerView";
 
 export interface QuestionViewProps {
-    question: Question
+    question: Question;
+    highlightCorrectAnswers: boolean;
+    highlightIncorrectAnswers: boolean;
+    answersDisabled: boolean;
+    onAnswerChange?: (key: string, checked: boolean) => void;
+}
+
+interface QuestionViewState {
+    isCorrect: boolean;
 }
 
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-export default class QuestionView extends React.PureComponent<QuestionViewProps, any> {
+export default class QuestionView extends React.PureComponent<QuestionViewProps, QuestionViewState> {
     constructor(props: QuestionViewProps) {
         super(props);
+
+        this.state = {
+          isCorrect: false
+        }
     }
 
     render(){
@@ -22,7 +34,9 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
                 <h3>{this.props.question.key}</h3>
                 <p>{this.props.question.text.value}</p>
                 <ButtonGroup vertical block type="checkbox">
-                  {Array.from(this.props.question.answers.map(a => (<AnswerView answer={a} key={a.key} />)))}
+                  {(this.props.question.answers.map(a => (
+                    <AnswerView onAnswerChange={this.props.onAnswerChange} disabled={this.props.answersDisabled} checked={false} answer={a} key={a.key} highlightIfCorrect={this.props.highlightCorrectAnswers} highlightIfIncorrect={this.props.highlightIncorrectAnswers} />
+                  )))}
                 </ButtonGroup>
             </div>;
 

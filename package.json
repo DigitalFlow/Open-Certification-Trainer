@@ -4,18 +4,30 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "copyHtml": "cpx src/html/index.html dist/",
+    "build": "tsc --jsx react src/server.ts --outDir ./dist && webpack && cpx src/views/index.ejs dist/views",
+    "prestart": "npm run build",
+    "start": "node dist/server.js",
     "deploy": "gh-pages -d dist",
-    "publish": "npm run build && npm run copyHtml && npm run deploy"
+    "publish": "npm run build && npm run deploy"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@types/express": "^4.0.39",
+    "@types/morgan": "^1.7.35",
     "@types/react": "^15.0.36",
     "@types/react-dom": "^15.5.1",
+    "@types/react-router-bootstrap": "^0.24.2",
+    "@types/react-router-config": "^1.0.4",
+    "@types/react-router-dom": "^4.2.0",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "react-router-bootstrap": "^0.24.4",
+    "react-router-config": "^1.0.0-beta.4",
+    "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
     "@types/react-bootstrap": "0.0.52",

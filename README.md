@@ -27,6 +27,20 @@ Courses can currently only be added as json files by copying them to ./dist/cour
 For the format of your courses, please take a look at test.json in the project root.
 
 ## Impressions
+### Certification Overview
+![certificationoverview](https://user-images.githubusercontent.com/4287938/32636139-c0a1cb6a-c5b3-11e7-9076-b7d8cc9a5517.png)
+
+Select a certification / course and take a look at the questions contained including the correct answers.
+
+### Assessment
+![assessment](https://user-images.githubusercontent.com/4287938/32636137-beeb639e-c5b3-11e7-8cce-c28e3ffcb423.png)
+
+Take an assessment for a certification / course. You will have to answer all questions contained in the course. Once you're done, the course will be regarded as passed, if you answered 70% or more of the questions correctly.
+
+## Planned features
+- Import / Export function for courses
+- Course Administration (Edit courses inside the website)
+- User Accounts
 
 ## License
 Licensed using the MIT license, happy learning!

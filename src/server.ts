@@ -9,11 +9,16 @@ import { renderToString } from 'react-dom/server'
 import { matchRoutes } from "react-router-config";
 import routes from "./routes";
 import App from "./components/App";
+import * as bodyparser from "body-parser";
 
 const server = express();
 
 server.set('views', path.join(__dirname, "views"))
 server.set('view engine', 'ejs')
+
+// Setup json parser
+server.use(bodyparser.json());
+
 // Setup logger
 server.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
 
@@ -39,6 +44,18 @@ server.get('*', (req, res) => {
 		let html = renderToString(router);
 
 		return res.render('index', {html})
+});
+
+server.post('/certificationUpload', (req, res) => {
+    let data = req.body;
+
+    fs.writeFile(path.resolve(__dirname, '..', 'dist', 'courses', 'new'), JSON.stringify(data), err => {
+      if (err){
+        console.log(err);
+      }
+      
+      return res.status(204);
+    });
 });
 
 const PORT = process.env.PORT || 8080;

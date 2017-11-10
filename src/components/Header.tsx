@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Well, Navbar, Nav, NavItem, MenuItem, NavDropdown, Jumbotron } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import { LinkContainer, IndexLinkContainer } from "react-router-bootstrap";
 import CertificationOverview from "./CertificationOverview";
 import Assessment from "./Assessment";
 import Certification from "../model/Certification";
@@ -60,12 +60,15 @@ export default class Header extends React.PureComponent<HeaderProps, HeaderState
           </Navbar.Header>
           <Navbar.Collapse>
           <Nav>
-              <LinkContainer to="/certificationOverview">
+              <IndexLinkContainer to="/certificationManagement">
+                <NavItem>Certification Management</NavItem>
+              </IndexLinkContainer>
+              <IndexLinkContainer to="/certificationOverview">
                 <NavItem>Certification Overview</NavItem>
-              </LinkContainer>
-              <LinkContainer to="/assessment">
+              </IndexLinkContainer>
+              <IndexLinkContainer to="/assessment">
                 <NavItem>Assessment</NavItem>
-              </LinkContainer>
+              </IndexLinkContainer>
           </Nav>
           </Navbar.Collapse>
         </Navbar>

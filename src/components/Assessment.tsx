@@ -49,10 +49,18 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
       this.previousQuestion = this.previousQuestion.bind(this);
       this.checkAnswer = this.checkAnswer.bind(this);
       this.answerChangedHandler = this.answerChangedHandler.bind(this);
+      this.reset = this.reset.bind(this);
   }
 
   answerChangedHandler(key: string, checked: boolean){
     this.checkedAnswers[key] = checked;
+  }
+
+  reset(){
+    this.setState({
+      activeQuestion: 0,
+      certification: null
+    });
   }
 
   shouldComponentUpdate(nextProps: AssessmentProps, nextState: AssessmentState){
@@ -96,6 +104,10 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
   }
 
   componentWillReceiveProps(props: AssessmentProps){
+    if (this.props.location.pathname != props.location.pathname){
+      this.reset();
+    }
+
     this.loadCourses(props);
   }
 
@@ -145,48 +157,65 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
       let content = (<div>Please select a course from the sidenav</div>);
 
       if (this.state.certification){
-        let activeQuestion = this.state.certification.questions[this.state.activeQuestion];
 
-        // <Button onClick={this.previousQuestion}>Previous</Button>
+        if (this.state.certification.questions && this.state.certification.questions.length){
 
-        if (this.state.activeQuestion < this.state.certification.questions.length) {
-          content = (
-            <div>
-              <h1>{this.state.certification.name}</h1>
-              <ProgressBar striped now={(this.state.activeQuestion + 1 / this.state.certification.questions.length) * 100} />
-              <QuestionView onAnswerChange={this.answerChangedHandler} question={activeQuestion} key={activeQuestion.key} highlightCorrectAnswers={this.state.checkingAnswers} highlightIncorrectAnswers={this.state.checkingAnswers} answersDisabled={this.state.checkingAnswers} />
-              {this.state.questionState === QuestionState.Open ? (<Button onClick={this.checkAnswer}>Check Answer</Button>) : <div/>}
-              {this.state.questionState === QuestionState.Correct ? <span style={{color:"green"}}>Correct Response</span> : <div/>}
-              {this.state.questionState === QuestionState.Incorrect ? <span style={{color:"red"}}>Incorrect Response</span> : <div/>}
-              {this.state.checkingAnswers ? (<Button onClick={this.nextQuestion}>Next</Button>) : <div/>}
-            </div>
-          );
-        } else {
-          let questionCount = this.state.certification.questions.length;
-          let resultPercentage = (this.state.correctAnswers / questionCount) * 100;
+          let activeQuestion = this.state.certification.questions[this.state.activeQuestion];
+          // <Button onClick={this.previousQuestion}>Previous</Button>
 
-          if (resultPercentage >= 70) {
+          if (this.state.activeQuestion < this.state.certification.questions.length) {
+            let progress = ((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100;
+
             content = (
               <div>
-                <h2>Congratulations!</h2>
-                <p>You passed the exam with {this.state.correctAnswers} correct answers out of {questionCount} questions.
-                <br/>
-                In respect to the 70% correct answer passing ratio, you passed having {resultPercentage}% of the questions answered correctly.
-                </p>
-              </div>
-            );
-          } else {
-            content = (
-              <div>
-                <h2>Sorry!</h2>
-                <p>You did not pass the exam with {this.state.correctAnswers} correct answers out of {questionCount} questions.
-                <br/>
-                In respect to the 70% correct answer passing ratio, you failed having {resultPercentage}% of the questions answered correctly.
-                Try again and don't give up!
-                </p>
+                <h1>{this.state.certification.name}</h1>
+                <ProgressBar striped now={progress} />
+                <QuestionView onAnswerChange={this.answerChangedHandler} question={activeQuestion} key={activeQuestion.key} highlightCorrectAnswers={this.state.checkingAnswers} highlightIncorrectAnswers={this.state.checkingAnswers} answersDisabled={this.state.checkingAnswers} />
+                {this.state.questionState === QuestionState.Open ? (<Button onClick={this.checkAnswer}>Check Answer</Button>) : <div/>}
+                {this.state.questionState === QuestionState.Correct ? <span style={{color:"green"}}>Correct Response</span> : <div/>}
+                {this.state.questionState === QuestionState.Incorrect ? <span style={{color:"red"}}>Incorrect Response</span> : <div/>}
+                {this.state.checkingAnswers ? (<Button onClick={this.nextQuestion}>Next</Button>) : <div/>}
               </div>
             );
           }
+          else
+          {
+            let questionCount = this.state.certification.questions.length;
+            let resultPercentage = (this.state.correctAnswers / questionCount) * 100;
+
+            if (resultPercentage >= 70) {
+              content = (
+                <div>
+                  <h2>Congratulations!</h2>
+                  <p>You passed the exam with {this.state.correctAnswers} correct answers out of {questionCount} questions.
+                  <br/>
+                  In respect to the 70% correct answer passing ratio, you passed having {resultPercentage}% of the questions answered correctly.
+                  </p>
+                </div>
+              );
+            }
+            else
+            {
+              content = (
+                <div>
+                  <h2>Sorry!</h2>
+                  <p>You did not pass the exam with {this.state.correctAnswers} correct answers out of {questionCount} questions.
+                  <br/>
+                  In respect to the 70% correct answer passing ratio, you failed having {resultPercentage}% of the questions answered correctly.
+                  Try again and don't give up!
+                  </p>
+                </div>
+              );
+            }
+          }
+        }
+        else
+        {
+          content = (
+            <div>
+              <h1>{this.state.certification.name}</h1>
+              <span>No questions found</span>
+            </div>);
         }
       }
 

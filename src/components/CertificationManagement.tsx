@@ -1,31 +1,34 @@
 import * as React from "react";
-import { ButtonGroup, DropdownButton, MenuItem, Well } from "react-bootstrap";
+import { ButtonGroup, ButtonToolbar, Button, MenuItem, Well } from "react-bootstrap";
 import Certification from "../model/Certification";
 import QuestionView from "./QuestionView";
 import SideNav from "./SideNav";
 
-export interface CertificationOverviewProps {
+export interface CertificationManagementProps {
   match: any;
   location: Location;
  }
 
-interface CertificationOverviewState {
+interface CertificationManagementState {
   certification: Certification;
+  activeQuestion: number;
 }
 
-export default class CertificationOverview extends React.Component<CertificationOverviewProps, CertificationOverviewState> {
-  constructor(props: CertificationOverviewProps){
+export default class CertificationManagement extends React.Component<CertificationManagementProps, CertificationManagementState> {
+  constructor(props: CertificationManagementProps){
       super(props);
 
       this.state = {
-        certification: null
+        certification: null,
+        activeQuestion: 0
       };
 
       this.loadCourses = this.loadCourses.bind(this);
+      this.createNewCertification = this.createNewCertification.bind(this);
       this.reset = this.reset.bind(this);
   }
 
-  shouldComponentUpdate(nextProps: CertificationOverviewProps, nextState: CertificationOverviewState){
+  shouldComponentUpdate(nextProps: CertificationManagementProps, nextState: CertificationManagementState){
     if (this.props.location.pathname != nextProps.location.pathname){
       return true;
     }
@@ -34,10 +37,14 @@ export default class CertificationOverview extends React.Component<Certification
       return true;
     }
 
+    if (this.state.activeQuestion != nextState.activeQuestion) {
+      return true;
+    }
+
     return false;
   }
 
-  loadCourses(props: CertificationOverviewProps){
+  loadCourses(props: CertificationManagementProps){
     let courseName = props.match.params.courseName;
 
     if (!courseName) {
@@ -53,11 +60,23 @@ export default class CertificationOverview extends React.Component<Certification
       });
   }
 
+  createNewCertification(){
+    let headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    fetch("/certificationUpload",
+    {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({name: "MB2-XXX.json"})
+    });
+  }
+
   componentDidMount(){
     this.loadCourses(this.props);
   }
 
-  componentWillReceiveProps(props: CertificationOverviewProps){
+  componentWillReceiveProps(props: CertificationManagementProps){
     if (this.props.location.pathname != props.location.pathname){
       this.reset();
     }
@@ -67,12 +86,13 @@ export default class CertificationOverview extends React.Component<Certification
 
   reset(){
     this.setState({
+      activeQuestion: 0,
       certification: null
     });
   }
 
   render(){
-      let content = (<div>Please select a course from the sidenav</div>);
+      let content = (<div>Please select a course from the sidenav, or click the new button for creating a new course</div>);
 
       if (this.state.certification){
         content = (
@@ -85,8 +105,13 @@ export default class CertificationOverview extends React.Component<Certification
       }
 
       return (<div>
-              <SideNav redirectComponent="certificationOverview" />
+              <SideNav redirectComponent="certificationEditor" />
               <Well className="col-xs-11 pull-right">
+                <ButtonToolbar>
+                  <ButtonGroup>
+                    <Button onClick={this.createNewCertification}>Create New Certification</Button>
+                  </ButtonGroup>
+                </ButtonToolbar>
                 {content}
               </Well>
           </div>);

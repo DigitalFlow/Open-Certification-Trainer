@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Nav, NavItem } from "react-bootstrap";
 import CourseList from "../model/CourseList";
-import { LinkContainer } from "react-router-bootstrap";
+import { IndexLinkContainer } from "react-router-bootstrap";
 
 export interface SideNavProps {
     redirectComponent: string;
@@ -34,14 +34,17 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
 
     render(){
         return (
-          <Nav bsStyle="pills" className="col-xs-1" stacked activeKey={1}>
-            <NavItem>Courses</NavItem>
-            {this.state.courseList.courses ? this.state.courseList.courses.map(c => (
-              <LinkContainer to={ "/" + this.props.redirectComponent + "/" + c}>
-                <NavItem>{c}</NavItem>
-              </LinkContainer>
-              )
-            ) : "" }
+          <Nav key="sidenav" bsStyle="pills" className="col-xs-1" stacked activeKey={1}>
+            <NavItem key="courses">Courses</NavItem>
+            {this.state.courseList.courses ? this.state.courseList.courses.map(c => {
+              let link = "/" + this.props.redirectComponent + "/" + c;
+
+              return (
+                <IndexLinkContainer key={link} to={link}>
+                  <NavItem key={link + "_navitem"}>{c}</NavItem>
+                </IndexLinkContainer>
+              );
+            }) : "" }
           </Nav>
         );
     }

@@ -1,9 +1,9 @@
 import Text from "./Text"
 
 export interface AnswerProps {
-  key: string;
-  text: Text;
-  isCorrect: boolean;
+  key?: string;
+  text?: Text;
+  isCorrect?: boolean;
 }
 
 export default class Answer {

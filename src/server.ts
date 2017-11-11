@@ -1,67 +1,79 @@
 import * as express from "express";
-import * as morgan from "morgan";
+import * as bodyParser from "body-parser";
+import * as logger from "morgan";
+import * as dotenv from "dotenv";
 import * as path from "path";
-import * as fs from "fs";
-import CourseList from "./model/CourseList";
-import * as React from "react";
-import { StaticRouter } from "react-router-dom";
-import { renderToString } from 'react-dom/server'
-import { matchRoutes } from "react-router-config";
-import routes from "./routes";
-import App from "./components/App";
-import * as bodyparser from "body-parser";
+import * as mongoose from "mongoose";
+import * as passport from "passport";
+import * as morgan from "morgan";
+// No d.ts yet
+const vhost = require("vhost");
 
-const server = express();
+// Controllers
+import * as userController from "./controllers/UserController";
+import * as homeController from "./controllers/HomeController";
+import * as courseController from "./controllers/CourseController";
 
-server.set('views', path.join(__dirname, "views"))
-server.set('view engine', 'ejs')
+// models
+import UserModel from "./model/User";
 
-// Setup json parser
-server.use(bodyparser.json());
+// Load environment variables
+dotenv.config({ path: ".env.config" });
 
-// Setup logger
-server.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
+/**
+ * Create Express server.
+ */
+const app = express();
 
-// Serve static assets
-server.use(express.static(path.resolve(__dirname, '..', 'dist')));
+/**
+ * Connect to MongoDB.
+ */
+// mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
 
-server.get('/courses/:courseName', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '..', 'dist', 'courses', req.params.courseName + ".json"));
+mongoose.connection.on("error", () => {
+  console.log("MongoDB connection error. Please make sure MongoDB is running.");
+  process.exit();
 });
 
-server.get('/courses', (req, res) => {
-  let courseDir = path.resolve(__dirname, '..', 'dist', 'courses');
+app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
 
-  fs.readdir(courseDir, (err, files) => {
-    res.json(new CourseList({courses: files}));
-  });
-});
+/**
+ * Express configuration.
+ */
+app.set("port", process.env.PORT || 3000);
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
-// Always return the main index.html, so react-router render the route in the client
-server.get('*', (req, res) => {
-		let props = {location: req.url, context: {}};
-		let router = React.createElement(StaticRouter, props, React.createElement(App));
-		let html = renderToString(router);
+app.use(express.static(path.resolve(__dirname, "..", "dist")));
 
-		return res.render('index', {html})
-});
+/**
+* Primary app routes.
+*/
+app.post("/login", userController.postLogin);
+app.post("/signup", userController.postSignup);
+app.get("/courses", courseController.getCourseOverview);
+app.get("/courses/:courseName", courseController.getCourse);
+app.post("/certificationUpload", courseController.postUpload);
 
-server.post('/certificationUpload', (req, res) => {
-    let data = req.body;
-
-    fs.writeFile(path.resolve(__dirname, '..', 'dist', 'courses', 'new'), JSON.stringify(data), err => {
-      if (err){
-        console.log(err);
-      }
-      
-      return res.status(204);
-    });
-});
+// Always return the main index.html, so react-router renders the route in the client
+app.get("*", homeController.getAll);
 
 const PORT = process.env.PORT || 8080;
 
-server.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}!`);
+let appHost = app;
+let host = process.env.CERT_TRAINER_VHOST || "localhost";
+
+if(process.env.CERT_TRAINER_VHOST){
+  appHost = express();
+  appHost.use(vhost(process.env.CERT_TRAINER_VHOST, app)); // Serves top level domain via Main server app
+}
+
+appHost.listen(PORT, () => {
+  console.log(`App listening on host ${host} and port ${PORT}!`);
 });
 
-module.exports = server;
+module.exports = appHost;

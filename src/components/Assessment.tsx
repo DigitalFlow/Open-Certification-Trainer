@@ -221,7 +221,7 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
 
       return (<div>
               <SideNav redirectComponent="assessment" />
-              <Well className="col-xs-11 pull-right">
+              <Well className="col-xs-10 pull-right">
                 {content}
               </Well>
           </div>);

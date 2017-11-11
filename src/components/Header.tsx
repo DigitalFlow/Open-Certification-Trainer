@@ -70,6 +70,14 @@ export default class Header extends React.PureComponent<HeaderProps, HeaderState
                 <NavItem>Assessment</NavItem>
               </IndexLinkContainer>
           </Nav>
+          <Nav pullRight>
+            <IndexLinkContainer to="/login">
+              <NavItem>Login</NavItem>
+            </IndexLinkContainer>
+            <IndexLinkContainer to="/signUp">
+              <NavItem>Sign Up</NavItem>
+            </IndexLinkContainer>
+          </Nav>
           </Navbar.Collapse>
         </Navbar>
       );

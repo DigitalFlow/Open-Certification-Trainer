@@ -34,8 +34,10 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
 
     render(){
         return (
-          <Nav key="sidenav" bsStyle="pills" className="col-xs-1" stacked activeKey={1}>
-            <NavItem key="courses">Courses</NavItem>
+          <Nav key="sidenav" bsStyle="pills" className="col-xs-2" stacked activeKey={1}>
+            <IndexLinkContainer key="topNav" to={"/" + this.props.redirectComponent}>
+              <NavItem key="courses">Courses</NavItem>
+            </IndexLinkContainer>
             {this.state.courseList.courses ? this.state.courseList.courses.map(c => {
               let link = "/" + this.props.redirectComponent + "/" + c;
 

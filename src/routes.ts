@@ -1,29 +1,42 @@
 import CertificationOverview from "./components/CertificationOverview";
 import CertificationManagement from "./components/CertificationManagement";
-import CertificationEditor from "./components/CertificationEditor";
 import Assessment from "./components/Assessment";
 import WelcomePage from "./components/WelcomePage";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 import { RouteConfig } from "react-router-config";
 
 const routes = new Array<RouteConfig>(
-	{ path: '/',
+	{
+		path: "/",
 		exact: true,
 		component: WelcomePage,
 	},
-  { path: '/index',
+  {
+		path: "/index",
 		exact: true,
 		component: WelcomePage,
 	},
-	{ path: '/assessment/:courseName?',
+	{
+		path: "/login",
+		exact: true,
+		component: Login,
+	},
+	{
+		path: "/signUp",
+		exact: true,
+		component: SignUp,
+	},
+	{
+		path: "/assessment/:courseName?",
 		component: Assessment
 	},
-	{ path: '/certificationManagement',
+	{
+		path: "/certificationManagement/:courseName?",
 		component: CertificationManagement
 	},
-	{ path: '/certificationEditor/:courseName?',
-		component: CertificationEditor
-	},
-	{ path: '/certificationOverview/:courseName?',
+	{
+		path: "/certificationOverview/:courseName?",
 		component: CertificationOverview
 	}
 );

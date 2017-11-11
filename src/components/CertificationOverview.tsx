@@ -86,7 +86,7 @@ export default class CertificationOverview extends React.Component<Certification
 
       return (<div>
               <SideNav redirectComponent="certificationOverview" />
-              <Well className="col-xs-11 pull-right">
+              <Well className="col-xs-10 pull-right">
                 {content}
               </Well>
           </div>);

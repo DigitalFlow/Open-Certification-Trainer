@@ -1,8 +1,11 @@
 import * as React from "react";
 import { ButtonGroup, ButtonToolbar, Button, MenuItem, Well } from "react-bootstrap";
 import Certification from "../model/Certification";
-import QuestionView from "./QuestionView";
+import QuestionEditView from "./QuestionEditView";
 import SideNav from "./SideNav";
+import FieldGroup from "./FieldGroup";
+import MessageBar from "./MessageBar";
+import ValidationResult from "../model/ValidationResult";
 
 export interface CertificationManagementProps {
   match: any;
@@ -12,6 +15,8 @@ export interface CertificationManagementProps {
 interface CertificationManagementState {
   certification: Certification;
   activeQuestion: number;
+  errors: Array<string>;
+  message: string;
 }
 
 export default class CertificationManagement extends React.Component<CertificationManagementProps, CertificationManagementState> {
@@ -20,12 +25,16 @@ export default class CertificationManagement extends React.Component<Certificati
 
       this.state = {
         certification: null,
-        activeQuestion: 0
+        activeQuestion: 0,
+        errors: [],
+        message: ""
       };
 
       this.loadCourses = this.loadCourses.bind(this);
       this.createNewCertification = this.createNewCertification.bind(this);
       this.reset = this.reset.bind(this);
+      this.save = this.save.bind(this);
+      this.onNameChange = this.onNameChange.bind(this);
   }
 
   shouldComponentUpdate(nextProps: CertificationManagementProps, nextState: CertificationManagementState){
@@ -38,6 +47,14 @@ export default class CertificationManagement extends React.Component<Certificati
     }
 
     if (this.state.activeQuestion != nextState.activeQuestion) {
+      return true;
+    }
+
+    if (this.state.message != nextState.message) {
+      return true;
+    }
+
+    if (JSON.stringify(this.state.errors) !== JSON.stringify(nextState.errors)) {
       return true;
     }
 
@@ -87,7 +104,41 @@ export default class CertificationManagement extends React.Component<Certificati
   reset(){
     this.setState({
       activeQuestion: 0,
-      certification: null
+      certification: null,
+      errors: [],
+      message: ""
+    });
+  }
+
+  save(){
+    let headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    fetch("/certificationUpload",
+    {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(this.state.certification),
+    })
+    .then(results => {
+      return results.json();
+    })
+    .then((data: ValidationResult) => {
+      this.setState({message: "Saved successfully", errors: []});
+    })
+    .catch(err => {
+      this.setState({errors: ["Error during save"]})
+    });
+  }
+
+  onNameChange(e: any){
+    let cert = this.state.certification;
+    let newName = e.target.value;
+
+    cert.name = newName;
+
+    this.setState({
+      certification: cert
     });
   }
 
@@ -97,23 +148,31 @@ export default class CertificationManagement extends React.Component<Certificati
       if (this.state.certification){
         content = (
           <div>
-            <h1>{this.state.certification.name}</h1>
+            <FieldGroup
+              id="certificationNameText"
+              control={{type: "text", value: this.state.certification.name, onChange: this.onNameChange}}
+              label="Certification Name"
+            />
             {this.state.certification.questions ? (this.state.certification.questions.map(q =>
-              (<QuestionView question={q} key={q.key} highlightCorrectAnswers={true} highlightIncorrectAnswers={false} answersDisabled={true} />)
+              (<QuestionEditView question={q} key={q.key} />)
             )) : <span>No questions found</span>}
-          </div>);
+            </div>);
       }
 
       return (<div>
-              <SideNav redirectComponent="certificationEditor" />
-              <Well className="col-xs-11 pull-right">
+              <SideNav redirectComponent="certificationManagement" />
+              <div className="col-xs-10 pull-right">
                 <ButtonToolbar>
                   <ButtonGroup>
                     <Button onClick={this.createNewCertification}>Create New Certification</Button>
+                    <Button onClick={this.save} type="submit">Save</Button>
                   </ButtonGroup>
                 </ButtonToolbar>
-                {content}
-              </Well>
+                <MessageBar message={this.state.message} errors={this.state.errors} />
+                <Well>
+                  {content}
+                </Well>
+              </div>
           </div>);
   }
 }

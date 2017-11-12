@@ -57,7 +57,9 @@ app.post("/login", userController.postLogin);
 app.post("/signup", userController.postSignup);
 app.get("/courses", courseController.getCourseOverview);
 app.get("/courses/:courseName", courseController.getCourse);
-app.post("/certificationUpload", courseController.postUpload);
+app.post("/certificationApi", courseController.postUpload);
+app.get("/certificationApi/:courseName", courseController.downloadCert);
+app.delete("/certificationApi/:courseName", courseController.deleteCert);
 
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);

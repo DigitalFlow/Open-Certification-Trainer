@@ -79,14 +79,14 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
               control={{type: "text", value:this.props.question.text ? this.props.question.text.value : "", onChange: this.onQuestionTextChange}}
               label="Question"
             />
-            <Button onClick={this.addAnswer}>Add Answer</Button>
+            <Button bsStyle="success" onClick={this.addAnswer}>Add Answer</Button>
             <ButtonGroup vertical block type="checkbox">
               {this.props.question.answers && (this.props.question.answers.map((a, index) =>
                 {
                   return (<AnswerEditView key={a.id} onAnswerChange={(a: Answer) => this.onAnswerChange(index, a)} answer={a} requestDeletion={() => this.deleteAnswer(index)} />)
                 }))}
-            <Button onClick={this.props.requestDeletion}>Delete Question</Button>
             </ButtonGroup>
+            <Button className="pull-right" bsStyle="danger" onClick={this.props.requestDeletion}>Delete Question</Button>
           </div>;
 
         return (

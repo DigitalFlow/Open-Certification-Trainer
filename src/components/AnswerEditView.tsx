@@ -47,7 +47,7 @@ export default class AnswerEditView extends React.PureComponent<AnswerEditViewPr
               control={{type: "text", value:this.props.answer.text ? this.props.answer.text.value : "", onChange: this.onTextChange}}
               label=""
             />
-            <Button onClick={this.props.requestDeletion}>Delete</Button>
+            <Button bsStyle="danger" onClick={this.props.requestDeletion}>Delete</Button>
           </Form>
         );
     }

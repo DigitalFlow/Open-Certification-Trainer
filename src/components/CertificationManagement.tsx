@@ -2,6 +2,8 @@ import * as React from "react";
 import { ButtonGroup, ButtonToolbar, Button, MenuItem, Well } from "react-bootstrap";
 import Certification from "../model/Certification";
 import QuestionEditView from "./QuestionEditView";
+import FileUploadModal from "./FileUploadModal";
+import UserPromptModal from "./UserPromptModal";
 import SideNav from "./SideNav";
 import FieldGroup from "./FieldGroup";
 import MessageBar from "./MessageBar";
@@ -20,6 +22,8 @@ interface CertificationManagementState {
   activeQuestion: number;
   errors: Array<string>;
   message: string;
+  uploadingFile: boolean;
+  deletionRequested: boolean;
 }
 
 export default class CertificationManagement extends React.Component<CertificationManagementProps, CertificationManagementState> {
@@ -32,7 +36,9 @@ export default class CertificationManagement extends React.Component<Certificati
         certification: null,
         activeQuestion: 0,
         errors: [],
-        message: ""
+        message: "",
+        uploadingFile: false,
+        deletionRequested: false
       };
       this.state = this.defaultState;
 
@@ -44,6 +50,53 @@ export default class CertificationManagement extends React.Component<Certificati
       this.addQuestion = this.addQuestion.bind(this);
       this.deleteQuestion = this.deleteQuestion.bind(this);
       this.setIds = this.setIds.bind(this);
+      this.import = this.import.bind(this);
+      this.loadImportedFile = this.loadImportedFile.bind(this);
+      this.delete = this.delete.bind(this);
+      this.export = this.export.bind(this);
+      this.verifyAndDelete = this.verifyAndDelete.bind(this);
+      this.hideDeletionPrompt = this.hideDeletionPrompt.bind(this);
+  }
+
+  export () {
+    window.open("/certificationApi/" + this.props.match.params.courseName, "about:blank");
+  }
+
+  delete () {
+    let headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    fetch("/certificationApi/" + this.props.match.params.courseName,
+    {
+      method: "DELETE",
+      headers: headers
+    })
+    .then(results => {
+      return results.json();
+    })
+    .then((data: ValidationResult) => {
+      if (data.success){
+        this.setState({message: data.message, errors: []});
+      }
+      else {
+        this.setState({errors: data.errors});
+      }
+    })
+    .catch(err => {
+        this.setState({errors: [err.message]});
+    });
+  }
+
+  loadImportedFile(data: any) {
+    let cert = data as Certification;
+
+    if(!cert) {
+      this.setState({uploadingFile: false});
+    }
+    else{
+      cert = this.setIds(cert);
+      this.setState({uploadingFile: false, certification: cert});
+    }
   }
 
   shouldComponentUpdate(nextProps: CertificationManagementProps, nextState: CertificationManagementState){
@@ -60,6 +113,14 @@ export default class CertificationManagement extends React.Component<Certificati
     }
 
     if (this.state.message != nextState.message) {
+      return true;
+    }
+
+    if(this.state.deletionRequested != nextState.deletionRequested) {
+      return true;
+    }
+
+    if (this.state.uploadingFile != nextState.uploadingFile) {
       return true;
     }
 
@@ -136,7 +197,7 @@ export default class CertificationManagement extends React.Component<Certificati
     let headers = new Headers();
     headers.set("Content-Type", "application/json");
 
-    fetch("/certificationUpload",
+    fetch("/certificationApi",
     {
       method: "POST",
       headers: headers,
@@ -192,6 +253,18 @@ export default class CertificationManagement extends React.Component<Certificati
     this.setState({certification: update});
   }
 
+  import(){
+    this.setState({uploadingFile: true});
+  }
+
+  verifyAndDelete(){
+    this.setState({deletionRequested: true});
+  }
+
+  hideDeletionPrompt(){
+    this.setState({deletionRequested: false});
+  }
+
   render(){
       let content = (<div>Please select a course from the sidenav, or click the new button for creating a new course</div>);
 
@@ -211,14 +284,19 @@ export default class CertificationManagement extends React.Component<Certificati
 
       return (<div>
                 <SideNav redirectComponent="certificationManagement" />
+                {this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={"Are you sure you want to delete " + this.state.certification.name + "?"} key="DeletionPromptModal" yesCallBack={this.delete} finally={this.hideDeletionPrompt} />}
+                {this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={this.loadImportedFile} />}
                 <div className="col-xs-10 pull-right">
                   <ButtonToolbar>
                     <ButtonGroup>
                       <LinkContainer key={"newLink"} to={"/certificationManagement/new"}>
-                        <Button>Create New Certification</Button>
+                        <Button bsStyle="default">Create New Certification</Button>
                       </LinkContainer>
-                      <Button onClick={this.addQuestion} type="submit">Add Question</Button>
-                      <Button onClick={this.save} type="submit">Save</Button>
+                      {this.state.certification && <Button bsStyle="default" onClick={this.import}>Import</Button>}
+                      {this.state.certification && <Button bsStyle="default" onClick={this.export}>Export</Button>}
+                      {this.state.certification && <Button bsStyle="default" onClick={this.addQuestion}>Add Question</Button>}
+                      {this.state.certification && <Button bsStyle="default" onClick={this.save}>Save</Button>}
+                      {this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={this.verifyAndDelete}>Delete</Button>}
                     </ButtonGroup>
                   </ButtonToolbar>
                   <MessageBar message={this.state.message} errors={this.state.errors} />

@@ -7,44 +7,9 @@ import Certification from "../model/Certification";
 
 export interface HeaderProps { }
 
-class HeaderState {
-  certification: Certification;
-}
-
-export default class Header extends React.PureComponent<HeaderProps, HeaderState> {
-  fileInput: HTMLInputElement;
-
+export default class Header extends React.PureComponent<HeaderProps, undefined> {
   constructor(props: HeaderProps){
       super(props);
-      this.loadFile = this.loadFile.bind(this);
-      this.receivedText = this.receivedText.bind(this);
-
-      this.state = {
-        certification: null
-      };
-  }
-
-  loadFile() : void {
-      if (!this.fileInput.files) {
-          alert("This browser doesn't seem to support the `files` property of file inputs.");
-          return;
-      }
-
-      let file = this.fileInput.files[0];
-
-      if (!file) {
-          alert("Please select a file before clicking 'Load'");
-          return;
-      }
-
-      let fileReader = new FileReader();
-      fileReader.onload = this.receivedText;
-      fileReader.readAsText(file);
-  }
-
-  receivedText(e: Event) {
-      let target: any = e.target;
-      var certification = JSON.parse(target.result) as Certification;
   }
 
   render() {

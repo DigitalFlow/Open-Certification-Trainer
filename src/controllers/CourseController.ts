@@ -37,3 +37,38 @@ export let postUpload = (req: Request, res: Response) => {
     return res.json(new ValidationResult({success: true}));
   });
 };
+
+export let downloadCert = (req: Request, res: Response) => {
+  let courseName = req.params.courseName;
+
+  if (!courseName || !courseName.trim()) {
+    return res.json(new ValidationResult({success: false, errors: ["Name is needed for download!"]}));
+  }
+
+  let filePath = path.resolve(__dirname, '..', '..', 'dist', 'courses', courseName);
+
+  fs.exists(filePath, (exists) => {
+    if (!exists){
+      return res.status(404);
+    }
+
+    return res.download(filePath);
+  });
+};
+
+export let deleteCert = (req: Request, res: Response) => {
+  let courseName = req.params.courseName;
+
+  if (!courseName || !courseName.trim()) {
+    return res.json(new ValidationResult({success: false, errors: ["Name is needed for deletion!"]}));
+  }
+
+  fs.unlink(path.resolve(__dirname, '..', '..', 'dist', 'courses', courseName), err => {
+    if (err){
+      console.log(err);
+      return res.json(new ValidationResult({success: false, errors: ["Failed to delete file"]}));
+    }
+
+    return res.json(new ValidationResult({success: true, message: "Deletion successful"}));
+  });
+};

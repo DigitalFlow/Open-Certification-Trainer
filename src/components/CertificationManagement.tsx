@@ -56,17 +56,18 @@ export default class CertificationManagement extends React.Component<Certificati
       this.export = this.export.bind(this);
       this.verifyAndDelete = this.verifyAndDelete.bind(this);
       this.hideDeletionPrompt = this.hideDeletionPrompt.bind(this);
+      this.onUniqueNameChange = this.onUniqueNameChange.bind(this);
   }
 
   export () {
-    window.open("/certificationApi/" + this.props.match.params.courseName, "about:blank");
+    window.open("/certificationApi/" + this.state.certification.uniqueName, "about:blank");
   }
 
   delete () {
     let headers = new Headers();
     headers.set("Content-Type", "application/json");
 
-    fetch("/certificationApi/" + this.props.match.params.courseName,
+    fetch("/certificationApi/" + this.state.certification.uniqueName,
     {
       method: "DELETE",
       headers: headers
@@ -229,6 +230,16 @@ export default class CertificationManagement extends React.Component<Certificati
     });
   }
 
+  onUniqueNameChange(e: any){
+    let cert = this.state.certification;
+    let newName = e.target.value;
+    let update = {...cert, uniqueName: newName};
+
+    this.setState({
+      certification: update
+    });
+  }
+
   onQuestionChange(index: number, question: Question){
     let certification = this.state.certification;
     let questions = (certification.questions || []).map((value, i) => i != index ? value : question);
@@ -275,6 +286,11 @@ export default class CertificationManagement extends React.Component<Certificati
               id={this.state.certification.id + "name"}
               control={{type: "text", value: this.state.certification.name, onChange: this.onNameChange}}
               label="Certification Name"
+            />
+            <FieldGroup
+              id={this.state.certification.id + "uniqueName"}
+              control={{type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange}}
+              label="Certification Unique Name"
             />
             {this.state.certification.questions ? (this.state.certification.questions.map((q, index) =>
               (<QuestionEditView onQuestionChange={(q: Question) => this.onQuestionChange(index, q)} requestDeletion={() => this.deleteQuestion(index)} question={q} key={q.id} />)

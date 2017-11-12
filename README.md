@@ -20,11 +20,16 @@ Once this installed all packages, you can start the website by running
 
 `npm start`.
 
-Afterwards the site can be accessed on http://localhost:8080
+Afterwards the site can be accessed on http://localhost:8080. You can also configure the site to be accessed using a DNS name.
+Use the CERT_TRAINER_VHOST variable and set it to the domain name you'd like.
+Afterwards make sure to edit the /etc/hosts file (Linux + Windows) on your host server.
+If you plan on using this tool in your company, you need to configure your company's DNS server to redirect to your host server for the domain you configured.
 
 ## Courses
-Courses can currently only be added as json files by copying them to ./dist/courses when the website is running.
-For the format of your courses, please take a look at test.json in the project root.
+Courses can be imported using the Certification Management page.
+You can press "Create New Certification" and then either enter your certification manually or import a JSON file.
+For the format of your courses, please take a look at MB2-716 file in the project root.
+IDs for the certification, questions and answers don't have to be set in your import file, they will be generated automatically if they're missing.
 
 ## Impressions
 ### Certification Overview
@@ -38,8 +43,6 @@ Select a certification / course and take a look at the questions contained inclu
 Take an assessment for a certification / course. You will have to answer all questions contained in the course. Once you're done, the course will be regarded as passed, if you answered 70% or more of the questions correctly.
 
 ## Planned features
-- Import / Export function for courses
-- Course Administration (Edit courses inside the website)
 - User Accounts
 
 ## License

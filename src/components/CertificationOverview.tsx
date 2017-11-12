@@ -14,12 +14,15 @@ interface CertificationOverviewState {
 }
 
 export default class CertificationOverview extends React.Component<CertificationOverviewProps, CertificationOverviewState> {
+  defaultState: CertificationOverviewState;
+
   constructor(props: CertificationOverviewProps){
       super(props);
 
-      this.state = {
+      this.defaultState = {
         certification: null
       };
+      this.state = this.defaultState;
 
       this.loadCourses = this.loadCourses.bind(this);
       this.reset = this.reset.bind(this);
@@ -66,9 +69,7 @@ export default class CertificationOverview extends React.Component<Certification
   }
 
   reset(){
-    this.setState({
-      certification: null
-    });
+    this.setState(this.defaultState);
   }
 
   render(){

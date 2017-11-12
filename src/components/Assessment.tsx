@@ -28,13 +28,12 @@ enum QuestionState {
 
 export default class Assessment extends React.Component<AssessmentProps, AssessmentState> {
   checkedAnswers: any;
+  defaultState: AssessmentState;
 
   constructor(props: AssessmentProps){
       super(props);
 
-      this.checkedAnswers = {};
-
-      this.state = {
+      this.defaultState = {
         certification: null,
         activeQuestion: 0,
         lastAnsweredQuestion: 0,
@@ -43,6 +42,9 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
         questionState: QuestionState.Open,
         correctAnswers: 0
       };
+      this.checkedAnswers = this.defaultState;
+
+      this.state = this.defaultState;
 
       this.loadCourses = this.loadCourses.bind(this);
       this.nextQuestion = this.nextQuestion.bind(this);
@@ -52,15 +54,12 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
       this.reset = this.reset.bind(this);
   }
 
-  answerChangedHandler(key: string, checked: boolean){
-    this.checkedAnswers[key] = checked;
+  answerChangedHandler(answer: Answer){
+    this.checkedAnswers[answer.id] = answer.isCorrect;
   }
 
   reset(){
-    this.setState({
-      activeQuestion: 0,
-      certification: null
-    });
+    this.setState(this.defaultState);
   }
 
   shouldComponentUpdate(nextProps: AssessmentProps, nextState: AssessmentState){
@@ -131,15 +130,15 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
     let answers = this.state.certification.questions[this.state.activeQuestion].answers;
     let questionAnsweredCorrectly = true;
 
-    for (let i = 0; i < answers.length; i++){
+    for (let i = 0; answers && i < answers.length; i++){
       let answer = answers[i];
 
-      if (answer.isCorrect && !this.checkedAnswers[answer.key]) {
+      if (answer.isCorrect && !this.checkedAnswers[answer.id]) {
         questionAnsweredCorrectly = false;
         break;
       }
 
-      if(!answer.isCorrect && this.checkedAnswers[answer.key]) {
+      if(!answer.isCorrect && this.checkedAnswers[answer.id]) {
         questionAnsweredCorrectly = false;
         break;
       }
@@ -161,7 +160,6 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
         if (this.state.certification.questions && this.state.certification.questions.length){
 
           let activeQuestion = this.state.certification.questions[this.state.activeQuestion];
-          // <Button onClick={this.previousQuestion}>Previous</Button>
 
           if (this.state.activeQuestion < this.state.certification.questions.length) {
             let progress = ((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100;

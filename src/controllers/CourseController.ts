@@ -24,6 +24,10 @@ export let getCourse = (req: Request, res: Response) => {
 export let postUpload = (req: Request, res: Response) => {
   let data = req.body as Certification;
 
+  if (!data.name || !data.name.trim()) {
+    return res.json(new ValidationResult({success: false, errors: ["Name is needed for certifications"]}));
+  }
+
   fs.writeFile(path.resolve(__dirname, '..', '..', 'dist', 'courses', data.name), JSON.stringify(data), err => {
     if (err){
       console.log(err);

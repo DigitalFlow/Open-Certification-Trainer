@@ -5,114 +5,93 @@ import AnswerEditView from "./AnswerEditView";
 import Answer from "../model/Answer";
 import Text from "../model/Text";
 import FieldGroup from "./FieldGroup";
+import * as uuid from "uuid/v4";
 
 export interface QuestionEditViewProps {
     question: Question;
-    onQuestionChange?: (question: Question) => void;
-}
-
-interface QuestionEditViewState {
-    question: Question;
+    onQuestionChange: (question: Question) => void;
+    requestDeletion: () => void;
 }
 
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-export default class QuestionEditView extends React.PureComponent<QuestionEditViewProps, QuestionEditViewState> {
+export default class QuestionEditView extends React.PureComponent<QuestionEditViewProps, undefined> {
     constructor(props: QuestionEditViewProps) {
         super(props);
 
-        this.state = {
-          question: props.question
-        }
-
         this.onAnswerChange = this.onAnswerChange.bind(this);
         this.addAnswer = this.addAnswer.bind(this);
+        this.deleteAnswer = this.deleteAnswer.bind(this);
         this.onQuestionTextChange = this.onQuestionTextChange.bind(this);
         this.onQuestionKeyChange = this.onQuestionKeyChange.bind(this);
     }
 
-    onAnswerChange(answer: Answer){
+    onAnswerChange(index: number, answer: Answer){
+      let question = this.props.question;
+      let answers = (question.answers || []).map((value, i) => i != index ? value : answer);
+      let update = {...question, answers: answers};
 
+      this.props.onQuestionChange(update);
     }
 
     onQuestionKeyChange (e: any) {
       let value = e.target.value;
-      let question = this.state.question;
+      let question = this.props.question;
 
-      question.key = value;
+      let update = {...question, key: value};
 
-      if (this.props.onQuestionChange){
-        this.props.onQuestionChange(question);
-      }
-
-      this.setState({question: question});
+      this.props.onQuestionChange(update);
     }
 
     onQuestionTextChange (e: any) {
       let value = e.target.value;
-      let question = this.state.question;
+      let question = this.props.question;
+      let update = {...question, text: new Text({value: value})};
 
-      question.text = new Text(value);
-
-      if (this.props.onQuestionChange){
-        this.props.onQuestionChange(question);
-      }
-
-      this.setState({question: question});
+      this.props.onQuestionChange(update);
     }
 
     addAnswer(){
-      let question = this.state.question;
+      let question = this.props.question;
+      let update = {...question, answers: (question.answers || []).concat(new Answer({id: uuid()}))};
 
-      this.setState({question: {...question, answers: (question.answers || []).concat(new Answer({}))}});
+      this.props.onQuestionChange(update);
     }
 
-    deleteAnswer = (index: number) => {
-      let question = this.state.question;
+    deleteAnswer (index: number) {
+      let question = this.props.question;
       let answers = (question.answers || []).filter((value, i) => i != index);
       let update = {...question, answers: answers};
 
-      this.setState({question: update});
+      this.props.onQuestionChange(update);
     }
 
     render(){
-        let content = null;
-
-        content =
-            <div>
-                <FieldGroup
-                  id={this.state.question.key + "_questionText"}
-                  control={{type: "text", value:this.state.question.key, onChange: this.onQuestionKeyChange}}
-                  label="Key"
-                />
-                <FieldGroup
-                  id={this.state.question.key + "_questionText"}
-                  control={{type: "text", value:this.state.question.text? this.state.question.text.value : "", onChange: this.onQuestionTextChange}}
-                  label="Question"
-                />
-                <Button disabled={this.state.question.answers.some(a => !a.text || !a.text.value)} onClick={this.addAnswer}>Add Answer</Button>
-                <ButtonGroup vertical block type="checkbox">
-                  {(this.state.question.answers.map((a, index) =>
-                    {
-                      let key = this.state.question.key + "_Answer_";
-
-                      if (a.text && a.text.value) {
-                        key += a.text.value;
-                      }
-                      else {
-                        key += "empty";
-                      }
-
-                      return (<AnswerEditView key={key} onAnswerChange={this.onAnswerChange} answer={a} requestDeletion={() => this.deleteAnswer(index)} />)
-                    }))}
-                </ButtonGroup>
-            </div>;
+        let content =
+          <div key={this.props.question.id + "header"}>
+            <FieldGroup
+              id={this.props.question.id + "_qKey"}
+              control={{type: "text", value:this.props.question.key, onChange: this.onQuestionKeyChange}}
+              label="Key"
+            />
+            <FieldGroup
+              id={this.props.question.id + "_qText"}
+              control={{type: "text", value:this.props.question.text ? this.props.question.text.value : "", onChange: this.onQuestionTextChange}}
+              label="Question"
+            />
+            <Button onClick={this.addAnswer}>Add Answer</Button>
+            <ButtonGroup vertical block type="checkbox">
+              {this.props.question.answers && (this.props.question.answers.map((a, index) =>
+                {
+                  return (<AnswerEditView key={a.id} onAnswerChange={(a: Answer) => this.onAnswerChange(index, a)} answer={a} requestDeletion={() => this.deleteAnswer(index)} />)
+                }))}
+            <Button onClick={this.props.requestDeletion}>Delete Question</Button>
+            </ButtonGroup>
+          </div>;
 
         return (
-        <div key={this.state.question.key}>
             <Panel>
                 {content}
-            </Panel>
-        </div>);
+            </Panel>);
     }
 }

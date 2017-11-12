@@ -4,7 +4,7 @@ import Answer from "../model/Answer";
 
 export interface AnswerViewProps {
     answer: Answer;
-    onAnswerChange: (key: string, checked: boolean) => void;
+    onAnswerChange?: (answer: Answer) => void;
     checked: boolean;
     highlightIfCorrect: boolean;
     highlightIfIncorrect: boolean;
@@ -34,7 +34,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, Ans
       let checked = e.target.checked;
 
       if (this.props.onAnswerChange){
-        this.props.onAnswerChange(this.props.answer.key, checked);
+        this.props.onAnswerChange({...this.props.answer, isCorrect: checked});
       }
 
       this.setState({checked: checked});
@@ -56,9 +56,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, Ans
         };
 
         return (
-          <div>
-            <Checkbox disabled={this.props.disabled} checked={this.state.checked} onChange={this.onChange}><span style={style}>{this.props.answer.text.value}</span></Checkbox>
-          </div>
+            <Checkbox disabled={this.props.disabled} key={this.props.answer.id + "_cb"} checked={this.state.checked} onChange={this.onChange}><span style={style}>{this.props.answer.text.value}</span></Checkbox>
         );
     }
 }

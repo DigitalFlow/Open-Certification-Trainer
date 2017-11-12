@@ -31,6 +31,8 @@ You can press "Create New Certification" and then either enter your certificatio
 For the format of your courses, please take a look at MB2-716 file in the project root.
 IDs for the certification, questions and answers don't have to be set in your import file, they will be generated automatically if they're missing.
 
+![oct_management](https://user-images.githubusercontent.com/4287938/32700997-6af32ffc-c7ce-11e7-9e85-7e80390b9082.png)
+
 ## Impressions
 ### Certification Overview
 ![certificationoverview](https://user-images.githubusercontent.com/4287938/32636139-c0a1cb6a-c5b3-11e7-9076-b7d8cc9a5517.png)

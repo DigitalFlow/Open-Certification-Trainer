@@ -26,6 +26,38 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
         this.onQuestionKeyChange = this.onQuestionKeyChange.bind(this);
     }
 
+    shouldComponentUpdate(nextProps: QuestionEditViewProps){
+      let q = this.props.question;
+      let nq = nextProps.question;
+
+      if (q.key !== nq.key){
+        return true;
+      }
+
+      if (q.text !== nq.text){
+        return true;
+      }
+
+      if (!q.answers && nq.answers) {
+        return true;
+      }
+
+      if (q.answers && !nq.answers){
+        return true;
+      }
+
+      if (q.answers && nq.answers && q.answers.length !== nq.answers.length) {
+        return true;
+      }
+
+      if (q.answers && nq.answers && q.answers.some((a, index) => a !== nq.answers[index])) {
+        return true;
+      }
+
+      return false;
+    }
+
+
     onAnswerChange(index: number, answer: Answer){
       let question = this.props.question;
       let answers = (question.answers || []).map((value, i) => i != index ? value : answer);

@@ -6,42 +6,11 @@ import Assessment from "./Assessment";
 import Certification from "../model/Certification";
 import UserInfo from "../model/UserInfo";
 import ValidationResult from "../model/ValidationResult";
+import IBaseProps from "../domain/IBaseProps";
 
-export interface HeaderProps {
-  location?: Location;
-}
-
-export interface HeaderState {
-  user: UserInfo;
-}
-
-export default class Header extends React.PureComponent<HeaderProps, HeaderState> {
-  constructor(props: HeaderProps){
+export default class Header extends React.PureComponent<IBaseProps, undefined> {
+  constructor(props: IBaseProps){
       super(props);
-
-      this.state = {
-        user: null
-      }
-  }
-
-  componentDidMount(){
-    fetch("/login",
-    {
-      method: "POST",
-      headers: [
-        ["Content-Type", "application/json"]
-      ],
-      credentials: 'include',
-      body: JSON.stringify({})
-    })
-    .then(results => {
-      return results.json();
-    })
-    .then((result: ValidationResult) => {
-      if (result.success){
-          this.setState({user: result.userInfo});
-      }
-    });
   }
 
   render() {
@@ -68,16 +37,16 @@ export default class Header extends React.PureComponent<HeaderProps, HeaderState
               </IndexLinkContainer>
           </Nav>
           <Nav pullRight>
-            {!this.state.user && <IndexLinkContainer to="/login">
+            {!this.props.user && <IndexLinkContainer to="/login">
               <NavItem>Login</NavItem>
             </IndexLinkContainer>}
-            {!this.state.user && <IndexLinkContainer to="/signUp">
+            {!this.props.user && <IndexLinkContainer to="/signUp">
               <NavItem>Sign Up</NavItem>
             </IndexLinkContainer>}
-            {this.state.user && <IndexLinkContainer to="/profile">
+            {this.props.user && <IndexLinkContainer to="/profile">
               <NavItem>Profile</NavItem>
             </IndexLinkContainer>}
-            {this.state.user && <IndexLinkContainer to="/logout">
+            {this.props.user && <IndexLinkContainer to="/logout">
               <NavItem>Logout</NavItem>
             </IndexLinkContainer>}
           </Nav>

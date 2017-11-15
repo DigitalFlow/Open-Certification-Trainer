@@ -2,17 +2,14 @@ import * as React from "react";
 import { Well, Jumbotron } from "react-bootstrap";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
-
-export interface LogoutProps {
-
-}
+import IBaseProps from "../domain/IBaseProps";
 
 export interface LogoutState {
   errors: Array<string>;
 }
 
-export default class Logout extends React.PureComponent<LogoutProps, LogoutState> {
-  constructor(props: LogoutProps){
+export default class Logout extends React.PureComponent<IBaseProps, LogoutState> {
+  constructor(props: IBaseProps){
       super(props);
 
       this.state = {

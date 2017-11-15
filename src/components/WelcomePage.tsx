@@ -1,13 +1,20 @@
 import * as React from "react";
 import { Well, Jumbotron } from "react-bootstrap";
+import IBaseProps from "../domain/IBaseProps";
 
-const WelcomePage = () => (
-  <Well>
-    <Jumbotron>
-      <h1>Welcome</h1>
-      <p>Study certifications, test yourself and take assessments! Let's get started</p>
-    </Jumbotron>
-  </Well>
-)
+export default class WelcomePage extends React.PureComponent<IBaseProps, undefined> {
+  constructor(props: IBaseProps){
+      super(props);
+  }
 
-export default WelcomePage
+  render(){
+    return (
+      <Well>
+        <Jumbotron>
+          <h1>Welcome {this.props.user && this.props.user.first_name}</h1>
+          <p>Study certifications, test yourself and take assessments! Let's get started</p>
+        </Jumbotron>
+      </Well>
+    );
+  }
+}

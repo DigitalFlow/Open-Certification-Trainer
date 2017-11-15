@@ -4,10 +4,10 @@ import FieldGroup from "./FieldGroup";
 import Authentication from "../model/Authentication"
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
+import IBaseProps from "../domain/IBaseProps";
 
-export interface LoginProps {
+export interface LoginProps extends IBaseProps {
     redirectComponent: string;
-    history: any;
 }
 
 interface LoginState {
@@ -69,9 +69,7 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
           });
         }
         else {
-          this.setState({
-            errors: []
-          });
+          // Reload so that App initializes again with User in state.
           window.location.href = "/index";
         }
       });

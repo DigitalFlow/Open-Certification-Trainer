@@ -19,7 +19,7 @@ import * as courseController from "./controllers/CourseController";
 
 // Load authenticator
 import { Authentication } from "./domain/Authentication";
-
+import { AuthFilter } from "./domain/AuthRedirect";
 // models
 import UserModel from "./model/User";
 
@@ -78,9 +78,9 @@ app.post("/logout", userController.postLogout);
 app.post("/signup", userController.postSignup);
 app.get("/courses", courseController.getCourseOverview);
 app.get("/courses/:courseName", courseController.getCourse);
-app.post("/certificationApi", courseController.postUpload);
-app.get("/certificationApi/:courseName", courseController.downloadCert);
-app.delete("/certificationApi/:courseName", courseController.deleteCert);
+app.post("/certificationApi", AuthFilter, courseController.postUpload);
+app.get("/certificationApi/:courseName", AuthFilter, courseController.downloadCert);
+app.delete("/certificationApi/:courseName", AuthFilter, courseController.deleteCert);
 
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);

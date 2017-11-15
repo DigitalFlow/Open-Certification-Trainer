@@ -12,7 +12,7 @@ const MessageBar = ( props: MessageBarProps ) => {
     return (
       <Panel>
         {props.message ? <div><span style={{color: "green"}}>{props.message}</span></div> : <div/>}
-        {props.errors.map(e => (<div><span style={{color:"red"}}>{e}</span><br /></div>))}
+        {props.errors.map(e => (<div key={e}><span style={{color:"red"}}>{e}</span><br /></div>))}
       </Panel>
     )
   }

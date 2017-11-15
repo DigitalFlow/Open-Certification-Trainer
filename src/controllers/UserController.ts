@@ -144,10 +144,14 @@ export let postLogin = (req: Request, res: Response) => {
       if (isMatch)
       {
         // JWT will complain if it is instance of a class
-        let token: Token = {userId: user.id};
-        const signedToken = jwt.sign(token, process.env.JWT_SECRET, { expiresIn: 86400 });
+        let token: Token = { userId: user.id };
+        let hour = 3600000;
+        // Expire in a week
+        let week = hour * 24 * 7;
+
+        const signedToken = jwt.sign(token, process.env.JWT_SECRET, { expiresIn: week });
            res.status(200)
-               .cookie('token', signedToken, { maxAge: 86400 })
+               .cookie('token', signedToken, { maxAge: week, httpOnly: true, secure: false })
                .json(new ValidationResult({success: true, userInfo: new UserInfo(user)}));
       }
       else {

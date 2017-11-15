@@ -4,11 +4,7 @@ import Certification from "../model/Certification";
 import Answer from "../model/Answer";
 import QuestionView from "./QuestionView";
 import SideNav from "./SideNav";
-
-export interface AssessmentProps {
-  match: any;
-  location: Location;
- }
+import IBaseProps from "../domain/IBaseProps";
 
 interface AssessmentState {
   certification: Certification;
@@ -26,11 +22,11 @@ enum QuestionState {
   Incorrect
 }
 
-export default class Assessment extends React.Component<AssessmentProps, AssessmentState> {
+export default class Assessment extends React.Component<IBaseProps, AssessmentState> {
   checkedAnswers: any;
   defaultState: AssessmentState;
 
-  constructor(props: AssessmentProps){
+  constructor(props: IBaseProps){
       super(props);
 
       this.defaultState = {
@@ -62,7 +58,7 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
     this.setState(this.defaultState);
   }
 
-  shouldComponentUpdate(nextProps: AssessmentProps, nextState: AssessmentState){
+  shouldComponentUpdate(nextProps: IBaseProps, nextState: AssessmentState){
     if (this.props.location.pathname != nextProps.location.pathname){
       return true;
     }
@@ -82,7 +78,7 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
     return false;
   }
 
-  loadCourses(props: AssessmentProps){
+  loadCourses(props: IBaseProps){
     let courseName = props.match.params.courseName;
 
     if (!courseName) {
@@ -104,7 +100,7 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
     this.loadCourses(this.props);
   }
 
-  componentWillReceiveProps(props: AssessmentProps){
+  componentWillReceiveProps(props: IBaseProps){
     if (this.props.location.pathname != props.location.pathname){
       this.reset();
     }

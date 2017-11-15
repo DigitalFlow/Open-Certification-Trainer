@@ -11,11 +11,7 @@ import ValidationResult from "../model/ValidationResult";
 import * as uuid from "uuid/v4";
 import Question from "../model/Question";
 import { LinkContainer } from "react-router-bootstrap";
-
-export interface CertificationManagementProps {
-  match: any;
-  location: Location;
- }
+import IBaseProps from "../domain/IBaseProps";
 
 interface CertificationManagementState {
   certification: Certification;
@@ -26,10 +22,10 @@ interface CertificationManagementState {
   deletionRequested: boolean;
 }
 
-export default class CertificationManagement extends React.Component<CertificationManagementProps, CertificationManagementState> {
+export default class CertificationManagement extends React.Component<IBaseProps, CertificationManagementState> {
   defaultState: CertificationManagementState;
 
-  constructor(props: CertificationManagementProps){
+  constructor(props: IBaseProps){
       super(props);
 
       this.defaultState = {
@@ -101,7 +97,7 @@ export default class CertificationManagement extends React.Component<Certificati
     }
   }
 
-  shouldComponentUpdate(nextProps: CertificationManagementProps, nextState: CertificationManagementState){
+  shouldComponentUpdate(nextProps: IBaseProps, nextState: CertificationManagementState){
     if (this.props.location.pathname != nextProps.location.pathname){
       return true;
     }
@@ -157,7 +153,7 @@ export default class CertificationManagement extends React.Component<Certificati
     return cert;
   }
 
-  loadCourses(props: CertificationManagementProps){
+  loadCourses(props: IBaseProps){
     let courseName = props.match.params.courseName;
 
     if (!courseName) {
@@ -185,7 +181,7 @@ export default class CertificationManagement extends React.Component<Certificati
     this.loadCourses(this.props);
   }
 
-  componentWillReceiveProps(props: CertificationManagementProps){
+  componentWillReceiveProps(props: IBaseProps){
     if (this.props.location.pathname != props.location.pathname){
       this.reset();
     }

@@ -3,13 +3,25 @@ import { Switch, Route } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { renderRoutes } from "react-router-config";
 import routes from "../routes"
+import IBaseProps from "../domain/IBaseProps";
+import UserInfo from "../model/UserInfo";
 
-const Main = () => (
-    <main>
-      <Switch>
-        {renderRoutes(routes)}
-      </Switch>
-    </main>
-)
+export default class Main extends React.PureComponent<IBaseProps, undefined> {
+  constructor(props: IBaseProps){
+      super(props);
+  }
 
-export default Main
+  shouldComponentUpdate(){
+    return true;
+  }
+
+  render() {
+    return (
+      <main>
+        <Switch>
+          {renderRoutes(routes, { user: this.props.user })}
+        </Switch>
+      </main>
+    );
+  }
+}

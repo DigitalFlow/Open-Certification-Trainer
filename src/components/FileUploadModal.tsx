@@ -27,6 +27,10 @@ export default class FileUploadModal extends React.PureComponent<FileUploadModal
         this.props.fileCallBack(null);
       }
 
+      if (fileInput.files.length < 1){
+        return;
+      }
+
       let file = fileInput.files[0];
 
       if (!file) {
@@ -51,8 +55,7 @@ export default class FileUploadModal extends React.PureComponent<FileUploadModal
           </Modal.Body>
 
           <Modal.Footer>
-            <Button onClick={this.loadFile}>Close</Button>
-            <Button onClick={this.loadFile}bsStyle="primary">Save changes</Button>
+            <Button onClick={this.loadFile} bsStyle="primary">Close</Button>
           </Modal.Footer>
         </Modal.Dialog>
       </div>);

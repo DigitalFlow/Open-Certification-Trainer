@@ -12,6 +12,7 @@ export interface SignUpProps {
 interface SignUpState {
     userName: string,
     password: string,
+    repeatPassword: string,
     email: string,
     errors: Array<string>;
     message: string;
@@ -26,6 +27,7 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
         this.state = {
           userName: "",
           password: "",
+          repeatPassword: "",
           email: "",
           errors: [],
           message: ""
@@ -33,6 +35,7 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
 
         this.setUsername = this.setUsername.bind(this);
         this.setPassword = this.setPassword.bind(this);
+        this.repeatPassword = this.repeatPassword.bind(this);
         this.setEmail = this.setEmail.bind(this);
         this.signUp = this.signUp.bind(this);
     }
@@ -45,11 +48,19 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
       this.setState({password: e.target.value})
     }
 
+    repeatPassword(e: any){
+      this.setState({repeatPassword: e.target.value})
+    }
+
     setEmail(e: any){
       this.setState({email: e.target.value})
     }
 
     signUp(){
+      if (this.state.password !== this.state.repeatPassword){
+        return this.setState({errors: ["Password and repeat passwords don't match, please enter them again."]})
+      }
+
       let headers = new Headers();
       headers.set("Content-Type", "application/json");
 
@@ -99,6 +110,11 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
                     id="formControlsPassword"
                     control={{type: "password", placeholder:"Enter password", onChange: this.setPassword}}
                     label="Password"
+                  />
+                  <FieldGroup
+                    id="formControlsRepeatPassword"
+                    control={{type: "password", placeholder:"Repeat password", onChange: this.repeatPassword}}
+                    label="Repeat Password"
                   />
                   <Button onClick={this.signUp} type="submit">
                     Submit

@@ -3,20 +3,16 @@ import { ButtonGroup, DropdownButton, MenuItem, Well } from "react-bootstrap";
 import Certification from "../model/Certification";
 import QuestionView from "./QuestionView";
 import SideNav from "./SideNav";
-
-export interface CertificationOverviewProps {
-  match: any;
-  location: Location;
- }
+import IBaseProps from "../domain/IBaseProps";
 
 interface CertificationOverviewState {
   certification: Certification;
 }
 
-export default class CertificationOverview extends React.Component<CertificationOverviewProps, CertificationOverviewState> {
+export default class CertificationOverview extends React.Component<IBaseProps, CertificationOverviewState> {
   defaultState: CertificationOverviewState;
 
-  constructor(props: CertificationOverviewProps){
+  constructor(props: IBaseProps){
       super(props);
 
       this.defaultState = {
@@ -28,7 +24,7 @@ export default class CertificationOverview extends React.Component<Certification
       this.reset = this.reset.bind(this);
   }
 
-  shouldComponentUpdate(nextProps: CertificationOverviewProps, nextState: CertificationOverviewState){
+  shouldComponentUpdate(nextProps: IBaseProps, nextState: CertificationOverviewState){
     if (this.props.location.pathname != nextProps.location.pathname){
       return true;
     }
@@ -40,7 +36,7 @@ export default class CertificationOverview extends React.Component<Certification
     return false;
   }
 
-  loadCourses(props: CertificationOverviewProps){
+  loadCourses(props: IBaseProps){
     let courseName = props.match.params.courseName;
 
     if (!courseName) {
@@ -62,7 +58,7 @@ export default class CertificationOverview extends React.Component<Certification
     this.loadCourses(this.props);
   }
 
-  componentWillReceiveProps(props: CertificationOverviewProps){
+  componentWillReceiveProps(props: IBaseProps){
     if (this.props.location.pathname != props.location.pathname){
       this.reset();
     }

@@ -25,6 +25,7 @@ enum QuestionState {
 export default class Assessment extends React.Component<IBaseProps, AssessmentState> {
   checkedAnswers: any;
   defaultState: AssessmentState;
+  session: Array<Answer>;
 
   constructor(props: IBaseProps){
       super(props);
@@ -39,12 +40,12 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         correctAnswers: 0
       };
       this.checkedAnswers = this.defaultState;
+      this.session = [];
 
       this.state = this.defaultState;
 
       this.loadCourses = this.loadCourses.bind(this);
       this.nextQuestion = this.nextQuestion.bind(this);
-      this.previousQuestion = this.previousQuestion.bind(this);
       this.checkAnswer = this.checkAnswer.bind(this);
       this.answerChangedHandler = this.answerChangedHandler.bind(this);
       this.reset = this.reset.bind(this);
@@ -108,12 +109,6 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     this.loadCourses(props);
   }
 
-  previousQuestion(){
-    if (this.state.activeQuestion > 0){
-      this.setState({activeQuestion: this.state.activeQuestion - 1});
-    }
-  }
-
   nextQuestion(){
     this.checkedAnswers = {};
 
@@ -153,13 +148,14 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   render(){
       let content = (<div>Please select a course from the sidenav</div>);
 
-      if (this.state.certification){
-
-        if (this.state.certification.questions && this.state.certification.questions.length){
-
+      if (this.state.certification)
+      {
+        if (this.state.certification.questions && this.state.certification.questions.length)
+        {
           let activeQuestion = this.state.certification.questions[this.state.activeQuestion];
 
-          if (this.state.activeQuestion < this.state.certification.questions.length) {
+          if (this.state.activeQuestion < this.state.certification.questions.length)
+          {
             let progress = ((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100;
 
             content = (
@@ -179,7 +175,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
             let questionCount = this.state.certification.questions.length;
             let resultPercentage = (this.state.correctAnswers / questionCount) * 100;
 
-            if (resultPercentage >= 70) {
+            if (resultPercentage >= 70)
+            {
               content = (
                 <div>
                   <h2>Congratulations!</h2>

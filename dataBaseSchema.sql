@@ -2,6 +2,11 @@
 -- PostgreSQL database dump
 --
 
+--
+-- Install pgcrypto extension if not existing for being able to use gen_random_uuid
+--
+CREATE EXTENSION IF NOT EXISTS pgcrypto
+
 -- Dumped from database version 10.1
 -- Dumped by pg_dump version 10.1
 
@@ -75,4 +80,3 @@ GRANT ALL ON TABLE "user" TO dev;
 --
 -- PostgreSQL database dump complete
 --
-

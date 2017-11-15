@@ -89,7 +89,9 @@ export default class Assessment extends React.Component<AssessmentProps, Assessm
       return;
     }
 
-    fetch("/courses/" + courseName)
+    fetch("/courses/" + courseName, {
+      credentials: 'include'
+    })
       .then(results => {
         return results.json();
       })

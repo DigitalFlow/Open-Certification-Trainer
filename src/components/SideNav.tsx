@@ -23,7 +23,9 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
     }
 
     componentDidMount(){
-      fetch("/courses")
+      fetch("/courses", {
+        credentials: 'include'
+      })
         .then(results => {
           return results.json();
         })

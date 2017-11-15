@@ -3,9 +3,12 @@ import * as bodyParser from "body-parser";
 import * as logger from "morgan";
 import * as dotenv from "dotenv";
 import * as path from "path";
-import * as mongoose from "mongoose";
-import * as passport from "passport";
 import * as morgan from "morgan";
+import * as cookieParser from "cookie-parser";
+
+// Load environment variables
+dotenv.config({ path: ".env.config" });
+
 // No d.ts yet
 const vhost = require("vhost");
 
@@ -14,28 +17,46 @@ import * as userController from "./controllers/UserController";
 import * as homeController from "./controllers/HomeController";
 import * as courseController from "./controllers/CourseController";
 
+// Load authenticator
+import { Authentication } from "./domain/Authentication";
+
 // models
 import UserModel from "./model/User";
 
-// Load environment variables
-dotenv.config({ path: ".env.config" });
+// Connect to MySQL
+import pool from "./domain/DbConnection";
+
+pool.query("set schema 'open_certification_trainer'")
+  .then(() => {
+    console.log("Connected to database.");
+  })
+  .catch(err => {
+    console.log("Database connection error. Please make sure the database is running and your config in .env.config is correct. Error: " + err.message);
+    process.exit();
+  });
+
+// Connect to MySql
+process.on('SIGINT', function() {
+  console.log("Closing database connection");
+
+  pool.end()
+  .then(() => {
+    console.log("Successfully terminated pool");
+    process.exit();
+  })
+  .catch(err => {
+      console.log("Failed closing pool, doing a force exit");
+      process.exit();
+  });
+});
 
 /**
  * Create Express server.
  */
 const app = express();
 
-/**
- * Connect to MongoDB.
- */
-// mongoose.Promise = global.Promise;
-/*mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
-
-mongoose.connection.on("error", () => {
-  console.log("MongoDB connection error. Please make sure MongoDB is running.");
-  process.exit();
-});
-*/
+app.use(cookieParser());
+app.use(Authentication);
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
 
 /**
@@ -46,7 +67,6 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(passport.initialize());
 
 app.use(express.static(path.resolve(__dirname, "..", "dist")));
 
@@ -54,6 +74,7 @@ app.use(express.static(path.resolve(__dirname, "..", "dist")));
 * Primary app routes.
 */
 app.post("/login", userController.postLogin);
+app.post("/logout", userController.postLogout);
 app.post("/signup", userController.postSignup);
 app.get("/courses", courseController.getCourseOverview);
 app.get("/courses/:courseName", courseController.getCourse);

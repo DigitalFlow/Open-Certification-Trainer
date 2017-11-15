@@ -70,7 +70,8 @@ export default class CertificationManagement extends React.Component<Certificati
     fetch("/certificationApi/" + this.state.certification.uniqueName,
     {
       method: "DELETE",
-      headers: headers
+      headers: headers,
+      credentials: 'include'
     })
     .then(results => {
       return results.json();
@@ -167,7 +168,9 @@ export default class CertificationManagement extends React.Component<Certificati
       return;
     }
 
-    fetch("/courses/" + courseName)
+    fetch("/courses/" + courseName, {
+      credentials: 'include'
+    })
       .then(results => {
         return results.json();
       })
@@ -203,6 +206,7 @@ export default class CertificationManagement extends React.Component<Certificati
       method: "POST",
       headers: headers,
       body: JSON.stringify(this.state.certification),
+      credentials: 'include'
     })
     .then(results => {
       return results.json();

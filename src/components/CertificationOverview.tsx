@@ -47,7 +47,9 @@ export default class CertificationOverview extends React.Component<Certification
       return;
     }
 
-    fetch("/courses/" + courseName)
+    fetch("/courses/" + courseName, {
+      credentials: 'include'
+    })
       .then(results => {
         return results.json();
       })

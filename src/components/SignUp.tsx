@@ -14,6 +14,7 @@ interface SignUpState {
     password: string,
     email: string,
     errors: Array<string>;
+    message: string;
 }
 
 // 'HelloProps' describes the shape of props.
@@ -26,7 +27,8 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
           userName: "",
           password: "",
           email: "",
-          errors: []
+          errors: [],
+          message: ""
         }
 
         this.setUsername = this.setUsername.bind(this);
@@ -55,7 +57,8 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
       {
         method: "POST",
         headers: headers,
-        body: JSON.stringify(new Authentication({userName: this.state.userName, password: this.state.password, email: this.state.email}))
+        body: JSON.stringify(new Authentication({userName: this.state.userName, password: this.state.password, email: this.state.email})),
+        credentials: 'include'
       })
       .then(results => {
         return results.json();
@@ -68,6 +71,7 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
         }
         else {
           this.setState({
+            message: "Success! You may now log in.",
             errors: []
           });
         }
@@ -77,7 +81,7 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
     render(){
         return (
           <Well>
-            <MessageBar errors={this.state.errors} />
+            <MessageBar message= {this.state.message} errors={this.state.errors} />
             <Jumbotron>
               <h1>SignUp</h1>
                 <form action="javascript:void(0);">

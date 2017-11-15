@@ -4,12 +4,44 @@ import { LinkContainer, IndexLinkContainer } from "react-router-bootstrap";
 import CertificationOverview from "./CertificationOverview";
 import Assessment from "./Assessment";
 import Certification from "../model/Certification";
+import UserInfo from "../model/UserInfo";
+import ValidationResult from "../model/ValidationResult";
 
-export interface HeaderProps { }
+export interface HeaderProps {
+  location?: Location;
+}
 
-export default class Header extends React.PureComponent<HeaderProps, undefined> {
+export interface HeaderState {
+  user: UserInfo;
+}
+
+export default class Header extends React.PureComponent<HeaderProps, HeaderState> {
   constructor(props: HeaderProps){
       super(props);
+
+      this.state = {
+        user: null
+      }
+  }
+
+  componentDidMount(){
+    fetch("/login",
+    {
+      method: "POST",
+      headers: [
+        ["Content-Type", "application/json"]
+      ],
+      credentials: 'include',
+      body: JSON.stringify({})
+    })
+    .then(results => {
+      return results.json();
+    })
+    .then((result: ValidationResult) => {
+      if (result.success){
+          this.setState({user: result.userInfo});
+      }
+    });
   }
 
   render() {
@@ -36,12 +68,18 @@ export default class Header extends React.PureComponent<HeaderProps, undefined> 
               </IndexLinkContainer>
           </Nav>
           <Nav pullRight>
-            <IndexLinkContainer to="/login">
+            {!this.state.user && <IndexLinkContainer to="/login">
               <NavItem>Login</NavItem>
-            </IndexLinkContainer>
-            <IndexLinkContainer to="/signUp">
+            </IndexLinkContainer>}
+            {!this.state.user && <IndexLinkContainer to="/signUp">
               <NavItem>Sign Up</NavItem>
-            </IndexLinkContainer>
+            </IndexLinkContainer>}
+            {this.state.user && <IndexLinkContainer to="/profile">
+              <NavItem>Profile</NavItem>
+            </IndexLinkContainer>}
+            {this.state.user && <IndexLinkContainer to="/logout">
+              <NavItem>Logout</NavItem>
+            </IndexLinkContainer>}
           </Nav>
           </Navbar.Collapse>
         </Navbar>

@@ -7,6 +7,7 @@ import MessageBar from "./MessageBar";
 
 export interface LoginProps {
     redirectComponent: string;
+    history: any;
 }
 
 interface LoginState {
@@ -55,6 +56,7 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
       {
         method: "POST",
         headers: headers,
+        credentials: 'include',
         body: JSON.stringify(new Authentication({userName: this.state.userName, password: this.state.password, email: this.state.email}))
       })
       .then(results => {
@@ -70,6 +72,7 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
           this.setState({
             errors: []
           });
+          window.location.href = "/index";
         }
       });
     }

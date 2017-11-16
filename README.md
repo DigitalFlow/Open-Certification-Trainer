@@ -10,7 +10,9 @@ You can view them and take assessments, where your knowledge is checked.
 More and more functions will be coming as the project progresses.
 
 ## Using
-You'll need to have [NodeJS](https://nodejs.org/en/) installed.
+You'll need to have [NodeJS](https://nodejs.org/en/) and [PostgreSQL](https://www.postgresql.org/) installed.
+Restore the database schema using the databaseSchema.sql file in the project root while following the instructions in there.
+After restoring the database, there will be an admin user for open certification trainer with user name and password root.
 
 Afterwards, clone the project, navigate to the project folder using your PowerShell / Bash, and launch
 

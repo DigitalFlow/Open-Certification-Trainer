@@ -1,11 +1,16 @@
 --
--- PostgreSQL database dump
+-- Guide: Insert this file inside a query window in PostgreSql. Exchange dev user at the bottom with the user you want to use for accesing the database
+-- There will be a root login for the open certification trainer with username and passwort root
 --
 
 --
--- Install pgcrypto extension if not existing for being able to use gen_random_uuid
+-- Don't remove: pgcrypto extensions needs to be loaded
 --
 CREATE EXTENSION IF NOT EXISTS pgcrypto
+
+--
+-- PostgreSQL database dump
+--
 
 -- Dumped from database version 10.1
 -- Dumped by pg_dump version 10.1
@@ -35,6 +40,19 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: certification; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE TABLE certification (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    name character varying(255),
+    unique_name character varying(255)
+);
+
+
+ALTER TABLE certification OWNER TO postgres;
+
+--
 -- Name: user; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
 --
 
@@ -52,8 +70,21 @@ CREATE TABLE "user" (
 ALTER TABLE "user" OWNER TO postgres;
 
 --
+-- Data for Name: certification; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
+--
+
+COPY certification (id, name, unique_name) FROM stdin;
+\.
+
+
+--
 -- Data for Name: user; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
 --
+
+COPY "user" (id, user_name, email, is_admin, password_hash, first_name, last_name) FROM stdin;
+f39f13b4-b8c6-4013-ace6-087a45dbd23d	root	root@local.domain	t	$2a$10$yTZcbz9AlfP3aKuSpTx8t.56yt/SAYo.VlrTP9829CPPlL0bvQ4ki	root	root
+\.
+
 
 --
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
@@ -80,3 +111,4 @@ GRANT ALL ON TABLE "user" TO dev;
 --
 -- PostgreSQL database dump complete
 --
+

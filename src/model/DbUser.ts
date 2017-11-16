@@ -1,6 +1,4 @@
-import * as crypto from "crypto";
-
-export interface UserProps{
+export interface DbUserProps{
   email: string;
   password_hash: string;
   user_name: string;
@@ -10,7 +8,7 @@ export interface UserProps{
   last_name: string;
 }
 
-export default class User {
+export default class DbUser {
   email: string;
   password_hash: string;
   user_name: string;
@@ -19,7 +17,7 @@ export default class User {
   first_name: string;
   last_name: string;
 
-  constructor (props: UserProps) {
+  constructor (props: DbUserProps) {
     this.email = props.email;
     this.password_hash = props.password_hash;
     this.user_name = props.user_name;

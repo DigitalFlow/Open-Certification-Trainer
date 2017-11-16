@@ -1,7 +1,7 @@
-import { default as User, UserProps } from "../model/User";
+import { default as DbUser, DbUserProps } from "../model/DbUser";
 import { Request, Response, NextFunction } from "express";
 import * as validator from "validator";
-import Authentication from "../model/Authentication";
+import UserDetail from "../model/UserDetail";
 import UserInfo from "../model/UserInfo";
 import ValidationResult from "../model/ValidationResult";
 import Token from "../model/Token";
@@ -16,7 +16,7 @@ import pool from "../domain/DbConnection";
  * @returns {object} The result of validation. Object contains a boolean validation result,
  *                   errors tips, and a global message for the whole form.
  */
-let validateSignupForm = (payload: Authentication) => {
+let validateSignupForm = (payload: UserDetail) => {
   const errors = new Array<string>();
   let isFormValid = true;
   let message = '';
@@ -54,7 +54,7 @@ let validateSignupForm = (payload: Authentication) => {
  * @returns {object} The result of validation. Object contains a boolean validation result,
  *                   errors tips, and a global message for the whole form.
  */
-let validateLoginForm = (payload: Authentication) => {
+let validateLoginForm = (payload: UserDetail) => {
   const errors = new Array<string>();
   let isFormValid = true;
   let message = '';
@@ -81,37 +81,48 @@ let validateLoginForm = (payload: Authentication) => {
 }
 
 export let postSignup = (req: Request, res: Response) => {
-  let auth = req.body as Authentication;
+  let auth = req.body as UserDetail;
   const validationResult = validateSignupForm(auth);
 
-  if (!validationResult.success) {
-      return res.status(200).json(validationResult);
-  }
+  // if (!validationResult.success) {
+  //     return res.status(200).json(validationResult);
+  // }
 
   bcrypt.genSalt(10, (err, salt) => {
     if (err) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`Internal error.`]}));
     }
 
-    bcrypt.hash(auth.password, salt, null, (err: Error, hash) => {
-      if (err) {
-        return res.status(200).json(new ValidationResult({success: false, errors: [`Internal error.`]}));
+    pool.query(`SELECT * FROM open_certification_trainer.user WHERE user_name = '${auth.userName}'`)
+    .then(result => {
+      if (result.rows.length > 0) {
+        return res.status(200).json(new ValidationResult({success: false, errors: [`User name is already in use, please choose another one.`]}));
       }
 
-      pool.query(`INSERT INTO open_certification_trainer.user (user_name, password_hash, email, is_admin) VALUES ('${auth.userName}', '${hash}', '${auth.email}', false)`)
-        .then(() => {
-          return res.status(200).json(new ValidationResult({success: true}));
-        })
-        .catch(err => {
+      bcrypt.hash(auth.password, salt, null, (err: Error, hash) => {
+        if (err) {
           return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
-        })
+        }
+
+        pool.query(`INSERT INTO open_certification_trainer.user (user_name, first_name, last_name, password_hash, email, is_admin) VALUES ('${auth.userName}', '${auth.firstName}', '${auth.lastName}', '${hash}', '${auth.email}', false)`)
+          .then(() => {
+            return res.status(200).json(new ValidationResult({success: true}));
+          })
+          .catch(err => {
+            return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
+          })
+      });
+    })
+    .catch(err => {
+      return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
     });
   });
 }
 
 export let postLogin = (req: Request, res: Response) => {
-  let auth = req.body as Authentication;
+  let auth = req.body as UserDetail;
 
+  // If already logged in by cookie
   if (req.user){
     return pool.query(`SELECT * FROM open_certification_trainer.user WHERE id = '${req.user}'`)
     .then(result =>{
@@ -119,7 +130,7 @@ export let postLogin = (req: Request, res: Response) => {
         return res.status(200).json(new ValidationResult({success: false, errors: [`Authentication failed.`]}));
       }
 
-      let user = new User(result.rows[0]);
+      let user = new DbUser(result.rows[0]);
 
       return res.status(200).json(new ValidationResult({success: true, userInfo: new UserInfo(user)}));
     })
@@ -134,11 +145,11 @@ export let postLogin = (req: Request, res: Response) => {
       return res.status(200).json(new ValidationResult({success: false, errors: [`Authentication failed.`]}));
     }
 
-    let user = new User(result.rows[0]);
+    let user = new DbUser(result.rows[0]);
 
     bcrypt.compare(auth.password, user.password_hash, (err: Error, isMatch: boolean) => {
       if (err) {
-        return res.status(200).json(new ValidationResult({success: false, errors: [`Authentication failed.`]}));
+        return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
       }
 
       if (isMatch)

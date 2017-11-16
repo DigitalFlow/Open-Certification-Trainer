@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Well, Button, Jumbotron, FormGroup, ControlLabel, FormControl, HelpBlock } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
-import Authentication from "../model/Authentication";
+import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 
@@ -11,6 +11,8 @@ export interface SignUpProps {
 
 interface SignUpState {
     userName: string,
+    firstName: string,
+    lastName: string,
     password: string,
     repeatPassword: string,
     email: string,
@@ -26,6 +28,8 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
 
         this.state = {
           userName: "",
+          firstName: "",
+          lastName: "",
           password: "",
           repeatPassword: "",
           email: "",
@@ -34,6 +38,8 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
         }
 
         this.setUsername = this.setUsername.bind(this);
+        this.setFirstName = this.setFirstName.bind(this);
+        this.setLastName = this.setLastName.bind(this);
         this.setPassword = this.setPassword.bind(this);
         this.repeatPassword = this.repeatPassword.bind(this);
         this.setEmail = this.setEmail.bind(this);
@@ -42,6 +48,14 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
 
     setUsername(e: any){
         this.setState({userName: e.target.value})
+    }
+
+    setFirstName(e: any){
+        this.setState({firstName: e.target.value})
+    }
+
+    setLastName(e: any){
+        this.setState({lastName: e.target.value})
     }
 
     setPassword(e: any){
@@ -68,7 +82,13 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
       {
         method: "POST",
         headers: headers,
-        body: JSON.stringify(new Authentication({userName: this.state.userName, password: this.state.password, email: this.state.email})),
+        body: JSON.stringify(new UserDetail({
+          userName: this.state.userName,
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          password: this.state.password,
+          email: this.state.email
+        })),
         credentials: 'include'
       })
       .then(results => {
@@ -96,6 +116,16 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
             <Jumbotron>
               <h1>SignUp</h1>
                 <form action="javascript:void(0);">
+                  <FieldGroup
+                    id="firstNameText"
+                    control={{type: "text", placeholder:"Enter first name", onChange: this.setFirstName}}
+                    label="First Name"
+                  />
+                  <FieldGroup
+                    id="lastNameText"
+                    control={{type: "text", placeholder:"Enter last name", onChange: this.setLastName}}
+                    label="Last Name"
+                  />
                   <FieldGroup
                     id="userNameText"
                     control={{type: "text", placeholder:"Enter username", onChange: this.setUsername}}

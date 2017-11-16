@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Well, Button, Jumbotron, FormGroup, ControlLabel, FormControl, HelpBlock } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
-import Authentication from "../model/Authentication"
+import UserDetail from "../model/UserDetail"
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
@@ -13,7 +13,6 @@ export interface LoginProps extends IBaseProps {
 interface LoginState {
     userName: string,
     password: string,
-    email: string,
     errors: Array<string>;
 }
 
@@ -26,13 +25,11 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
         this.state = {
           userName: "",
           password: "",
-          email: "",
           errors: []
         }
 
         this.setUsername = this.setUsername.bind(this);
         this.setPassword = this.setPassword.bind(this);
-        this.setEmail = this.setEmail.bind(this);
         this.login = this.login.bind(this);
     }
 
@@ -44,10 +41,6 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
       this.setState({password: e.target.value})
     }
 
-    setEmail(e: any){
-      this.setState({email: e.target.value})
-    }
-
     login(){
       let headers = new Headers();
       headers.set("Content-Type", "application/json");
@@ -57,7 +50,10 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
         method: "POST",
         headers: headers,
         credentials: 'include',
-        body: JSON.stringify(new Authentication({userName: this.state.userName, password: this.state.password, email: this.state.email}))
+        body: JSON.stringify(new UserDetail({
+          userName: this.state.userName,
+          password: this.state.password
+        }))
       })
       .then(results => {
         return results.json();

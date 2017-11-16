@@ -4,12 +4,14 @@ import Certification from "../model/Certification";
 import QuestionEditView from "./QuestionEditView";
 import FileUploadModal from "./FileUploadModal";
 import UserPromptModal from "./UserPromptModal";
+import TextInputModal from "./TextInputModal";
 import SideNav from "./SideNav";
 import FieldGroup from "./FieldGroup";
 import MessageBar from "./MessageBar";
 import ValidationResult from "../model/ValidationResult";
 import * as uuid from "uuid/v4";
 import Question from "../model/Question";
+import Answer from "../model/Answer";
 import { LinkContainer } from "react-router-bootstrap";
 import IBaseProps from "../domain/IBaseProps";
 
@@ -20,6 +22,7 @@ interface CertificationManagementState {
   message: string;
   uploadingFile: boolean;
   deletionRequested: boolean;
+  addingMultipleQuestions: boolean;
 }
 
 export default class CertificationManagement extends React.Component<IBaseProps, CertificationManagementState> {
@@ -34,8 +37,10 @@ export default class CertificationManagement extends React.Component<IBaseProps,
         errors: [],
         message: "",
         uploadingFile: false,
-        deletionRequested: false
+        deletionRequested: false,
+        addingMultipleQuestions: false
       };
+
       this.state = this.defaultState;
 
       this.loadCourses = this.loadCourses.bind(this);
@@ -44,6 +49,9 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       this.onNameChange = this.onNameChange.bind(this);
       this.onQuestionChange = this.onQuestionChange.bind(this);
       this.addQuestion = this.addQuestion.bind(this);
+      this.addMultipleQuestions = this.addMultipleQuestions.bind(this);
+      this.openMultipleQuestionsModal = this.openMultipleQuestionsModal.bind(this);
+      this.hideMultipleQuestionsModal = this.hideMultipleQuestionsModal.bind(this);
       this.deleteQuestion = this.deleteQuestion.bind(this);
       this.setIds = this.setIds.bind(this);
       this.import = this.import.bind(this);
@@ -119,6 +127,10 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     }
 
     if (this.state.uploadingFile != nextState.uploadingFile) {
+      return true;
+    }
+
+    if (this.state.addingMultipleQuestions != nextState.addingMultipleQuestions){
       return true;
     }
 
@@ -256,12 +268,44 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     this.setState({certification: update});
   }
 
-  addQuestion(){
-    let certification = this.state.certification;
-    let questions = (certification.questions || []).concat(new Question({id: uuid()}));
+  appendQuestion(certification: Certification){
+    let questions = (certification.questions || []).concat(new Question({
+      id: uuid(),
+      answers: [0, 0, 0, 0].map(() => new Answer({id: uuid(), isCorrect: false}))
+    }));
     let update = {...certification, questions: questions};
 
+    return update;
+  }
+
+  addQuestion(){
+    let update = this.appendQuestion(this.state.certification);
+
     this.setState({certification: update});
+  }
+
+  addMultipleQuestions(value: string) {
+    let count = parseInt(value);
+
+    if(isNaN(count)){
+      return;
+    }
+
+    let update = this.state.certification;
+
+    for (let i = 0; i < count; i++){
+      update = this.appendQuestion(update);
+    }
+
+    this.setState({certification: update});
+  }
+
+  openMultipleQuestionsModal(){
+    this.setState({addingMultipleQuestions: true});
+  }
+
+  hideMultipleQuestionsModal() {
+    this.setState({addingMultipleQuestions: false});
   }
 
   import(){
@@ -301,6 +345,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       return (<div>
                 <SideNav redirectComponent="certificationManagement" />
                 {this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={"Are you sure you want to delete " + this.state.certification.name + "?"} key="DeletionPromptModal" yesCallBack={this.delete} finally={this.hideDeletionPrompt} />}
+                {this.state.addingMultipleQuestions && <TextInputModal title="Add multiple Questions" text={"How many questions do you want to add?"} key="AddMultipleQuestionsModal" yesCallBack={this.addMultipleQuestions} finally={this.hideMultipleQuestionsModal} />}
                 {this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={this.loadImportedFile} />}
                 <div className="col-xs-10 pull-right">
                   <ButtonToolbar>
@@ -311,6 +356,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
                       {this.state.certification && <Button bsStyle="default" onClick={this.import}>Import</Button>}
                       {this.state.certification && <Button bsStyle="default" onClick={this.export}>Export</Button>}
                       {this.state.certification && <Button bsStyle="default" onClick={this.addQuestion}>Add Question</Button>}
+                      {this.state.certification && <Button bsStyle="default" onClick={this.openMultipleQuestionsModal}>Add Multiple Questions</Button>}
                       {this.state.certification && <Button bsStyle="default" onClick={this.save}>Save</Button>}
                       {this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={this.verifyAndDelete}>Delete</Button>}
                     </ButtonGroup>

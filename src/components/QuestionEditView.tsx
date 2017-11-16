@@ -85,7 +85,7 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
 
     addAnswer(){
       let question = this.props.question;
-      let update = {...question, answers: (question.answers || []).concat(new Answer({id: uuid()}))};
+      let update = {...question, answers: (question.answers || []).concat(new Answer({id: uuid(), isCorrect: false}))};
 
       this.props.onQuestionChange(update);
     }

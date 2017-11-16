@@ -36,7 +36,7 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
                 <p>{this.props.question.text.value}</p>
                 <ButtonGroup vertical block type="checkbox">
                   {this.props.question.answers ? (this.props.question.answers.map(a => (
-                    <AnswerView onAnswerChange={this.props.onAnswerChange} disabled={this.props.answersDisabled} checked={false} answer={a} key={a.key} highlightIfCorrect={this.props.highlightCorrectAnswers} highlightIfIncorrect={this.props.highlightIncorrectAnswers} />
+                    <AnswerView onAnswerChange={this.props.onAnswerChange} disabled={this.props.answersDisabled} checked={false} answer={a} key={a.id} highlightIfCorrect={this.props.highlightCorrectAnswers} highlightIfIncorrect={this.props.highlightIncorrectAnswers} />
                   ))) : <span>No answers found</span>}
                 </ButtonGroup>
             </div>;

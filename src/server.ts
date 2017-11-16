@@ -20,8 +20,6 @@ import * as courseController from "./controllers/CourseController";
 // Load authenticator
 import { Authentication } from "./domain/Authentication";
 import { AuthFilter } from "./domain/AuthRedirect";
-// models
-import UserModel from "./model/User";
 
 // Connect to MySQL
 import pool from "./domain/DbConnection";

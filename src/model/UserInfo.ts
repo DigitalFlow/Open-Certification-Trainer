@@ -4,6 +4,7 @@ export interface UserInfoProps {
   last_name: string;
 }
 
+/// This class is specifically for retrieving non security relevant user information for display in pages
 export default class UserInfo {
   is_admin: boolean;
   first_name: string;

@@ -1,5 +1,6 @@
 import CertificationOverview from "./components/CertificationOverview";
 import CertificationManagement from "./components/CertificationManagement";
+import PortalManagement from "./components/PortalManagement";
 import Assessment from "./components/Assessment";
 import WelcomePage from "./components/WelcomePage";
 import Login from "./components/Login";
@@ -50,6 +51,10 @@ const routes = new Array<RouteConfig>(
 	{
 		path: "/certificationOverview/:courseName?",
 		component: CertificationOverview
+	},
+	{
+		path: "/portalManagement",
+		component: PortalManagement
 	}
 );
 

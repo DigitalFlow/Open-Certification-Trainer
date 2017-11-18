@@ -148,6 +148,14 @@ ALTER TABLE ONLY certification
 
 
 --
+-- Name: user user_name; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_name UNIQUE (user_name);
+
+
+--
 -- Name: question question_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 

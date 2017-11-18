@@ -6,7 +6,7 @@
 --
 -- Don't remove: pgcrypto extensions needs to be loaded
 --
-CREATE EXTENSION IF NOT EXISTS pgcrypto
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 --
 -- PostgreSQL database dump
@@ -40,11 +40,26 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: answer; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE TABLE answer (
+    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
+    key character varying(255),
+    text text,
+    is_correct boolean,
+    question_id uuid
+);
+
+
+ALTER TABLE answer OWNER TO postgres;
+
+--
 -- Name: certification; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
 --
 
 CREATE TABLE certification (
-    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
     name character varying(255),
     unique_name character varying(255)
 );
@@ -53,11 +68,25 @@ CREATE TABLE certification (
 ALTER TABLE certification OWNER TO postgres;
 
 --
+-- Name: question; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE TABLE question (
+    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
+    key character varying(255),
+    text text,
+    certification_id uuid
+);
+
+
+ALTER TABLE question OWNER TO postgres;
+
+--
 -- Name: user; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
 --
 
 CREATE TABLE "user" (
-    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
     user_name character varying(255),
     email character varying(255),
     is_admin boolean,
@@ -70,10 +99,26 @@ CREATE TABLE "user" (
 ALTER TABLE "user" OWNER TO postgres;
 
 --
+-- Data for Name: answer; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
+--
+
+COPY answer (id, key, text, is_correct, question_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: certification; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
 --
 
 COPY certification (id, name, unique_name) FROM stdin;
+\.
+
+
+--
+-- Data for Name: question; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
+--
+
+COPY question (id, key, text, certification_id) FROM stdin;
 \.
 
 
@@ -87,6 +132,38 @@ f39f13b4-b8c6-4013-ace6-087a45dbd23d	root	root@local.domain	t	$2a$10$yTZcbz9AlfP
 
 
 --
+-- Name: answer answer_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY answer
+    ADD CONSTRAINT answer_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: certification id; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY certification
+    ADD CONSTRAINT id PRIMARY KEY (id);
+
+
+--
+-- Name: question question_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY question
+    ADD CONSTRAINT question_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: certification unique_name; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY certification
+    ADD CONSTRAINT unique_name UNIQUE (unique_name);
+
+
+--
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 
@@ -95,18 +172,19 @@ ALTER TABLE ONLY "user"
 
 
 --
--- Name: open_certification_trainer; Type: ACL; Schema: -; Owner: postgres
+-- Name: answer answer_question_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 
-GRANT ALL ON SCHEMA open_certification_trainer TO dev;
+ALTER TABLE ONLY answer
+    ADD CONSTRAINT answer_question_id_fkey FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE;
 
 
 --
--- Name: user; Type: ACL; Schema: open_certification_trainer; Owner: postgres
+-- Name: question question_certification_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 
-GRANT ALL ON TABLE "user" TO dev;
-
+ALTER TABLE ONLY question
+    ADD CONSTRAINT question_certification_id_fkey FOREIGN KEY (certification_id) REFERENCES certification(id) ON DELETE CASCADE;
 
 --
 -- PostgreSQL database dump complete

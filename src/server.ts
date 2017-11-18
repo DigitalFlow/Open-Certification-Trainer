@@ -19,7 +19,7 @@ import * as courseController from "./controllers/CourseController";
 
 // Load authenticator
 import { Authentication } from "./domain/Authentication";
-import { AuthFilter } from "./domain/AuthRedirect";
+import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions";
 
 // Connect to MySQL
 import pool from "./domain/DbConnection";
@@ -73,12 +73,16 @@ app.use(express.static(path.resolve(__dirname, "..", "dist")));
 */
 app.post("/login", userController.postLogin);
 app.post("/logout", userController.postLogout);
+app.get("/retrieveProfile", IsAuthenticated, userController.getProfile);
+app.post("/profile", IsAuthenticated, userController.postProfile);
 app.post("/signup", userController.postSignup);
+
 app.get("/courses", courseController.getCourseOverview);
 app.get("/courses/:courseName", courseController.getCourse);
-app.post("/certificationApi", AuthFilter, courseController.postUpload);
-app.get("/certificationApi/:courseName", AuthFilter, courseController.downloadCert);
-app.delete("/certificationApi/:courseName", AuthFilter, courseController.deleteCert);
+
+app.post("/certificationApi", IsAdmin, courseController.postUpload);
+app.get("/certificationApi/:courseName", IsAdmin, courseController.downloadCert);
+app.delete("/certificationApi/:courseName", IsAdmin, courseController.deleteCert);
 
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);

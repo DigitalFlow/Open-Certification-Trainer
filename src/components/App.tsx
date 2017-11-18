@@ -14,10 +14,17 @@ export default class App extends React.PureComponent<any, AppState> {
 
     this.state = {
       user: null
-    }
+    };
+
+    this.setUser = this.setUser.bind(this);
+    this.triggerUserReload = this.triggerUserReload.bind(this);
   }
 
   componentDidMount(){
+    this.setUser();
+  }
+
+  setUser(){
     fetch("/login",
     {
       method: "POST",
@@ -34,6 +41,9 @@ export default class App extends React.PureComponent<any, AppState> {
       if (result.success){
           this.setState({user: result.userInfo});
       }
+      else {
+          this.setState({user: null});
+      }
     });
   }
 
@@ -41,11 +51,15 @@ export default class App extends React.PureComponent<any, AppState> {
     return true;
   }
 
+  triggerUserReload(){
+    this.setUser();
+  }
+
   render(){
     return (
       <div>
-        <Header user={this.state.user} />
-        <Main user={this.state.user}/>
+        <Header user={this.state.user} triggerUserReload={this.triggerUserReload} />
+        <Main user={this.state.user} triggerUserReload={this.triggerUserReload}/>
       </div>
     );
   }

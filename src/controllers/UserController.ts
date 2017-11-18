@@ -9,13 +9,6 @@ import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt-nodejs";
 import pool from "../domain/DbConnection";
 
-/**
- * Validate the sign up form
- *
- * @param {object} payload - the HTTP body message
- * @returns {object} The result of validation. Object contains a boolean validation result,
- *                   errors tips, and a global message for the whole form.
- */
 let validateSignupForm = (payload: UserDetail) => {
   const errors = new Array<string>();
   let isFormValid = true;
@@ -47,13 +40,37 @@ let validateSignupForm = (payload: UserDetail) => {
   });
 }
 
-/**
- * Validate the login form
- *
- * @param {object} payload - the HTTP body message
- * @returns {object} The result of validation. Object contains a boolean validation result,
- *                   errors tips, and a global message for the whole form.
- */
+let validateProfileForm = (payload: UserDetail) => {
+  const errors = new Array<string>();
+  let isFormValid = true;
+  let message = '';
+
+  if (!payload || typeof payload.email !== 'string' || !validator.isEmail(payload.email)) {
+    isFormValid = false;
+    errors.push('Please provide a correct email address.');
+  }
+
+  if (payload && typeof payload.password === 'string' && payload.password && payload.password.trim().length < 8) {
+    isFormValid = false;
+    errors.push('Password must have at least 8 characters.');
+  }
+
+  if (!payload || typeof payload.userName !== 'string' || payload.userName.trim().length === 0) {
+    isFormValid = false;
+    errors.push('Please provide your user name.');
+  }
+
+  if (!isFormValid) {
+    message = 'Check the form for errors.';
+  }
+
+  return new ValidationResult({
+    success: isFormValid,
+    message,
+    errors
+  });
+}
+
 let validateLoginForm = (payload: UserDetail) => {
   const errors = new Array<string>();
   let isFormValid = true;
@@ -80,43 +97,48 @@ let validateLoginForm = (payload: UserDetail) => {
   });
 }
 
+let hashPassword = (password: string, callBack: (error: Error, hash: string) => void) => {
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) {
+      return callBack(err, null);
+    }
+    bcrypt.hash(password, salt, null, (err: Error, hash) => {
+      if (err) {
+        return callBack(err, null);
+      }
+
+      callBack(null, hash);
+    });
+  });
+};
+
 export let postSignup = (req: Request, res: Response) => {
   let auth = req.body as UserDetail;
   const validationResult = validateSignupForm(auth);
 
-  // if (!validationResult.success) {
-  //     return res.status(200).json(validationResult);
-  // }
+  if (!validationResult.success) {
+      return res.status(200).json(validationResult);
+  }
 
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) {
-      return res.status(200).json(new ValidationResult({success: false, errors: [`Internal error.`]}));
-    }
-
-    pool.query(`SELECT * FROM open_certification_trainer.user WHERE user_name = '${auth.userName}'`)
+  pool.query(`SELECT * FROM open_certification_trainer.user WHERE user_name = '${auth.userName}'`)
     .then(result => {
       if (result.rows.length > 0) {
         return res.status(200).json(new ValidationResult({success: false, errors: [`User name is already in use, please choose another one.`]}));
       }
 
-      bcrypt.hash(auth.password, salt, null, (err: Error, hash) => {
-        if (err) {
-          return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
-        }
-
+      hashPassword(auth.password, (err: Error, hash: string) => {
         pool.query(`INSERT INTO open_certification_trainer.user (user_name, first_name, last_name, password_hash, email, is_admin) VALUES ('${auth.userName}', '${auth.firstName}', '${auth.lastName}', '${hash}', '${auth.email}', false)`)
           .then(() => {
             return res.status(200).json(new ValidationResult({success: true}));
           })
           .catch(err => {
             return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
-          })
+          });
       });
     })
     .catch(err => {
       return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
     });
-  });
 }
 
 export let postLogin = (req: Request, res: Response) => {
@@ -182,4 +204,53 @@ export let postLogout = (req: Request, res: Response) => {
 
   res.clearCookie("token");
   res.status(200).json(new ValidationResult({success: true}));
+};
+
+export let getProfile = (req: Request, res: Response) => {
+  let userId = req.user;
+
+  pool.query(`SELECT user_name, first_name, last_name, email FROM open_certification_trainer.user WHERE id = '${userId}'`)
+  .then(result => {
+    if (result.rows.length < 1) {
+      return res.status(200).json(new ValidationResult({success: false, errors: [`User not found.`]}));
+    }
+
+    let user = result.rows[0] as DbUser;
+
+    return res.json(user);
+  })
+  .catch(err => {
+    return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
+  });
+};
+
+export let postProfile = (req: Request, res: Response) => {
+  let userId = req.user;
+  let auth = req.body as UserDetail;
+  const validationResult = validateProfileForm(auth);
+
+  if (!validationResult.success) {
+      return res.status(200).json(validationResult);
+  }
+
+  if (auth.password) {
+    hashPassword(auth.password, (err: Error, hash: string) => {
+      pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', password_hash='${hash}', email='${auth.email}' WHERE id = '${userId}'`)
+        .then(() => {
+          return res.status(200).json(new ValidationResult({success: true}));
+        })
+        .catch(err => {
+          return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
+        });
+    });
+  }
+  else {
+    pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', email='${auth.email}' WHERE id = '${userId}'`)
+      .then(() => {
+        return res.status(200).json(new ValidationResult({success: true}));
+      })
+      .catch(err => {
+        return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
+      });
+  }
 };

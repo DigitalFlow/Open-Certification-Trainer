@@ -32,7 +32,8 @@ export default class Logout extends React.PureComponent<IBaseProps, LogoutState>
     })
     .then((result: ValidationResult) => {
       if (result.success){
-        window.location.href = "/index";
+        this.props.triggerUserReload();
+        this.props.history.push("/index");
       }
       else {
         this.setState({errors: result.errors});

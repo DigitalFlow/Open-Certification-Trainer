@@ -66,7 +66,8 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
         }
         else {
           // Reload so that App initializes again with User in state.
-          window.location.href = "/index";
+          this.props.triggerUserReload();
+          this.props.history.push("/index");
         }
       });
     }

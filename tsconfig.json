@@ -3,9 +3,10 @@
         "outDir": "./dist/",
         "sourceMap": true,
         "noImplicitAny": true,
+        "module": "ES6",
         "moduleResolution": "node",
         "baseUrl": ".",
-        "module": "commonjs",
+        "module": "es6",
         "target": "es6",
         "jsx": "react",
         "paths": {

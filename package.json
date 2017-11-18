@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "build": "tsc --jsx react src/server.ts --outDir ./dist && webpack && cpx src/views/index.ejs dist/views",
+    "build": "tsc -t ES6 -m commonjs --jsx react src/server.ts --outDir ./dist && webpack && cpx src/views/index.ejs dist/views",
     "pebuild": "npm run tslint",
     "prestart": "npm run build",
     "start": "node dist/server.js",

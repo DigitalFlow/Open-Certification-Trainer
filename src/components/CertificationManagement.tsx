@@ -205,6 +205,20 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     this.setState(this.defaultState);
   }
 
+  setKeys(cert: Certification){
+    for (let i = 0; cert.questions && i < cert.questions.length; i++){
+      let question = cert.questions[i];
+
+      for (let j = 0; question.answers && j < question.answers.length; j++){
+        let answer = question.answers[j];
+
+        answer.key = `${j + 1}`;
+      }
+    }
+
+    return cert;
+  }
+
   save(){
     let headers = new Headers();
     headers.set("Content-Type", "application/json");
@@ -213,7 +227,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(this.state.certification),
+      body: JSON.stringify(this.setKeys({...this.state.certification})),
       credentials: 'include'
     })
     .then(results => {

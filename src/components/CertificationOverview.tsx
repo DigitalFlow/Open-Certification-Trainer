@@ -78,7 +78,7 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
           <div>
             <h1>{this.state.certification.name}</h1>
             {this.state.certification.questions ? (this.state.certification.questions.map(q =>
-              (<QuestionView question={q} key={q.key} highlightCorrectAnswers={true} highlightIncorrectAnswers={false} answersDisabled={true} />)
+              (<QuestionView question={q} key={q.id} highlightCorrectAnswers={true} highlightIncorrectAnswers={false} answersDisabled={true} />)
             )) : <span>No questions found</span>}
           </div>);
       }

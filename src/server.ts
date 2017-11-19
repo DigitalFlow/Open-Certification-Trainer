@@ -73,7 +73,10 @@ app.use(express.static(path.resolve(__dirname, "..", "dist")));
 */
 app.post("/login", userController.postLogin);
 app.post("/logout", userController.postLogout);
+app.get("/retrieveProfile/:userId", IsAdmin, userController.getProfile);
 app.get("/retrieveProfile", IsAuthenticated, userController.getProfile);
+app.get("/userList", IsAdmin, userController.getUserList);
+app.post("/profile/:userId", IsAdmin, userController.postProfile);
 app.post("/profile", IsAuthenticated, userController.postProfile);
 app.post("/signup", userController.postSignup);
 

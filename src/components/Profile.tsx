@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Well, Button, Jumbotron, FormGroup, ControlLabel, FormControl, HelpBlock } from "react-bootstrap";
+import { Well, Button, Jumbotron, FormGroup, ControlLabel, FormControl, HelpBlock, Checkbox } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
 import DbUser from "../model/DbUser";
 import UserDetail from "../model/UserDetail";
@@ -18,6 +18,7 @@ interface ProfileState {
     password: string,
     repeatPassword: string,
     email: string,
+    isAdmin: boolean,
     errors: Array<string>;
     message: string;
 }
@@ -35,6 +36,7 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
           password: "",
           repeatPassword: "",
           email: "",
+          isAdmin: false,
           errors: [],
           message: ""
         }
@@ -45,6 +47,7 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
         this.setPassword = this.setPassword.bind(this);
         this.repeatPassword = this.repeatPassword.bind(this);
         this.setEmail = this.setEmail.bind(this);
+        this.setIsAdmin = this.setIsAdmin.bind(this);
         this.update = this.update.bind(this);
         this.retrieveUser = this.retrieveUser.bind(this);
     }
@@ -54,7 +57,9 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
     }
 
     retrieveUser(){
-      fetch("/retrieveProfile",
+      let userId = this.props.match.params.userId;
+
+      fetch(`/retrieveProfile${userId ? `/${userId}` : ""}`,
       {
         credentials: 'include'
       })
@@ -69,6 +74,7 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
               password: "",
               repeatPassword: "",
               email: user.email,
+              isAdmin: user.is_admin,
               errors: [],
               message: ""
           });
@@ -99,6 +105,10 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
       this.setState({email: e.target.value})
     }
 
+    setIsAdmin(e: any){
+      this.setState({isAdmin: e.target.checked})
+    }
+
     update(){
       if (this.state.password !== this.state.repeatPassword){
         return this.setState({errors: ["Password and repeat passwords don't match, please enter them again."]})
@@ -107,7 +117,9 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
       let headers = new Headers();
       headers.set("Content-Type", "application/json");
 
-      fetch("/profile",
+      let userId = this.props.match.params.userId;
+
+      fetch(`/profile${userId ? `/${userId}` : ""}`,
       {
         method: "POST",
         headers: headers,
@@ -116,7 +128,8 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
           firstName: this.state.firstName,
           lastName: this.state.lastName,
           password: this.state.password,
-          email: this.state.email
+          email: this.state.email,
+          isAdmin: this.state.isAdmin
         })),
         credentials: 'include'
       })
@@ -175,6 +188,7 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
                     control={{type: "password", value:this.state.repeatPassword, placeholder:"Repeat password", onChange: this.repeatPassword}}
                     label="Repeat Password"
                   />
+                  {this.props.user && this.props.user.is_admin && <Checkbox key={`${this.state.userName}_isAdmin`} checked={this.state.isAdmin} onChange={this.setIsAdmin}>Is Admin</Checkbox>}
                   <Button onClick={this.update} type="submit">
                     Submit
                   </Button>

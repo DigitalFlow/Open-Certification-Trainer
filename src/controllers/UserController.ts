@@ -207,9 +207,9 @@ export let postLogout = (req: Request, res: Response) => {
 };
 
 export let getProfile = (req: Request, res: Response) => {
-  let userId = req.user;
+  let userId = req.params.userId || req.user;
 
-  pool.query(`SELECT user_name, first_name, last_name, email FROM open_certification_trainer.user WHERE id = '${userId}'`)
+  pool.query(`SELECT user_name, first_name, last_name, email, is_admin FROM open_certification_trainer.user WHERE id = '${userId}'`)
   .then(result => {
     if (result.rows.length < 1) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`User not found.`]}));
@@ -224,8 +224,20 @@ export let getProfile = (req: Request, res: Response) => {
   });
 };
 
+export let getUserList = (req: Request, res: Response) => {
+  pool.query(`SELECT id, user_name, first_name, last_name, email, is_admin FROM open_certification_trainer.user ORDER BY user_name`)
+  .then(result => {
+    let users = result.rows as Array<DbUser>;
+
+    return res.json(users);
+  })
+  .catch(err => {
+    return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
+  });
+};
+
 export let postProfile = (req: Request, res: Response) => {
-  let userId = req.user;
+  let userId = req.params.userId || req.user;
   let auth = req.body as UserDetail;
   const validationResult = validateProfileForm(auth);
 
@@ -233,24 +245,42 @@ export let postProfile = (req: Request, res: Response) => {
       return res.status(200).json(validationResult);
   }
 
-  if (auth.password) {
-    hashPassword(auth.password, (err: Error, hash: string) => {
-      pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', password_hash='${hash}', email='${auth.email}' WHERE id = '${userId}'`)
+  // Only admin users may update other user's profiles
+  pool.query(`SELECT is_admin FROM open_certification_trainer.user WHERE id = '${req.user}'`)
+  .then(result => {
+    if (result.rows.length < 1) {
+      return res.status(200).json(new ValidationResult({success: false, errors: [`Executing user not found.`]}));
+    }
+
+    let executingUser = result.rows[0] as DbUser;
+
+    if (!executingUser.is_admin && req.params.userId !== req.user) {
+      return res.status(200).json(new ValidationResult({success: false, errors: [`Only admins may update other user's profiles.`]}));
+    }
+
+    if (!executingUser.is_admin && auth.isAdmin) {
+      return res.status(200).json(new ValidationResult({success: false, errors: [`An administrator has to make you admin.`]}));
+    }
+
+    if (auth.password) {
+      hashPassword(auth.password, (err: Error, hash: string) => {
+        pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', password_hash='${hash}', email='${auth.email}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
+          .then(() => {
+            return res.status(200).json(new ValidationResult({success: true}));
+          })
+          .catch(err => {
+            return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
+          });
+      });
+    }
+    else {
+      pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', email='${auth.email}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
         .then(() => {
           return res.status(200).json(new ValidationResult({success: true}));
         })
         .catch(err => {
           return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
         });
-    });
-  }
-  else {
-    pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', email='${auth.email}' WHERE id = '${userId}'`)
-      .then(() => {
-        return res.status(200).json(new ValidationResult({success: true}));
-      })
-      .catch(err => {
-        return res.status(200).json(new ValidationResult({success: false, errors: [err.message]}));
-      });
-  }
+    }
+  });
 };

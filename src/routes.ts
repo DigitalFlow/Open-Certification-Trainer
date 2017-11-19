@@ -31,7 +31,7 @@ const routes = new Array<RouteConfig>(
 		component: Logout
 	},
 	{
-		path: "/profile",
+		path: "/profile/:userId?",
 		exact: true,
 		component: Profile
 	},

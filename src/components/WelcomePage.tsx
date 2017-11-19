@@ -12,7 +12,7 @@ export default class WelcomePage extends React.PureComponent<IBaseProps, undefin
       <Well>
         <Jumbotron>
           <h1>Welcome {this.props.user && this.props.user.first_name}</h1>
-          <p>Study certifications, test yourself and take assessments! Let's get started</p>
+          <p>Study certifications, test yourself and take assessments!{this.props.user ? "" : " Sign up or log in to get started"}</p>
         </Jumbotron>
       </Well>
     );

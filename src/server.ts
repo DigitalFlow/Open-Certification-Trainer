@@ -80,8 +80,8 @@ app.post("/profile/:userId", IsAdmin, userController.postProfile);
 app.post("/profile", IsAuthenticated, userController.postProfile);
 app.post("/signup", userController.postSignup);
 
-app.get("/courses", courseController.getCourseOverview);
-app.get("/courses/:courseName", courseController.getCourse);
+app.get("/courses", IsAuthenticated, courseController.getCourseOverview);
+app.get("/courses/:courseName", IsAuthenticated, courseController.getCourse);
 
 app.post("/certificationApi", IsAdmin, courseController.postUpload);
 app.get("/certificationApi/:courseName", IsAdmin, courseController.downloadCert);

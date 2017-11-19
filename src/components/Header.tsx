@@ -26,12 +26,16 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
           </Navbar.Header>
           <Navbar.Collapse>
           <Nav>
-              <IndexLinkContainer to="/certificationOverview">
-                <NavItem>Certification Overview</NavItem>
-              </IndexLinkContainer>
-              <IndexLinkContainer to="/assessment">
-                <NavItem>Assessment</NavItem>
-              </IndexLinkContainer>
+              {this.props.user &&
+                <IndexLinkContainer to="/certificationOverview">
+                  <NavItem>Certification Overview</NavItem>
+                </IndexLinkContainer>
+              }
+              {this.props.user &&
+                <IndexLinkContainer to="/assessment">
+                  <NavItem>Assessment</NavItem>
+                </IndexLinkContainer>
+              }
               {this.props.user && this.props.user.is_admin &&
                 <IndexLinkContainer to="/certificationManagement">
                   <NavItem>Certification Management</NavItem>

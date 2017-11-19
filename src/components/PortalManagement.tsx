@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Tab, Row, Col, NavItem, Nav, Table, Jumbotron } from "react-bootstrap";
+import { Tab, Row, Col, NavItem, Nav, Table, Jumbotron, Well } from "react-bootstrap";
 import IBaseProps from "../domain/IBaseProps";
 import DbUser from "../model/DbUser";
 import UserListView from "./UserListView";
@@ -47,27 +47,29 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
               </Nav>
             </Col>
             <Col sm={11}>
-              <Tab.Content animation>
-                <Tab.Pane eventKey="users">
-                  <Table striped bordered condensed hover>
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>E-Mail</th>
-                            <th>Is Admin</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.users.map(u => { return (<UserListView key={u.user_name} user={u} />)})}
-                    </tbody>
-                    </Table>
-                </Tab.Pane>
-                <Tab.Pane eventKey="groups">
-                  <Jumbotron><h2>Groups - In construction</h2></Jumbotron>
-                </Tab.Pane>
-              </Tab.Content>
+              <Well>
+                <Tab.Content animation>
+                  <Tab.Pane eventKey="users">
+                    <Table striped bordered condensed hover>
+                      <thead>
+                          <tr>
+                              <th>Username</th>
+                              <th>First Name</th>
+                              <th>Last Name</th>
+                              <th>E-Mail</th>
+                              <th>Is Admin</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.users.map(u => { return (<UserListView key={u.user_name} user={u} />)})}
+                      </tbody>
+                      </Table>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="groups">
+                    <Jumbotron><h2>Groups - In construction</h2></Jumbotron>
+                  </Tab.Pane>
+                </Tab.Content>
+              </Well>
             </Col>
           </Row>
       </Tab.Container>);

@@ -27,7 +27,7 @@ export default class FileUploadModal extends React.PureComponent<FileUploadModal
         this.props.fileCallBack(null);
       }
 
-      if (fileInput.files.length < 1){
+      if (!fileInput.files || fileInput.files.length < 1){
         return;
       }
 

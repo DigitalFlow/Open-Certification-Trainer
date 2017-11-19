@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "build": "tsc -t ES6 -m commonjs --jsx react src/server.ts --outDir ./dist && webpack && cpx src/views/index.ejs dist/views",
-    "pebuild": "npm run tslint",
+    "build": "tsc -t ES6 -m commonjs --jsx react src/server.ts --outDir ./dist && webpack",
+    "prebuild": "cpx src/views/index.ejs dist/views && cpx \"src/lib/*.{css,js}\" dist/lib",
     "prestart": "npm run build",
     "start": "node dist/server.js",
     "predebug": "npm run build",
@@ -19,6 +19,7 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
+    "bootstrap": "^3.3.7",
     "cookie-parser": "^1.4.3",
     "dotenv": "^4.0.0",
     "ejs": "^2.5.7",

@@ -104,6 +104,14 @@ export let getCourse = (req: Request, res: Response) => {
     });
 };
 
+let escapeSpecialCharacters = (text: string) => {
+  if (!text){
+    return "";
+  }
+
+  return text.replace(/'/g, "''");
+}
+
 export let postUpload = (req: Request, res: Response) => {
   let data = req.body as Certification;
 
@@ -118,9 +126,9 @@ export let postUpload = (req: Request, res: Response) => {
   // Upsert certification first
   let query = [
     "BEGIN;",
-    `INSERT INTO open_certification_trainer.certification (id, name, unique_name) VALUES ('${data.id}', '${data.name}', '${data.uniqueName}')
+    `INSERT INTO open_certification_trainer.certification (id, name, unique_name) VALUES ('${data.id}', '${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}')
      ON CONFLICT(id) DO
-	     UPDATE SET (name, unique_name) = ('${data.name}', '${data.uniqueName}')
+	     UPDATE SET (name, unique_name) = ('${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}')
        WHERE open_certification_trainer.certification.id = '${data.id}';`
   ];
 
@@ -132,9 +140,9 @@ export let postUpload = (req: Request, res: Response) => {
 
     // Upsert question one by one
     query.push(
-      `INSERT INTO open_certification_trainer.question (id, key, text, certification_id) VALUES ('${question.id}', '${question.key}', '${question.text ? question.text.value : ""}', '${data.id}')
+      `INSERT INTO open_certification_trainer.question (id, key, text, certification_id) VALUES ('${question.id}', '${escapeSpecialCharacters(question.key)}', '${question.text ? escapeSpecialCharacters(question.text.value) : ""}', '${data.id}')
        ON CONFLICT(id) DO
-  	     UPDATE SET (key, text, certification_id) = ('${question.key}', '${question.text ? question.text.value : ""}', '${data.id}')
+  	     UPDATE SET (key, text, certification_id) = ('${escapeSpecialCharacters(question.key)}', '${question.text ? escapeSpecialCharacters(question.text.value) : ""}', '${data.id}')
          WHERE open_certification_trainer.question.id = '${question.id}';`
      );
 
@@ -143,9 +151,9 @@ export let postUpload = (req: Request, res: Response) => {
 
       // Upsert all answers to current question
       query.push(
-        `INSERT INTO open_certification_trainer.answer (id, key, text, is_correct, question_id) VALUES ('${answer.id}', '${answer.key}', '${answer.text ? answer.text.value : ""}', ${answer.isCorrect ? true : false}, '${question.id}')
+        `INSERT INTO open_certification_trainer.answer (id, key, text, is_correct, question_id) VALUES ('${answer.id}', '${escapeSpecialCharacters(answer.key)}', '${answer.text ? escapeSpecialCharacters(answer.text.value) : ""}', ${answer.isCorrect ? true : false}, '${question.id}')
          ON CONFLICT(id) DO
-    	     UPDATE SET (key, text, is_correct, question_id) = ('${answer.key}', '${answer.text ? answer.text.value : ""}', ${answer.isCorrect ? true : false}, '${question.id}')
+    	     UPDATE SET (key, text, is_correct, question_id) = ('${escapeSpecialCharacters(answer.key)}', '${answer.text ? escapeSpecialCharacters(answer.text.value) : ""}', ${answer.isCorrect ? true : false}, '${question.id}')
            WHERE open_certification_trainer.answer.id = '${answer.id}';`
        );
     }
@@ -167,10 +175,18 @@ export let postUpload = (req: Request, res: Response) => {
   }
 
   // Delete questions that have been removed during update. Answers will be deleted by cascade as well
-  query.push([
-    "DELETE FROM open_certification_trainer.question as question",
-    `WHERE question.certification_id = '${data.id}' AND question.id NOT IN (${questionIds.join(", ")});`
-  ].join("\n"));
+  if (questionIds && questionIds.length) {
+    query.push([
+      "DELETE FROM open_certification_trainer.question as question",
+      `WHERE question.certification_id = '${data.id}' AND question.id NOT IN (${questionIds.join(", ")});`
+    ].join("\n"));
+  }
+  else {
+    query.push([
+      "DELETE FROM open_certification_trainer.question as question",
+      `WHERE question.certification_id = '${data.id}';`
+    ].join("\n"));
+  }
 
   query.push("COMMIT;")
 

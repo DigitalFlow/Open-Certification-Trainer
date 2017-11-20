@@ -108,7 +108,7 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
             />
             <FieldGroup
               id={this.props.question.id + "_qText"}
-              control={{type: "text", value:this.props.question.text ? this.props.question.text.value : "", onChange: this.onQuestionTextChange}}
+              control={{componentClass: "textarea", rows: 3, value:this.props.question.text ? this.props.question.text.value : "", onChange: this.onQuestionTextChange}}
               label="Question"
             />
             <Button bsStyle="success" onClick={this.addAnswer}>Add Answer</Button>

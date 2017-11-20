@@ -5,6 +5,9 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 import * as morgan from "morgan";
 import * as cookieParser from "cookie-parser";
+import * as http from "http";
+import * as https from "https";
+import * as fs from "fs";
 
 // Load environment variables
 dotenv.config({ path: ".env.config" });
@@ -100,8 +103,19 @@ if(process.env.CERT_TRAINER_VHOST){
   appHost.use(vhost(process.env.CERT_TRAINER_VHOST, app)); // Serves top level domain via Main server app
 }
 
-appHost.listen(PORT, () => {
-  console.log(`App listening on host ${host} and port ${PORT}!`);
-});
+let server;
 
-module.exports = appHost;
+if (process.env.CERT_TRAINER_HTTPS){
+  const options = {
+    cert: fs.readFileSync(process.env.CERT_TRAINER_CERT),
+    key: fs.readFileSync(process.env.CERT_TRAINER_KEY)
+  };
+
+  server = https.createServer(options, appHost).listen(PORT);
+}
+else {
+  server = http.createServer(appHost).listen(PORT);
+}
+
+console.log(`App listening on host ${host} and port ${PORT}!`);
+module.exports = server;

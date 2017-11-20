@@ -180,12 +180,12 @@ export default class Profile extends React.PureComponent<ProfileProps, ProfileSt
                   />
                   <FieldGroup
                     id="formControlsPassword"
-                    control={{type: "password", value:this.state.password, placeholder:"Enter password", onChange: this.setPassword}}
+                    control={{type: "password", value:this.state.password, placeholder:"Leave empty for not updating", onChange: this.setPassword}}
                     label="Password"
                   />
                   <FieldGroup
                     id="formControlsRepeatPassword"
-                    control={{type: "password", value:this.state.repeatPassword, placeholder:"Repeat password", onChange: this.repeatPassword}}
+                    control={{type: "password", value:this.state.repeatPassword, placeholder:"Leave empty for not updating", onChange: this.repeatPassword}}
                     label="Repeat Password"
                   />
                   {this.props.user && this.props.user.is_admin && <Checkbox key={`${this.state.userName}_isAdmin`} checked={this.state.isAdmin} onChange={this.setIsAdmin}>Is Admin</Checkbox>}

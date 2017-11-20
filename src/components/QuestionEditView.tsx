@@ -118,6 +118,8 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
                   return (<AnswerEditView key={a.id} onAnswerChange={(a: Answer) => this.onAnswerChange(index, a)} answer={a} requestDeletion={() => this.deleteAnswer(index)} />)
                 }))}
             </ButtonGroup>
+            <br />
+            <br />
             <Button className="pull-right" bsStyle="danger" onClick={this.props.requestDeletion}>Delete Question</Button>
           </div>;
 

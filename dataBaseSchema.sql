@@ -75,7 +75,8 @@ CREATE TABLE question (
     id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
     key character varying(255),
     text text,
-    certification_id uuid
+    certification_id uuid,
+    position integer
 );
 
 
@@ -197,4 +198,3 @@ ALTER TABLE ONLY question
 --
 -- PostgreSQL database dump complete
 --
-

@@ -208,6 +208,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   setKeys(cert: Certification){
     for (let i = 0; cert.questions && i < cert.questions.length; i++){
       let question = cert.questions[i];
+      question.position = i + 1;
 
       for (let j = 0; question.answers && j < question.answers.length; j++){
         let answer = question.answers[j];

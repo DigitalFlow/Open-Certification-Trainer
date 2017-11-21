@@ -49,7 +49,7 @@ let retrieveCourse = (courseName: string) => {
         return null;
       }
 
-      return pool.query(`SELECT * from open_certification_trainer.question AS question WHERE question.certification_id = '${certId}' ORDER BY question.key`);
+      return pool.query(`SELECT * from open_certification_trainer.question AS question WHERE question.certification_id = '${certId}' ORDER BY question.position`);
     })
     .then(result => {
       if (!result){
@@ -140,9 +140,9 @@ export let postUpload = (req: Request, res: Response) => {
 
     // Upsert question one by one
     query.push(
-      `INSERT INTO open_certification_trainer.question (id, key, text, certification_id) VALUES ('${question.id}', '${escapeSpecialCharacters(question.key)}', '${question.text ? escapeSpecialCharacters(question.text.value) : ""}', '${data.id}')
+      `INSERT INTO open_certification_trainer.question (id, key, text, certification_id, position) VALUES ('${question.id}', '${escapeSpecialCharacters(question.key)}', '${question.text ? escapeSpecialCharacters(question.text.value) : ""}', '${data.id}', '${question.position}')
        ON CONFLICT(id) DO
-  	     UPDATE SET (key, text, certification_id) = ('${escapeSpecialCharacters(question.key)}', '${question.text ? escapeSpecialCharacters(question.text.value) : ""}', '${data.id}')
+  	     UPDATE SET (key, text, certification_id, position) = ('${escapeSpecialCharacters(question.key)}', '${question.text ? escapeSpecialCharacters(question.text.value) : ""}', '${data.id}', '${question.position}')
          WHERE open_certification_trainer.question.id = '${question.id}';`
      );
 
@@ -191,7 +191,7 @@ export let postUpload = (req: Request, res: Response) => {
   query.push("COMMIT;")
 
   let queryText = query.join("\n");
-  console.log(queryText);
+
   pool.query(queryText)
     .then(() => {
       return res.json(new ValidationResult({success: true}));

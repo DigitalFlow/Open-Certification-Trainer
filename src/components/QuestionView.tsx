@@ -6,6 +6,7 @@ import AnswerView from "./AnswerView";
 
 export interface QuestionViewProps {
     question: Question;
+    checkedAnswers?: Map<string, boolean>;
     highlightCorrectAnswers: boolean;
     highlightIncorrectAnswers: boolean;
     answersDisabled: boolean;
@@ -34,9 +35,9 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
             <div style={{whiteSpace: "pre"}}>
                 <h3>{this.props.question.key}</h3>
                 <p>{this.props.question.text.value}</p>
-                <ButtonGroup vertical block type="checkbox">
+                <ButtonGroup vertical block>
                   {this.props.question.answers ? (this.props.question.answers.map(a => (
-                    <AnswerView onAnswerChange={this.props.onAnswerChange} disabled={this.props.answersDisabled} checked={false} answer={a} key={a.id} highlightIfCorrect={this.props.highlightCorrectAnswers} highlightIfIncorrect={this.props.highlightIncorrectAnswers} />
+                    <AnswerView onAnswerChange={this.props.onAnswerChange} disabled={this.props.answersDisabled} checked={this.props.checkedAnswers.get(a.id) || false} answer={a} key={a.id} highlightIfCorrect={this.props.highlightCorrectAnswers} highlightIfIncorrect={this.props.highlightIncorrectAnswers} />
                   ))) : <span>No answers found</span>}
                 </ButtonGroup>
             </div>;

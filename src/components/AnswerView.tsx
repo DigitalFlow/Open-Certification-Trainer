@@ -11,21 +11,13 @@ export interface AnswerViewProps {
     disabled?: boolean;
 }
 
-interface AnswerViewState {
-    checked: boolean;
-}
-
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-export default class AnswerView extends React.PureComponent<AnswerViewProps, AnswerViewState> {
+export default class AnswerView extends React.PureComponent<AnswerViewProps, undefined> {
     button: Button;
 
     constructor(props: AnswerViewProps) {
         super(props);
-
-        this.state = {
-          checked: false
-        }
 
         this.onChange = this.onChange.bind(this);
     }
@@ -46,7 +38,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, Ans
         if (this.props.highlightIfCorrect && this.props.answer.isCorrect) {
           color = "green";
         }
-        else if (this.props.highlightIfIncorrect && !this.props.answer.isCorrect && this.state.checked) {
+        else if (this.props.highlightIfIncorrect && !this.props.answer.isCorrect && this.props.checked) {
           color = "red";
         }
 
@@ -56,7 +48,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, Ans
         };
 
         return (
-            <Checkbox disabled={this.props.disabled} key={this.props.answer.id + "_cb"} checked={this.state.checked} onChange={this.onChange}><span style={style}>{this.props.answer.text.value}</span></Checkbox>
+            <Checkbox disabled={this.props.disabled} key={this.props.answer.id + "_cb"} checked={this.props.checked} onChange={this.onChange}><span style={style}>{this.props.answer.text.value}</span></Checkbox>
         );
     }
 }

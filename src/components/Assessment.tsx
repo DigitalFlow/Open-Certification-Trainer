@@ -14,6 +14,7 @@ interface AssessmentState {
   checkingAnswers: boolean;
   questionState: QuestionState;
   correctAnswers: number;
+  checkedAnswers: Map<string, boolean>;
 }
 
 enum QuestionState {
@@ -23,7 +24,6 @@ enum QuestionState {
 }
 
 export default class Assessment extends React.Component<IBaseProps, AssessmentState> {
-  checkedAnswers: any;
   defaultState: AssessmentState;
   session: Array<Answer>;
 
@@ -37,9 +37,10 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         activeQuestionAnswered: false,
         checkingAnswers: false,
         questionState: QuestionState.Open,
-        correctAnswers: 0
+        correctAnswers: 0,
+        checkedAnswers: new Map<string, boolean>()
       };
-      this.checkedAnswers = this.defaultState;
+
       this.session = [];
 
       this.state = this.defaultState;
@@ -52,7 +53,17 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   answerChangedHandler(answer: Answer){
-    this.checkedAnswers[answer.id] = answer.isCorrect;
+    let answers = this.state.certification.questions[this.state.activeQuestion].answers;
+    let sum = answers.map(a => a.isCorrect ? 1 : 0).reduce((acc: number, val: number) => acc + val, 0)
+
+    let copy = new Map(this.state.checkedAnswers);
+
+    if (sum <= 1) {
+      copy.clear();
+    }
+
+    copy.set(answer.id, answer.isCorrect);
+    this.setState({checkedAnswers: copy});
   }
 
   reset(){
@@ -76,7 +87,31 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       return true;
     }
 
+    if (this.state.checkedAnswers != nextState.checkedAnswers) {
+      return true;
+    }
+
     return false;
+  }
+
+  // Shuffles array in-place
+  shuffle<T>(array: Array<T>): void {
+    let j, x, i;
+
+    for (i = array.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = array[i];
+        array[i] = array[j];
+        array[j] = x;
+    }
+  }
+
+  shuffleAnswers(certification: Certification) {
+    for (let i = 0; certification.questions && i < certification.questions.length; i++) {
+      let question = certification.questions[i];
+
+      this.shuffle<Answer>(question.answers);
+    }
   }
 
   loadCourses(props: IBaseProps){
@@ -93,6 +128,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         return results.json();
       })
       .then(data => {
+        this.shuffleAnswers(data);
+
         this.setState({certification: data as Certification});
       });
   }
@@ -110,12 +147,11 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   nextQuestion(){
-    this.checkedAnswers = {};
-
     this.setState({
       activeQuestion: this.state.activeQuestion + 1,
       checkingAnswers: false,
-      questionState: QuestionState.Open
+      questionState: QuestionState.Open,
+      checkedAnswers: new Map<string, boolean>()
     });
   }
 
@@ -126,12 +162,12 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     for (let i = 0; answers && i < answers.length; i++){
       let answer = answers[i];
 
-      if (answer.isCorrect && !this.checkedAnswers[answer.id]) {
+      if (answer.isCorrect && !this.state.checkedAnswers.get(answer.id)) {
         questionAnsweredCorrectly = false;
         break;
       }
 
-      if(!answer.isCorrect && this.checkedAnswers[answer.id]) {
+      if(!answer.isCorrect && this.state.checkedAnswers.get(answer.id)) {
         questionAnsweredCorrectly = false;
         break;
       }
@@ -162,7 +198,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
               <div>
                 <h1>{this.state.certification.name}</h1>
                 <ProgressBar striped now={progress} />
-                <QuestionView onAnswerChange={this.answerChangedHandler} question={activeQuestion} key={activeQuestion.key} highlightCorrectAnswers={this.state.checkingAnswers} highlightIncorrectAnswers={this.state.checkingAnswers} answersDisabled={this.state.checkingAnswers} />
+                <QuestionView checkedAnswers={this.state.checkedAnswers} onAnswerChange={this.answerChangedHandler} question={activeQuestion} key={activeQuestion.key} highlightCorrectAnswers={this.state.checkingAnswers} highlightIncorrectAnswers={this.state.checkingAnswers} answersDisabled={this.state.checkingAnswers} />
                 {this.state.questionState === QuestionState.Open ? (<Button onClick={this.checkAnswer}>Check Answer</Button>) : <div/>}
                 {this.state.questionState === QuestionState.Correct ? <span style={{color:"green"}}>Correct Response</span> : <div/>}
                 {this.state.questionState === QuestionState.Incorrect ? <span style={{color:"red"}}>Incorrect Response</span> : <div/>}

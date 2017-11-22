@@ -157,6 +157,13 @@ ALTER TABLE ONLY "user"
 
 
 --
+-- Name: ux_user_case_insensitive_user_name; Type: INDEX; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE UNIQUE INDEX ux_user_case_insensitive_user_name ON "user" USING btree (lower((user_name)::text));
+
+
+--
 -- Name: question question_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 

@@ -120,7 +120,7 @@ export let postSignup = (req: Request, res: Response) => {
       return res.status(200).json(validationResult);
   }
 
-  pool.query(`SELECT * FROM open_certification_trainer.user WHERE user_name = '${auth.userName}'`)
+  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${auth.userName}')`)
     .then(result => {
       if (result.rows.length > 0) {
         return res.status(200).json(new ValidationResult({success: false, errors: [`User name is already in use, please choose another one.`]}));
@@ -161,7 +161,7 @@ export let postLogin = (req: Request, res: Response) => {
     })
   }
 
-  pool.query(`SELECT * FROM open_certification_trainer.user WHERE user_name = '${auth.userName}'`)
+  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${auth.userName}')`)
   .then(result => {
     if (!result.rows.length) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`Authentication failed.`]}));

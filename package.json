@@ -64,6 +64,7 @@
     "react-select": "^1.0.0-rc.5",
     "source-map-loader": "^0.2.1",
     "tslint": "^5.8.0",
-    "typescript": "^2.4.1"
+    "typescript": "^2.4.1",
+    "webpack": "^3.8.1"
   }
 }

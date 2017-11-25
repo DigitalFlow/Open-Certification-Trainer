@@ -19,6 +19,7 @@ const vhost = require("vhost");
 import * as userController from "./controllers/UserController";
 import * as homeController from "./controllers/HomeController";
 import * as courseController from "./controllers/CourseController";
+import * as assessmentSessionController from "./controllers/AssessmentSessionController";
 
 // Load authenticator
 import { Authentication } from "./domain/Authentication";
@@ -89,6 +90,8 @@ app.get("/courses/:courseName", IsAuthenticated, courseController.getCourse);
 app.post("/certificationApi", IsAdmin, courseController.postUpload);
 app.get("/certificationApi/:courseName", IsAdmin, courseController.downloadCert);
 app.delete("/certificationApi/:courseName", IsAdmin, courseController.deleteCert);
+
+app.post("/assessmentSession", IsAuthenticated, assessmentSessionController.postAssessmentSession);
 
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);

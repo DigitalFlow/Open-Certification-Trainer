@@ -44,7 +44,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE answer (
-    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     key character varying(255),
     text text,
     is_correct boolean,
@@ -55,11 +55,26 @@ CREATE TABLE answer (
 ALTER TABLE answer OWNER TO postgres;
 
 --
+-- Name: assessment_session; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE TABLE assessment_session (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    user_id uuid,
+    certification_id uuid,
+    session json,
+    in_progress boolean
+);
+
+
+ALTER TABLE assessment_session OWNER TO postgres;
+
+--
 -- Name: certification; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
 --
 
 CREATE TABLE certification (
-    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     name character varying(255),
     unique_name character varying(255)
 );
@@ -72,11 +87,11 @@ ALTER TABLE certification OWNER TO postgres;
 --
 
 CREATE TABLE question (
-    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     key character varying(255),
     text text,
     certification_id uuid,
-    position integer
+    "position" integer
 );
 
 
@@ -87,7 +102,7 @@ ALTER TABLE question OWNER TO postgres;
 --
 
 CREATE TABLE "user" (
-    id uuid DEFAULT public.gen_random_uuid() PRIMARY KEY,
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     user_name character varying(255),
     email character varying(255),
     is_admin boolean,
@@ -100,35 +115,11 @@ CREATE TABLE "user" (
 ALTER TABLE "user" OWNER TO postgres;
 
 --
--- Data for Name: answer; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
---
-
-COPY answer (id, key, text, is_correct, question_id) FROM stdin;
-\.
-
-
---
--- Data for Name: certification; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
---
-
-COPY certification (id, name, unique_name) FROM stdin;
-\.
-
-
---
--- Data for Name: question; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
---
-
-COPY question (id, key, text, certification_id) FROM stdin;
-\.
-
-
---
 -- Data for Name: user; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
 --
 
 COPY "user" (id, user_name, email, is_admin, password_hash, first_name, last_name) FROM stdin;
-f39f13b4-b8c6-4013-ace6-087a45dbd23d	root	root@local.domain	t	$2a$10$yTZcbz9AlfP3aKuSpTx8t.56yt/SAYo.VlrTP9829CPPlL0bvQ4ki	root	root
+f39f13b4-b8c6-4013-ace6-087a45dbd23d	root	root@local.domain	t	$2a$10$covQWp6GhzWOIik3T6oiveFVnIxTVG7X1c9ziHRM3jTiEFPT0cjd2	root	root
 \.
 
 
@@ -141,26 +132,19 @@ ALTER TABLE ONLY answer
 
 
 --
+-- Name: assessment_session assessment_session_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY assessment_session
+    ADD CONSTRAINT assessment_session_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: certification id; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 
 ALTER TABLE ONLY certification
     ADD CONSTRAINT id PRIMARY KEY (id);
-
-
---
--- Name: user user_name; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
---
-
-ALTER TABLE ONLY "user"
-    ADD CONSTRAINT user_name UNIQUE (user_name);
-
-
---
--- Name: ux_user_case_insensitive_user_name; Type: INDEX; Schema: open_certification_trainer; Owner: postgres
---
-
-CREATE UNIQUE INDEX ux_user_case_insensitive_user_name ON "user" USING btree (lower((user_name)::text));
 
 
 --
@@ -180,11 +164,33 @@ ALTER TABLE ONLY certification
 
 
 --
+-- Name: user user_name; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_name UNIQUE (user_name);
+
+
+--
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 
 ALTER TABLE ONLY "user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_id_certification_id_unique; Type: INDEX; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE UNIQUE INDEX user_id_certification_id_unique ON assessment_session USING btree (user_id, certification_id) WHERE in_progress;
+
+
+--
+-- Name: ux_user_case_insensitive_user_name; Type: INDEX; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE UNIQUE INDEX ux_user_case_insensitive_user_name ON "user" USING btree (lower((user_name)::text));
 
 
 --
@@ -196,11 +202,28 @@ ALTER TABLE ONLY answer
 
 
 --
+-- Name: assessment_session assessment_session_certification_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY assessment_session
+    ADD CONSTRAINT assessment_session_certification_id_fkey FOREIGN KEY (certification_id) REFERENCES certification(id) ON DELETE CASCADE;
+
+
+--
+-- Name: assessment_session assessment_session_user_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY assessment_session
+    ADD CONSTRAINT assessment_session_user_id_fkey FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE;
+
+
+--
 -- Name: question question_certification_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 
 ALTER TABLE ONLY question
     ADD CONSTRAINT question_certification_id_fkey FOREIGN KEY (certification_id) REFERENCES certification(id) ON DELETE CASCADE;
+
 
 --
 -- PostgreSQL database dump complete

@@ -1,7 +1,9 @@
 import * as React from "react";
 import { MenuItem, Modal, ModalBody, ButtonGroup, DropdownButton, Button, Well, ProgressBar, Panel } from "react-bootstrap";
 import Certification from "../model/Certification";
+import AssessmentSession from "../model/AssessmentSession";
 import Answer from "../model/Answer";
+import Question from "../model/Question";
 import QuestionView from "./QuestionView";
 import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
@@ -15,6 +17,7 @@ interface AssessmentState {
   questionState: QuestionState;
   correctAnswers: number;
   checkedAnswers: Map<string, boolean>;
+  session: Map<string, Array<string>>;
 }
 
 enum QuestionState {
@@ -25,7 +28,6 @@ enum QuestionState {
 
 export default class Assessment extends React.Component<IBaseProps, AssessmentState> {
   defaultState: AssessmentState;
-  session: Array<Answer>;
 
   constructor(props: IBaseProps){
       super(props);
@@ -38,10 +40,9 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         checkingAnswers: false,
         questionState: QuestionState.Open,
         correctAnswers: 0,
-        checkedAnswers: new Map<string, boolean>()
+        checkedAnswers: new Map<string, boolean>(),
+        session: new Map<string, Array<string>>()
       };
-
-      this.session = [];
 
       this.state = this.defaultState;
 
@@ -156,11 +157,18 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   checkAnswer(){
-    let answers = this.state.certification.questions[this.state.activeQuestion].answers;
+    let question = this.state.certification.questions[this.state.activeQuestion]
+    let answers = question.answers;
     let questionAnsweredCorrectly = true;
+
+    let checkedAnswers = [];
 
     for (let i = 0; answers && i < answers.length; i++){
       let answer = answers[i];
+
+      if (this.state.checkedAnswers.get(answer.id)) {
+        checkedAnswers.push(answer.id);
+      }
 
       if (answer.isCorrect && !this.state.checkedAnswers.get(answer.id)) {
         questionAnsweredCorrectly = false;
@@ -173,12 +181,28 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       }
     }
 
-    this.setState({
-      lastAnsweredQuestion: this.state.activeQuestion,
-      checkingAnswers: true,
-      questionState: questionAnsweredCorrectly ? QuestionState.Correct : QuestionState.Incorrect,
-      correctAnswers: questionAnsweredCorrectly ? this.state.correctAnswers + 1 : this.state.correctAnswers,
-    });
+    let session = new Map(this.state.session).set(question.id, checkedAnswers);
+    let assessmentSession = new AssessmentSession({ certification: this.state.certification, answers: [...session] });
+
+    let headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    fetch("/assessmentSession",
+    {
+      method: "POST",
+      headers: headers,
+      credentials: 'include',
+      body: JSON.stringify(assessmentSession)
+    })
+    .then(results => {
+      this.setState({
+        lastAnsweredQuestion: this.state.activeQuestion,
+        session: session,
+        checkingAnswers: true,
+        questionState: questionAnsweredCorrectly ? QuestionState.Correct : QuestionState.Incorrect,
+        correctAnswers: questionAnsweredCorrectly ? this.state.correctAnswers + 1 : this.state.correctAnswers,
+      });
+    })
   }
 
   render(){

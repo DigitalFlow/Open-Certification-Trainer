@@ -91,6 +91,7 @@ app.post("/certificationApi", IsAdmin, courseController.postUpload);
 app.get("/certificationApi/:courseName", IsAdmin, courseController.downloadCert);
 app.delete("/certificationApi/:courseName", IsAdmin, courseController.deleteCert);
 
+app.get("/assessmentSession/:certificationUniqueName", IsAuthenticated, assessmentSessionController.getAssessmentSession);
 app.post("/assessmentSession", IsAuthenticated, assessmentSessionController.postAssessmentSession);
 
 // Always return the main index.html, so react-router renders the route in the client

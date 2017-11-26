@@ -10,15 +10,27 @@ import pool from "../domain/DbConnection";
 export let postAssessmentSession = (req: Request, res: Response) => {
   let session = req.body as AssessmentSession;
   let userId = req.user;
-  let query = ["INSERT INTO open_certification_trainer.assessment_session(user_id, certification_id, in_progress, session)",
-               `VALUES ('${userId}', '${session.certification.id}', '${session.answers.length !== session.certification.questions.length}', '${JSON.stringify(session)}')`,
-               "ON CONFLICT(user_id, certification_id) WHERE in_progress DO",
-               `UPDATE SET session = '${JSON.stringify(session)}'`,
-               `WHERE open_certification_trainer.assessment_session.user_id = '${userId}' AND open_certification_trainer.assessment_session.certification_id = '${session.certification.id}';`]
+  let isInProgress = Object.keys(session.answers).length !== session.certification.questions.length;
+
+  let query = ["INSERT INTO open_certification_trainer.assessment_session(id, user_id, certification_id, in_progress, session)",
+               `VALUES ('${session.sessionId}', '${userId}', '${session.certification.id}', '${isInProgress}', '${JSON.stringify(session)}')`,
+               "ON CONFLICT(id) DO",
+               `UPDATE SET session = '${JSON.stringify(session)}', in_progress=${isInProgress}`,
+               `WHERE open_certification_trainer.assessment_session.id='${session.sessionId}';`]
               .join("\n");
 
   pool.query(query)
     .then(result => {
       return res.sendStatus(200);
     })
+}
+
+export let getAssessmentSession = (req: Request, res: Response) => {
+  let userId = req.user;
+  let certificationUniqueName = req.params.certificationUniqueName;
+
+  pool.query(`SELECT session from open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id='${userId}' AND cert.unique_name='${certificationUniqueName}' AND in_progress`)
+    .then(result => {
+      return res.send(result.rows && result.rows.length ? result.rows[0].session : "{}");
+    });
 }

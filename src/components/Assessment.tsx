@@ -7,17 +7,17 @@ import Question from "../model/Question";
 import QuestionView from "./QuestionView";
 import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
+import * as uuid from "uuid/v4";
+import IAssociativeArray from "../domain/IAssociativeArray";
 
 interface AssessmentState {
   certification: Certification;
   activeQuestion: number;
-  lastAnsweredQuestion: number;
   activeQuestionAnswered: boolean;
   checkingAnswers: boolean;
   questionState: QuestionState;
-  correctAnswers: number;
-  checkedAnswers: Map<string, boolean>;
-  session: Map<string, Array<string>>;
+  checkedAnswers: IAssociativeArray<boolean>;
+  session: AssessmentSession;
 }
 
 enum QuestionState {
@@ -35,18 +35,18 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       this.defaultState = {
         certification: null,
         activeQuestion: 0,
-        lastAnsweredQuestion: 0,
         activeQuestionAnswered: false,
         checkingAnswers: false,
         questionState: QuestionState.Open,
-        correctAnswers: 0,
-        checkedAnswers: new Map<string, boolean>(),
-        session: new Map<string, Array<string>>()
+        checkedAnswers: {},
+        session: new AssessmentSession({ sessionId: uuid(), certification: null, answers: {}})
       };
 
       this.state = this.defaultState;
 
-      this.loadCourses = this.loadCourses.bind(this);
+      this.loadCertification = this.loadCertification.bind(this);
+      this.loadSession = this.loadSession.bind(this);
+      this.loadHandler = this.loadHandler.bind(this);
       this.nextQuestion = this.nextQuestion.bind(this);
       this.checkAnswer = this.checkAnswer.bind(this);
       this.answerChangedHandler = this.answerChangedHandler.bind(this);
@@ -55,15 +55,17 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
 
   answerChangedHandler(answer: Answer){
     let answers = this.state.certification.questions[this.state.activeQuestion].answers;
+
+    // If only one correct answer allowed, emulate select behavior, i.e. only one item selectable
     let sum = answers.map(a => a.isCorrect ? 1 : 0).reduce((acc: number, val: number) => acc + val, 0)
 
-    let copy = new Map(this.state.checkedAnswers);
+    let copy = {...this.state.checkedAnswers};
 
     if (sum <= 1) {
-      copy.clear();
+      copy = {};
     }
 
-    copy.set(answer.id, answer.isCorrect);
+    copy[answer.id] = answer.isCorrect;
     this.setState({checkedAnswers: copy});
   }
 
@@ -115,7 +117,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     }
   }
 
-  loadCourses(props: IBaseProps){
+  loadCertification(props: IBaseProps){
     let courseName = props.match.params.courseName;
 
     if (!courseName) {
@@ -135,8 +137,36 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       });
   }
 
+  loadSession(props: IBaseProps){
+    let courseName = props.match.params.courseName;
+
+    if (!courseName) {
+      return Promise.resolve();
+    }
+
+    return fetch("/assessmentSession/" + courseName, {
+      credentials: 'include'
+    })
+      .then(results => {
+        return results.json();
+      });
+  }
+
+  loadHandler(props: IBaseProps) {
+    this.loadSession(props)
+      .then((session: AssessmentSession) => {
+        if (session && session.sessionId) {
+          this.setState({certification: session.certification, session: session, activeQuestion: Object.keys(session.answers).length});
+        }
+        else {
+          this.loadCertification(props);
+        }
+      })
+
+  }
+
   componentDidMount(){
-    this.loadCourses(this.props);
+    this.loadHandler(this.props);
   }
 
   componentWillReceiveProps(props: IBaseProps){
@@ -144,7 +174,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       this.reset();
     }
 
-    this.loadCourses(props);
+    this.loadHandler(props);
   }
 
   nextQuestion(){
@@ -152,37 +182,40 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       activeQuestion: this.state.activeQuestion + 1,
       checkingAnswers: false,
       questionState: QuestionState.Open,
-      checkedAnswers: new Map<string, boolean>()
+      checkedAnswers: {}
     });
   }
 
-  checkAnswer(){
-    let question = this.state.certification.questions[this.state.activeQuestion]
-    let answers = question.answers;
+  checkIfAnsweredCorrectly(answers: Array<Answer>, checkedAnswers: IAssociativeArray<boolean>){
     let questionAnsweredCorrectly = true;
-
-    let checkedAnswers = [];
 
     for (let i = 0; answers && i < answers.length; i++){
       let answer = answers[i];
 
-      if (this.state.checkedAnswers.get(answer.id)) {
-        checkedAnswers.push(answer.id);
-      }
-
-      if (answer.isCorrect && !this.state.checkedAnswers.get(answer.id)) {
+      if (answer.isCorrect && !checkedAnswers[answer.id]) {
         questionAnsweredCorrectly = false;
         break;
       }
 
-      if(!answer.isCorrect && this.state.checkedAnswers.get(answer.id)) {
+      if(!answer.isCorrect && checkedAnswers[answer.id]) {
         questionAnsweredCorrectly = false;
         break;
       }
     }
 
-    let session = new Map(this.state.session).set(question.id, checkedAnswers);
-    let assessmentSession = new AssessmentSession({ certification: this.state.certification, answers: [...session] });
+    return questionAnsweredCorrectly;
+  }
+
+  checkAnswer(){
+    let question = this.state.certification.questions[this.state.activeQuestion]
+    let answers = question.answers;
+    let checkedAnswers = Object.keys(this.state.checkedAnswers).filter(k => this.state.checkedAnswers[k]);
+    let questionAnsweredCorrectly = this.checkIfAnsweredCorrectly(answers, this.state.checkedAnswers);
+
+    let sessionAnswers = { ...this.state.session.answers };
+    sessionAnswers[question.id] = checkedAnswers;
+
+    let assessmentSession = { ...this.state.session, certification: this.state.certification, answers: sessionAnswers } as AssessmentSession;
 
     let headers = new Headers();
     headers.set("Content-Type", "application/json");
@@ -196,11 +229,9 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     })
     .then(results => {
       this.setState({
-        lastAnsweredQuestion: this.state.activeQuestion,
-        session: session,
+        session: assessmentSession,
         checkingAnswers: true,
-        questionState: questionAnsweredCorrectly ? QuestionState.Correct : QuestionState.Incorrect,
-        correctAnswers: questionAnsweredCorrectly ? this.state.correctAnswers + 1 : this.state.correctAnswers,
+        questionState: questionAnsweredCorrectly ? QuestionState.Correct : QuestionState.Incorrect
       });
     })
   }
@@ -232,15 +263,29 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
           }
           else
           {
-            let questionCount = this.state.certification.questions.length;
-            let resultPercentage = (this.state.correctAnswers / questionCount) * 100;
+            let questions = this.state.certification.questions;
+            let questionCount = questions.length;
+
+            let correctAnswers = questions.reduce((acc: number, val: Question) => {
+              let answeredCorrectly = this.checkIfAnsweredCorrectly(val.answers, this.state.session.answers[val.id].reduce((acc: IAssociativeArray<boolean>, val: string) => {
+                acc[val] = true;
+                return acc;
+              }, { }));
+
+              if (answeredCorrectly){
+                return ++acc;
+              }
+              return acc;
+            }, 0);
+
+            let resultPercentage = (correctAnswers / questionCount) * 100;
 
             if (resultPercentage >= 70)
             {
               content = (
                 <div>
                   <h2>Congratulations!</h2>
-                  <p>You passed the exam with {this.state.correctAnswers} correct answers out of {questionCount} questions.
+                  <p>You passed the exam with {correctAnswers} correct answers out of {questionCount} questions.
                   <br/>
                   In respect to the 70% correct answer passing ratio, you passed having {resultPercentage}% of the questions answered correctly.
                   </p>
@@ -252,7 +297,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
               content = (
                 <div>
                   <h2>Sorry!</h2>
-                  <p>You did not pass the exam with {this.state.correctAnswers} correct answers out of {questionCount} questions.
+                  <p>You did not pass the exam with {correctAnswers} correct answers out of {questionCount} questions.
                   <br/>
                   In respect to the 70% correct answer passing ratio, you failed having {resultPercentage}% of the questions answered correctly.
                   Try again and don't give up!

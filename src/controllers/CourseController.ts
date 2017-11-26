@@ -94,13 +94,16 @@ let retrieveCourse = (courseName: string) => {
     })
     .catch(err => {
       console.log(err.message);
-    })
+    });
 }
 
 export let getCourse = (req: Request, res: Response) => {
   retrieveCourse(req.params.courseName)
     .then(cert => {
       res.json(cert);
+    })
+    .catch(err => {
+      return res.status(500).send(err.message);
     });
 };
 
@@ -211,6 +214,9 @@ export let downloadCert = (req: Request, res: Response) => {
   return retrieveCourse(courseName)
     .then(cert => {
       return res.json(cert);
+    })
+    .catch(err => {
+      return res.status(500).send(err.message);
     });
 };
 

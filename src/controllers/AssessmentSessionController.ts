@@ -23,14 +23,33 @@ export let postAssessmentSession = (req: Request, res: Response) => {
     .then(result => {
       return res.sendStatus(200);
     })
+    .catch(err => {
+      return res.status(500).send(err.message);
+    });
 }
 
 export let getAssessmentSession = (req: Request, res: Response) => {
   let userId = req.user;
   let certificationUniqueName = req.params.certificationUniqueName;
 
-  pool.query(`SELECT session from open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id='${userId}' AND cert.unique_name='${certificationUniqueName}' AND in_progress`)
+  pool.query(`SELECT session FROM open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id='${userId}' AND cert.unique_name='${certificationUniqueName}' AND in_progress`)
     .then(result => {
       return res.send(result.rows && result.rows.length ? result.rows[0].session : "{}");
+    })
+    .catch(err => {
+      return res.status(500).send(err.message);
+    });
+}
+
+export let deleteAssessmentSession = (req: Request, res: Response) => {
+  let userId = req.user;
+  let certificationUniqueName = req.params.certificationUniqueName;
+
+  pool.query(`DELETE FROM open_certification_trainer.assessment_session as session USING open_certification_trainer.certification as cert WHERE session.certification_id = cert.id AND session.user_id='${userId}' AND cert.unique_name='${certificationUniqueName}' AND in_progress`)
+    .then(result => {
+      return res.sendStatus(200);
+    })
+    .catch(err => {
+      return res.status(500).send(err.message);
     });
 }

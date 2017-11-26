@@ -51,6 +51,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       this.checkAnswer = this.checkAnswer.bind(this);
       this.answerChangedHandler = this.answerChangedHandler.bind(this);
       this.reset = this.reset.bind(this);
+      this.resetSession = this.resetSession.bind(this);
   }
 
   answerChangedHandler(answer: Answer){
@@ -78,7 +79,15 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       return true;
     }
 
-    if (this.state.certification != nextState.certification) {
+    if (this.state.certification && !nextState.certification) {
+      return true;
+    }
+
+    if (!this.state.certification && nextState.certification) {
+      return true;
+    }
+
+    if (this.state.certification && nextState.certification && this.state.certification.id !== nextState.certification.id) {
       return true;
     }
 
@@ -91,6 +100,18 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     }
 
     if (this.state.checkedAnswers != nextState.checkedAnswers) {
+      return true;
+    }
+
+    if (this.state.session && !nextState.session){
+      return true;
+    }
+
+    if (!this.state.session && nextState.session){
+      return true;
+    }
+
+    if (this.state.session && nextState.session && this.state.session.sessionId !== nextState.session.sessionId){
       return true;
     }
 
@@ -133,7 +154,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       .then(data => {
         this.shuffleAnswers(data);
 
-        this.setState({certification: data as Certification});
+        this.setState({certification: data as Certification, session: this.getDefaultState().session, activeQuestion: 0});
       });
   }
 
@@ -236,6 +257,23 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     })
   }
 
+  resetSession() {
+    let headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    fetch("/assessmentSession/" + this.props.match.params.courseName, {
+      method: "DELETE",
+      headers: headers,
+      credentials: 'include'
+    })
+      .then(results => {
+        this.loadHandler(this.props);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   render(){
       let content = (<div>Please select a course from the sidenav</div>);
 
@@ -244,8 +282,9 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         if (this.state.certification.questions && this.state.certification.questions.length)
         {
           let activeQuestion = this.state.certification.questions[this.state.activeQuestion];
+          let assessmentInProgress = this.state.activeQuestion < this.state.certification.questions.length;
 
-          if (this.state.activeQuestion < this.state.certification.questions.length)
+          if (assessmentInProgress)
           {
             let progress = ((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100;
 
@@ -257,7 +296,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
                 {this.state.questionState === QuestionState.Open ? (<Button onClick={this.checkAnswer}>Check Answer</Button>) : <div/>}
                 {this.state.questionState === QuestionState.Correct ? <span style={{color:"green"}}>Correct Response</span> : <div/>}
                 {this.state.questionState === QuestionState.Incorrect ? <span style={{color:"red"}}>Incorrect Response</span> : <div/>}
-                {this.state.checkingAnswers ? (<Button onClick={this.nextQuestion}>Next</Button>) : <div/>}
+                {this.state.checkingAnswers && (<Button onClick={this.nextQuestion}>Next</Button>)}
+                {assessmentInProgress && Object.keys(this.state.session.answers).length ? <Button className="pull-right" onClick={this.resetSession}>Restart</Button> : ""}
               </div>
             );
           }

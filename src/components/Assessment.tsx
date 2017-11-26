@@ -27,22 +27,22 @@ enum QuestionState {
 }
 
 export default class Assessment extends React.Component<IBaseProps, AssessmentState> {
-  defaultState: AssessmentState;
+  getDefaultState = () => {
+    return {
+      certification: null,
+      activeQuestion: 0,
+      activeQuestionAnswered: false,
+      checkingAnswers: false,
+      questionState: QuestionState.Open,
+      checkedAnswers: {},
+      session: new AssessmentSession({ sessionId: uuid(), certification: null, answers: {}})
+    } as AssessmentState;
+  }
 
   constructor(props: IBaseProps){
       super(props);
 
-      this.defaultState = {
-        certification: null,
-        activeQuestion: 0,
-        activeQuestionAnswered: false,
-        checkingAnswers: false,
-        questionState: QuestionState.Open,
-        checkedAnswers: {},
-        session: new AssessmentSession({ sessionId: uuid(), certification: null, answers: {}})
-      };
-
-      this.state = this.defaultState;
+      this.state = this.getDefaultState();
 
       this.loadCertification = this.loadCertification.bind(this);
       this.loadSession = this.loadSession.bind(this);
@@ -70,7 +70,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   reset(){
-    this.setState(this.defaultState);
+    this.setState(this.getDefaultState());
   }
 
   shouldComponentUpdate(nextProps: IBaseProps, nextState: AssessmentState){

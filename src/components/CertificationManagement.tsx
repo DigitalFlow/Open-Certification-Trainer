@@ -26,22 +26,22 @@ interface CertificationManagementState {
 }
 
 export default class CertificationManagement extends React.Component<IBaseProps, CertificationManagementState> {
-  defaultState: CertificationManagementState;
+  getDefaultState = () => {
+    return {
+      certification: null,
+      activeQuestion: 0,
+      errors: [],
+      message: "",
+      uploadingFile: false,
+      deletionRequested: false,
+      addingMultipleQuestions: false
+    } as CertificationManagementState;
+  }
 
   constructor(props: IBaseProps){
       super(props);
 
-      this.defaultState = {
-        certification: null,
-        activeQuestion: 0,
-        errors: [],
-        message: "",
-        uploadingFile: false,
-        deletionRequested: false,
-        addingMultipleQuestions: false
-      };
-
-      this.state = this.defaultState;
+      this.state = this.getDefaultState();
 
       this.loadCourses = this.loadCourses.bind(this);
       this.reset = this.reset.bind(this);
@@ -202,7 +202,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   }
 
   reset(){
-    this.setState(this.defaultState);
+    this.setState(this.getDefaultState());
   }
 
   setKeys(cert: Certification){

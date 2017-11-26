@@ -10,15 +10,16 @@ interface CertificationOverviewState {
 }
 
 export default class CertificationOverview extends React.Component<IBaseProps, CertificationOverviewState> {
-  defaultState: CertificationOverviewState;
+  getDefaultState = () => {
+    return {
+      certification: null
+    } as CertificationOverviewState;
+  }
 
   constructor(props: IBaseProps){
       super(props);
 
-      this.defaultState = {
-        certification: null
-      };
-      this.state = this.defaultState;
+      this.state = this.getDefaultState();
 
       this.loadCourses = this.loadCourses.bind(this);
       this.reset = this.reset.bind(this);
@@ -67,7 +68,7 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
   }
 
   reset(){
-    this.setState(this.defaultState);
+    this.setState(this.getDefaultState());
   }
 
   render(){

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ButtonGroup, ButtonToolbar, Button, MenuItem, Well } from "react-bootstrap";
+import { ButtonGroup, ButtonToolbar, Button, MenuItem, Well, Checkbox } from "react-bootstrap";
 import Certification from "../model/Certification";
 import QuestionEditView from "./QuestionEditView";
 import FileUploadModal from "./FileUploadModal";
@@ -61,6 +61,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       this.verifyAndDelete = this.verifyAndDelete.bind(this);
       this.hideDeletionPrompt = this.hideDeletionPrompt.bind(this);
       this.onUniqueNameChange = this.onUniqueNameChange.bind(this);
+      this.onPublishedChange = this.onPublishedChange.bind(this);
   }
 
   export () {
@@ -176,7 +177,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       return;
     }
 
-    fetch("/courses/" + courseName, {
+    fetch(`/courses/${courseName}`, {
       credentials: 'include'
     })
       .then(results => {
@@ -251,6 +252,16 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     let cert = this.state.certification;
     let newName = e.target.value;
     let update = {...cert, name: newName};
+
+    this.setState({
+      certification: update
+    });
+  }
+
+  onPublishedChange(e: any){
+    let cert = this.state.certification;
+    let isPublished = e.target.checked;
+    let update = {...cert, isPublished: isPublished};
 
     this.setState({
       certification: update
@@ -351,6 +362,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
               control={{type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange}}
               label="Certification Unique Name"
             />
+            <Checkbox key={this.state.certification.id + "_isPublished"} checked={this.state.certification.isPublished} onChange={this.onPublishedChange}>Is Published</Checkbox>
             {this.state.certification.questions ? (this.state.certification.questions.map((q, index) =>
               (<QuestionEditView onQuestionChange={(q: Question) => this.onQuestionChange(index, q)} requestDeletion={() => this.deleteQuestion(index)} question={q} key={q.id} />)
             )) : <span>No questions found</span>}
@@ -358,7 +370,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       }
 
       return (<div>
-                <SideNav redirectComponent="certificationManagement" />
+                <SideNav redirectComponent="certificationManagement" showUnpublished={true} />
                 {this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={"Are you sure you want to delete " + this.state.certification.name + "?"} key="DeletionPromptModal" yesCallBack={this.delete} finally={this.hideDeletionPrompt} />}
                 {this.state.addingMultipleQuestions && <TextInputModal title="Add multiple Questions" text={"How many questions do you want to add?"} key="AddMultipleQuestionsModal" yesCallBack={this.addMultipleQuestions} finally={this.hideMultipleQuestionsModal} />}
                 {this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={this.loadImportedFile} />}

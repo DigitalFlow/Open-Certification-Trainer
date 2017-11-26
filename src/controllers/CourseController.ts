@@ -12,9 +12,10 @@ import Answer from "../model/Answer";
 import Text from "../model/Text";
 import ValidationResult from "../model/ValidationResult";
 import pool from "../domain/DbConnection";
+import { escapeSpecialCharacters } from "../domain/StringExtensions";
 
 export let getCourseOverview = (req: Request, res: Response) => {
-  let query = "SELECT unique_name from open_certification_trainer.certification";
+  let query = `SELECT unique_name from open_certification_trainer.certification${req.query.showAll ? "" : " WHERE is_published"}`;
 
   pool.query(query)
     .then(result => {
@@ -41,6 +42,7 @@ let retrieveCourse = (courseName: string) => {
       certification.id = dbCert.id;
       certification.name = dbCert.name;
       certification.uniqueName = dbCert.unique_name;
+      certification.isPublished = dbCert.is_published;
 
       return dbCert.id;
     })
@@ -107,14 +109,6 @@ export let getCourse = (req: Request, res: Response) => {
     });
 };
 
-let escapeSpecialCharacters = (text: string) => {
-  if (!text){
-    return "";
-  }
-
-  return text.replace(/'/g, "''");
-}
-
 export let postUpload = (req: Request, res: Response) => {
   let data = req.body as Certification;
 
@@ -129,9 +123,9 @@ export let postUpload = (req: Request, res: Response) => {
   // Upsert certification first
   let query = [
     "BEGIN;",
-    `INSERT INTO open_certification_trainer.certification (id, name, unique_name) VALUES ('${data.id}', '${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}')
+    `INSERT INTO open_certification_trainer.certification (id, name, unique_name, is_published) VALUES ('${data.id}', '${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}', ${data.isPublished || false})
      ON CONFLICT(id) DO
-	     UPDATE SET (name, unique_name) = ('${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}')
+	     UPDATE SET (name, unique_name, is_published) = ('${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}', ${data.isPublished || false})
        WHERE open_certification_trainer.certification.id = '${data.id}';`
   ];
 

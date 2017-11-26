@@ -8,6 +8,7 @@ import Token from "../model/Token";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt-nodejs";
 import pool from "../domain/DbConnection";
+import { escapeSpecialCharacters } from "../domain/StringExtensions";
 
 let validateSignupForm = (payload: UserDetail) => {
   const errors = new Array<string>();
@@ -120,14 +121,14 @@ export let postSignup = (req: Request, res: Response) => {
       return res.status(200).json(validationResult);
   }
 
-  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${auth.userName}')`)
+  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${escapeSpecialCharacters(auth.userName)}')`)
     .then(result => {
       if (result.rows.length > 0) {
         return res.status(200).json(new ValidationResult({success: false, errors: [`User name is already in use, please choose another one.`]}));
       }
 
       hashPassword(auth.password, (err: Error, hash: string) => {
-        pool.query(`INSERT INTO open_certification_trainer.user (user_name, first_name, last_name, password_hash, email, is_admin) VALUES ('${auth.userName}', '${auth.firstName}', '${auth.lastName}', '${hash}', '${auth.email}', false)`)
+        pool.query(`INSERT INTO open_certification_trainer.user (user_name, first_name, last_name, password_hash, email, is_admin) VALUES ('${escapeSpecialCharacters(auth.userName)}', '${escapeSpecialCharacters(auth.firstName)}', '${escapeSpecialCharacters(auth.lastName)}', '${hash}', '${escapeSpecialCharacters(auth.email)}', false)`)
           .then(() => {
             return res.status(200).json(new ValidationResult({success: true}));
           })
@@ -161,7 +162,7 @@ export let postLogin = (req: Request, res: Response) => {
     })
   }
 
-  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${auth.userName}')`)
+  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${escapeSpecialCharacters(auth.userName)}')`)
   .then(result => {
     if (!result.rows.length) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`Authentication failed.`]}));
@@ -264,7 +265,7 @@ export let postProfile = (req: Request, res: Response) => {
 
     if (auth.password) {
       hashPassword(auth.password, (err: Error, hash: string) => {
-        pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', password_hash='${hash}', email='${auth.email}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
+        pool.query(`UPDATE open_certification_trainer.user SET user_name='${escapeSpecialCharacters(auth.userName)}', first_name='${escapeSpecialCharacters(auth.firstName)}', last_name='${escapeSpecialCharacters(auth.lastName)}', password_hash='${hash}', email='${escapeSpecialCharacters(auth.email)}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
           .then(() => {
             return res.status(200).json(new ValidationResult({success: true}));
           })
@@ -274,7 +275,7 @@ export let postProfile = (req: Request, res: Response) => {
       });
     }
     else {
-      pool.query(`UPDATE open_certification_trainer.user SET user_name='${auth.userName}', first_name='${auth.firstName}', last_name='${auth.lastName}', email='${auth.email}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
+      pool.query(`UPDATE open_certification_trainer.user SET user_name='${escapeSpecialCharacters(auth.userName)}', first_name='${escapeSpecialCharacters(auth.firstName)}', last_name='${escapeSpecialCharacters(auth.lastName)}', email='${escapeSpecialCharacters(auth.email)}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
         .then(() => {
           return res.status(200).json(new ValidationResult({success: true}));
         })

@@ -6,6 +6,7 @@ import Answer from "../model/Answer";
 import Text from "../model/Text";
 import AssessmentSession from "../model/AssessmentSession";
 import pool from "../domain/DbConnection";
+import { escapeSpecialCharacters } from "../domain/StringExtensions";
 
 export let postAssessmentSession = (req: Request, res: Response) => {
   let session = req.body as AssessmentSession;
@@ -13,9 +14,9 @@ export let postAssessmentSession = (req: Request, res: Response) => {
   let isInProgress = Object.keys(session.answers).length !== session.certification.questions.length;
 
   let query = ["INSERT INTO open_certification_trainer.assessment_session(id, user_id, certification_id, in_progress, session)",
-               `VALUES ('${session.sessionId}', '${userId}', '${session.certification.id}', '${isInProgress}', '${JSON.stringify(session)}')`,
+               `VALUES ('${session.sessionId}', '${userId}', '${session.certification.id}', '${isInProgress}', '${escapeSpecialCharacters(JSON.stringify(session))}')`,
                "ON CONFLICT(id) DO",
-               `UPDATE SET session = '${JSON.stringify(session)}', in_progress=${isInProgress}`,
+               `UPDATE SET session = '${escapeSpecialCharacters(JSON.stringify(session))}', in_progress=${isInProgress}`,
                `WHERE open_certification_trainer.assessment_session.id='${session.sessionId}';`]
               .join("\n");
 

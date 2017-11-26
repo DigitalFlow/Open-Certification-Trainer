@@ -5,6 +5,7 @@ import { IndexLinkContainer } from "react-router-bootstrap";
 
 export interface SideNavProps {
     redirectComponent: string;
+    showUnpublished?: boolean;
 }
 
 interface SideNavState {
@@ -23,7 +24,7 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
     }
 
     componentDidMount(){
-      fetch("/courses", {
+      fetch(`/courses${this.props.showUnpublished ? "?showAll=true" : "/"}`, {
         credentials: 'include'
       })
         .then(results => {

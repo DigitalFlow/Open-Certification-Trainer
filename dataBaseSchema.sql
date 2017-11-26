@@ -76,7 +76,8 @@ ALTER TABLE assessment_session OWNER TO postgres;
 CREATE TABLE certification (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     name character varying(255),
-    unique_name character varying(255)
+    unique_name character varying(255),
+    is_published boolean
 );
 
 
@@ -113,6 +114,7 @@ CREATE TABLE "user" (
 
 
 ALTER TABLE "user" OWNER TO postgres;
+
 
 --
 -- Data for Name: user; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
@@ -202,27 +204,53 @@ ALTER TABLE ONLY answer
 
 
 --
--- Name: assessment_session assessment_session_certification_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
---
-
-ALTER TABLE ONLY assessment_session
-    ADD CONSTRAINT assessment_session_certification_id_fkey FOREIGN KEY (certification_id) REFERENCES certification(id) ON DELETE CASCADE;
-
-
---
--- Name: assessment_session assessment_session_user_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
---
-
-ALTER TABLE ONLY assessment_session
-    ADD CONSTRAINT assessment_session_user_id_fkey FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE;
-
-
---
 -- Name: question question_certification_id_fkey; Type: FK CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
 --
 
 ALTER TABLE ONLY question
     ADD CONSTRAINT question_certification_id_fkey FOREIGN KEY (certification_id) REFERENCES certification(id) ON DELETE CASCADE;
+
+
+--
+-- Name: open_certification_trainer; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT ALL ON SCHEMA open_certification_trainer TO dev;
+
+
+--
+-- Name: answer; Type: ACL; Schema: open_certification_trainer; Owner: postgres
+--
+
+GRANT ALL ON TABLE answer TO dev;
+
+
+--
+-- Name: assessment_session; Type: ACL; Schema: open_certification_trainer; Owner: postgres
+--
+
+GRANT ALL ON TABLE assessment_session TO dev;
+
+
+--
+-- Name: certification; Type: ACL; Schema: open_certification_trainer; Owner: postgres
+--
+
+GRANT ALL ON TABLE certification TO dev;
+
+
+--
+-- Name: question; Type: ACL; Schema: open_certification_trainer; Owner: postgres
+--
+
+GRANT ALL ON TABLE question TO dev;
+
+
+--
+-- Name: user; Type: ACL; Schema: open_certification_trainer; Owner: postgres
+--
+
+GRANT ALL ON TABLE "user" TO dev;
 
 
 --

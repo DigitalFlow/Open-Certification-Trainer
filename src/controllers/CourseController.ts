@@ -15,7 +15,8 @@ import pool from "../domain/DbConnection";
 import { escapeSpecialCharacters } from "../domain/StringExtensions";
 
 export let getCourseOverview = (req: Request, res: Response) => {
-  let query = `SELECT unique_name from open_certification_trainer.certification${req.query.showAll ? "" : " WHERE is_published"}`;
+  // No sql injection possible, no user data passed
+  let query = `SELECT unique_name from open_certification_trainer.certification${req.query.showAll ? "" : " WHERE is_published"} ORDER BY unique_name`;
 
   pool.query(query)
     .then(result => {
@@ -31,7 +32,7 @@ export let getCourseOverview = (req: Request, res: Response) => {
 let retrieveCourse = (courseName: string) => {
   let certification = new Certification({ id: '', questions: []});
 
-  return pool.query(`SELECT * from open_certification_trainer.certification AS cert WHERE cert.unique_name LIKE '${courseName}'`)
+  return pool.query("SELECT * from open_certification_trainer.certification AS cert WHERE cert.unique_name LIKE $1", [courseName])
     .then(result => {
       if (result.rowCount < 1) {
         return null;
@@ -51,7 +52,7 @@ let retrieveCourse = (courseName: string) => {
         return null;
       }
 
-      return pool.query(`SELECT * from open_certification_trainer.question AS question WHERE question.certification_id = '${certId}' ORDER BY question.position`);
+      return pool.query("SELECT * from open_certification_trainer.question AS question WHERE question.certification_id = $1 ORDER BY question.position", [certId]);
     })
     .then(result => {
       if (!result){
@@ -68,7 +69,7 @@ let retrieveCourse = (courseName: string) => {
         let question = new Question({id: dbQuestion.id, key: dbQuestion.key, text: new Text({value: dbQuestion.text}), answers: []});
 
         questions.push(
-          pool.query(`SELECT * from open_certification_trainer.answer AS answer WHERE answer.question_id = '${question.id}' ORDER BY answer.key`)
+          pool.query("SELECT * from open_certification_trainer.answer AS answer WHERE answer.question_id = $1 ORDER BY answer.key", [question.id])
             .then(result => {
               let dbAnswers = result.rows;
 
@@ -223,13 +224,11 @@ export let deleteCert = (req: Request, res: Response) => {
 
   // Due to On Delete Cascade settings, deletion of certification will delete all questions and answers below it automatically
   let query = [
-    "BEGIN;",
       "DELETE FROM open_certification_trainer.certification as cert",
-      `WHERE cert.unique_name LIKE '${courseName}';`,
-    "COMMIT;"
+      "WHERE cert.unique_name LIKE $1;"
   ].join("\n");
 
-  return pool.query(query)
+  return pool.query(query, [courseName])
     .then(result => {
       return res.json(new ValidationResult({success: true, message: "Deletion successful"}));
     })

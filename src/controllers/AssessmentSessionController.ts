@@ -14,13 +14,15 @@ export let postAssessmentSession = (req: Request, res: Response) => {
   let isInProgress = Object.keys(session.answers).length !== session.certification.questions.length;
 
   let query = ["INSERT INTO open_certification_trainer.assessment_session(id, user_id, certification_id, in_progress, session)",
-               `VALUES ('${session.sessionId}', '${userId}', '${session.certification.id}', '${isInProgress}', '${escapeSpecialCharacters(JSON.stringify(session))}')`,
+               "VALUES ($1, $2, $3, $4, $5)",
                "ON CONFLICT(id) DO",
-               `UPDATE SET session = '${escapeSpecialCharacters(JSON.stringify(session))}', in_progress=${isInProgress}`,
-               `WHERE open_certification_trainer.assessment_session.id='${session.sessionId}';`]
+               "UPDATE SET session = $5, in_progress=$4",
+               "WHERE open_certification_trainer.assessment_session.id=$1;"]
               .join("\n");
 
-  pool.query(query)
+  let values = [session.sessionId, userId, session.certification.id, isInProgress, JSON.stringify(session)];
+
+  pool.query(query, values)
     .then(result => {
       return res.sendStatus(200);
     })
@@ -33,7 +35,8 @@ export let getAssessmentSession = (req: Request, res: Response) => {
   let userId = req.user;
   let certificationUniqueName = req.params.certificationUniqueName;
 
-  pool.query(`SELECT session FROM open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id='${userId}' AND cert.unique_name='${certificationUniqueName}' AND in_progress`)
+  pool.query("SELECT session FROM open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id=$1 AND cert.unique_name=$2 AND in_progress",
+    [userId, certificationUniqueName])
     .then(result => {
       return res.send(result.rows && result.rows.length ? result.rows[0].session : "{}");
     })
@@ -46,7 +49,8 @@ export let deleteAssessmentSession = (req: Request, res: Response) => {
   let userId = req.user;
   let certificationUniqueName = req.params.certificationUniqueName;
 
-  pool.query(`DELETE FROM open_certification_trainer.assessment_session as session USING open_certification_trainer.certification as cert WHERE session.certification_id = cert.id AND session.user_id='${userId}' AND cert.unique_name='${certificationUniqueName}' AND in_progress`)
+  pool.query("DELETE FROM open_certification_trainer.assessment_session as session USING open_certification_trainer.certification as cert WHERE session.certification_id = cert.id AND session.user_id=$1 AND cert.unique_name=$2 AND in_progress",
+    [userId, certificationUniqueName])
     .then(result => {
       return res.sendStatus(200);
     })

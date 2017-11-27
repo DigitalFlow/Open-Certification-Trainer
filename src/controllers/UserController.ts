@@ -121,14 +121,15 @@ export let postSignup = (req: Request, res: Response) => {
       return res.status(200).json(validationResult);
   }
 
-  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${escapeSpecialCharacters(auth.userName)}')`)
+  pool.query("SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER($1)", [auth.userName])
     .then(result => {
       if (result.rows.length > 0) {
         return res.status(200).json(new ValidationResult({success: false, errors: [`User name is already in use, please choose another one.`]}));
       }
 
       hashPassword(auth.password, (err: Error, hash: string) => {
-        pool.query(`INSERT INTO open_certification_trainer.user (user_name, first_name, last_name, password_hash, email, is_admin) VALUES ('${escapeSpecialCharacters(auth.userName)}', '${escapeSpecialCharacters(auth.firstName)}', '${escapeSpecialCharacters(auth.lastName)}', '${hash}', '${escapeSpecialCharacters(auth.email)}', false)`)
+        pool.query("INSERT INTO open_certification_trainer.user (user_name, first_name, last_name, password_hash, email, is_admin) VALUES ($1, $2, $3, $4, $5, false)",
+          [auth.userName, auth.firstName, auth.lastName, hash, auth.email])
           .then(() => {
             return res.status(200).json(new ValidationResult({success: true}));
           })
@@ -147,7 +148,7 @@ export let postLogin = (req: Request, res: Response) => {
 
   // If already logged in by cookie
   if (req.user){
-    return pool.query(`SELECT * FROM open_certification_trainer.user WHERE id = '${req.user}'`)
+    return pool.query("SELECT * FROM open_certification_trainer.user WHERE id = $1", [req.user])
     .then(result =>{
       if (!result.rows.length) {
         return res.status(200).json(new ValidationResult({success: false, errors: [`Authentication failed.`]}));
@@ -162,7 +163,7 @@ export let postLogin = (req: Request, res: Response) => {
     })
   }
 
-  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER('${escapeSpecialCharacters(auth.userName)}')`)
+  pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER($1)`, [auth.userName])
   .then(result => {
     if (!result.rows.length) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`Authentication failed.`]}));
@@ -210,7 +211,7 @@ export let postLogout = (req: Request, res: Response) => {
 export let getProfile = (req: Request, res: Response) => {
   let userId = req.params.userId || req.user;
 
-  pool.query(`SELECT user_name, first_name, last_name, email, is_admin FROM open_certification_trainer.user WHERE id = '${userId}'`)
+  pool.query("SELECT user_name, first_name, last_name, email, is_admin FROM open_certification_trainer.user WHERE id = $1", [userId])
   .then(result => {
     if (result.rows.length < 1) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`User not found.`]}));
@@ -226,7 +227,7 @@ export let getProfile = (req: Request, res: Response) => {
 };
 
 export let getUserList = (req: Request, res: Response) => {
-  pool.query(`SELECT id, user_name, first_name, last_name, email, is_admin FROM open_certification_trainer.user ORDER BY user_name`)
+  pool.query("SELECT id, user_name, first_name, last_name, email, is_admin FROM open_certification_trainer.user ORDER BY user_name")
   .then(result => {
     let users = result.rows as Array<DbUser>;
 
@@ -247,7 +248,7 @@ export let postProfile = (req: Request, res: Response) => {
   }
 
   // Only admin users may update other user's profiles
-  pool.query(`SELECT is_admin FROM open_certification_trainer.user WHERE id = '${req.user}'`)
+  pool.query("SELECT is_admin FROM open_certification_trainer.user WHERE id = $1", [req.user])
   .then(result => {
     if (result.rows.length < 1) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`Executing user not found.`]}));
@@ -255,7 +256,7 @@ export let postProfile = (req: Request, res: Response) => {
 
     let executingUser = result.rows[0] as DbUser;
 
-    if (!executingUser.is_admin && req.params.userId !== req.user) {
+    if (!executingUser.is_admin && req.params.userId && req.params.userId !== req.user) {
       return res.status(200).json(new ValidationResult({success: false, errors: [`Only admins may update other user's profiles.`]}));
     }
 
@@ -265,7 +266,8 @@ export let postProfile = (req: Request, res: Response) => {
 
     if (auth.password) {
       hashPassword(auth.password, (err: Error, hash: string) => {
-        pool.query(`UPDATE open_certification_trainer.user SET user_name='${escapeSpecialCharacters(auth.userName)}', first_name='${escapeSpecialCharacters(auth.firstName)}', last_name='${escapeSpecialCharacters(auth.lastName)}', password_hash='${hash}', email='${escapeSpecialCharacters(auth.email)}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
+        pool.query("UPDATE open_certification_trainer.user SET user_name=$1, first_name=$2, last_name=$3, password_hash=$4, email=$5, is_admin=$6 WHERE id = $7",
+          [auth.userName, auth.firstName, auth.lastName, hash, auth.email, auth.isAdmin, userId])
           .then(() => {
             return res.status(200).json(new ValidationResult({success: true}));
           })
@@ -275,7 +277,8 @@ export let postProfile = (req: Request, res: Response) => {
       });
     }
     else {
-      pool.query(`UPDATE open_certification_trainer.user SET user_name='${escapeSpecialCharacters(auth.userName)}', first_name='${escapeSpecialCharacters(auth.firstName)}', last_name='${escapeSpecialCharacters(auth.lastName)}', email='${escapeSpecialCharacters(auth.email)}', is_admin=${auth.isAdmin} WHERE id = '${userId}'`)
+      pool.query("UPDATE open_certification_trainer.user SET user_name=$1, first_name=$2, last_name=$3, email=$4, is_admin=$5 WHERE id = $6",
+        [auth.userName, auth.firstName, auth.lastName, auth.email, auth.isAdmin, userId])
         .then(() => {
           return res.status(200).json(new ValidationResult({success: true}));
         })

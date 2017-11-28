@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "build": "tsc -t ES6 -m commonjs --jsx react src/server.ts --outDir ./dist && webpack",
     "prebuild": "cpx src/views/index.ejs dist/views && cpx \"src/lib/*.{css,js}\" dist/lib",
+    "build": "tsc -t ES6 -m commonjs --jsx react src/server.ts --outDir ./dist && webpack",
     "prestart": "npm run build",
     "start": "node dist/server.js",
     "predebug": "npm run build",
     "debug": "node inspect dist/server.js",
-    "deploy": "gh-pages -d dist",
-    "publish": "npm run build && npm run deploy"
+    "zip": "bestzip dist.zip dist .env.config",
+    "publish": "npm run build && npm run zip"
   },
   "author": "",
   "license": "MIT",
@@ -58,6 +58,7 @@
     "@types/validator": "^6.3.0",
     "awesome-typescript-loader": "^3.2.1",
     "base64url": "^2.0.0",
+    "bestzip": "^1.1.4",
     "cpx": "^1.5.0",
     "gh-pages": "^1.0.0",
     "react-bootstrap": "^0.31.5",

@@ -7,10 +7,6 @@ import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
 
-export interface ProfileProps extends IBaseProps {
-    redirectComponent: string;
-}
-
 interface ProfileState {
     userName: string,
     firstName: string,
@@ -25,8 +21,8 @@ interface ProfileState {
 
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-export default class Profile extends React.PureComponent<ProfileProps, ProfileState> {
-    constructor(props: ProfileProps) {
+export default class Profile extends React.PureComponent<IBaseProps, ProfileState> {
+    constructor(props: IBaseProps) {
         super(props);
 
         this.state = {

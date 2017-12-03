@@ -20,6 +20,7 @@ import * as userController from "./controllers/UserController";
 import * as homeController from "./controllers/HomeController";
 import * as courseController from "./controllers/CourseController";
 import * as assessmentSessionController from "./controllers/AssessmentSessionController";
+import * as postController from "./controllers/PostController";
 
 // Load authenticator
 import { Authentication } from "./domain/Authentication";
@@ -94,6 +95,10 @@ app.delete("/certificationApi/:courseName", IsAdmin, courseController.deleteCert
 app.get("/assessmentSession/:certificationUniqueName", IsAuthenticated, assessmentSessionController.getAssessmentSession);
 app.post("/assessmentSession", IsAuthenticated, assessmentSessionController.postAssessmentSession);
 app.delete("/assessmentSession/:certificationUniqueName", IsAuthenticated, assessmentSessionController.deleteAssessmentSession);
+
+app.get("/posts", IsAuthenticated, postController.getPosts);
+app.get("/posts/:postId", IsAuthenticated, postController.getPost);
+app.post("/posts/:postId", IsAdmin, postController.upsertPost);
 
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);

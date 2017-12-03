@@ -1,3 +1,4 @@
+import { RouteConfig } from "react-router-config";
 import CertificationOverview from "./components/CertificationOverview";
 import CertificationManagement from "./components/CertificationManagement";
 import PortalManagement from "./components/PortalManagement";
@@ -7,7 +8,7 @@ import Login from "./components/Login";
 import Logout from "./components/Logout";
 import Profile from "./components/Profile";
 import SignUp from "./components/SignUp";
-import { RouteConfig } from "react-router-config";
+import PostEditView from "./components/PostEditView";
 
 const routes = new Array<RouteConfig>(
 	{
@@ -55,7 +56,12 @@ const routes = new Array<RouteConfig>(
 	{
 		path: "/portalManagement",
 		component: PortalManagement
-	}
+	},
+	{
+		path: "/post/:postId",
+		exact: true,
+		component: PostEditView
+	},
 );
 
 export default routes

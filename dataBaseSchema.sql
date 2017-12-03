@@ -77,11 +77,26 @@ CREATE TABLE certification (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     name character varying(255),
     unique_name character varying(255),
-    is_published boolean
+    is_published boolean,
+    version character varying(255)
 );
 
 
 ALTER TABLE certification OWNER TO postgres;
+
+--
+-- Name: post; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
+--
+
+CREATE TABLE post (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    content text,
+    created_on timestamp without time zone DEFAULT timezone('utc'::text, now()),
+    title character varying(255)
+);
+
+
+ALTER TABLE post OWNER TO postgres;
 
 --
 -- Name: question; Type: TABLE; Schema: open_certification_trainer; Owner: postgres
@@ -115,7 +130,6 @@ CREATE TABLE "user" (
 
 ALTER TABLE "user" OWNER TO postgres;
 
-
 --
 -- Data for Name: user; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
 --
@@ -147,6 +161,14 @@ ALTER TABLE ONLY assessment_session
 
 ALTER TABLE ONLY certification
     ADD CONSTRAINT id PRIMARY KEY (id);
+
+
+--
+-- Name: post post_pkey; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY post
+    ADD CONSTRAINT post_pkey PRIMARY KEY (id);
 
 
 --
@@ -237,6 +259,13 @@ GRANT ALL ON TABLE assessment_session TO dev;
 --
 
 GRANT ALL ON TABLE certification TO dev;
+
+
+--
+-- Name: post; Type: ACL; Schema: open_certification_trainer; Owner: postgres
+--
+
+GRANT ALL ON TABLE post TO dev;
 
 
 --

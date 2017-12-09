@@ -33,7 +33,7 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
         let content = null;
 
         content =
-            <div style={{whiteSpace: "pre"}}>
+            <div style={{whiteSpace: "pre-wrap"}}>
                 <h3>{this.props.question.key}</h3>
                 <p>{this.props.question.text.value}</p>
                 <ButtonGroup vertical block>

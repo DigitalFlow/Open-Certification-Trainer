@@ -9,6 +9,7 @@ import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
 import * as uuid from "uuid/v4";
 import IAssociativeArray from "../domain/IAssociativeArray";
+import UserPromptModal from "./UserPromptModal";
 
 interface AssessmentState {
   certification: Certification;
@@ -20,6 +21,7 @@ interface AssessmentState {
   session: AssessmentSession;
   showCorrectQuestions: boolean;
   showIncorrectQuestions: boolean;
+  restartSessionModal: boolean;
 }
 
 enum QuestionState {
@@ -39,7 +41,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       checkedAnswers: {},
       session: new AssessmentSession({ sessionId: uuid(), certification: null, answers: {}}),
       showCorrectQuestions: false,
-      showIncorrectQuestions: false
+      showIncorrectQuestions: false,
+      restartSessionModal: false,
     } as AssessmentState;
   }
 
@@ -58,6 +61,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       this.resetSession = this.resetSession.bind(this);
       this.toggleShowCorrectQuestions = this.toggleShowCorrectQuestions.bind(this);
       this.toggleShowIncorrectQuestions = this.toggleShowIncorrectQuestions.bind(this);
+      this.showResetSessionPrompt = this.showResetSessionPrompt.bind(this);
+      this.hideResetSessionPrompt = this.hideResetSessionPrompt.bind(this);
   }
 
   answerChangedHandler(answer: Answer){
@@ -126,6 +131,10 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     }
 
     if (this.state.showIncorrectQuestions !== nextState.showIncorrectQuestions) {
+      return true;
+    }
+
+    if (this.state.restartSessionModal !== nextState.restartSessionModal) {
       return true;
     }
 
@@ -288,6 +297,18 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       });
   }
 
+  showResetSessionPrompt() {
+    this.setState({
+      restartSessionModal: true
+    });
+  }
+
+  hideResetSessionPrompt() {
+    this.setState({
+      restartSessionModal: false
+    });
+  }
+
   toggleShowCorrectQuestions() {
     this.setState({showCorrectQuestions: !this.state.showCorrectQuestions});
   }
@@ -319,7 +340,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
                 {this.state.questionState === QuestionState.Correct ? <span style={{color:"green"}}>Correct Response</span> : <div/>}
                 {this.state.questionState === QuestionState.Incorrect ? <span style={{color:"red"}}>Incorrect Response</span> : <div/>}
                 {this.state.checkingAnswers && (<Button onClick={this.nextQuestion}>Next</Button>)}
-                {assessmentInProgress && Object.keys(this.state.session.answers).length ? <Button className="pull-right" onClick={this.resetSession}>Restart</Button> : ""}
+                {assessmentInProgress && Object.keys(this.state.session.answers).length ? <Button className="pull-right" onClick={this.showResetSessionPrompt}>Restart</Button> : ""}
               </div>
             );
           }
@@ -412,6 +433,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       return (<div>
               <SideNav redirectComponent="assessment" />
               <Well className="col-xs-10 pull-right">
+                {this.state.restartSessionModal && <UserPromptModal yesCallBack={this.resetSession} finally={this.hideResetSessionPrompt} title="Restart Session" text="All your current progress will be lost and this session will be deleted. Continue?" />}
                 {content}
               </Well>
           </div>);

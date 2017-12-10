@@ -21,49 +21,6 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
         posts: [],
         postInput: "Demo"
       };
-
-      this.setInput = this.setInput.bind(this);
-      this.fetchUsers = this.fetchUsers.bind(this);
-      this.fetchPosts = this.fetchPosts.bind(this);
-    }
-
-    fetchUsers(){
-      return fetch("/userList",
-      {
-        credentials: 'include'
-      })
-      .then(results => {
-        return results.json();
-      })
-      .then((users: Array<DbUser>) => {
-          this.setState({
-              users: users
-          });
-      });
-    }
-
-    fetchPosts(){
-      return fetch("/posts",
-      {
-        credentials: 'include'
-      })
-      .then(results => {
-        return results.json();
-      })
-      .then((posts: Array<DbPost>) => {
-          this.setState({
-              posts: posts
-          });
-      });
-    }
-
-    componentDidMount(){
-      this.fetchUsers();
-      this.fetchPosts();
-    }
-
-    setInput(e: any) {
-      this.setState({postInput: e.target.value});
     }
 
     render(){
@@ -87,36 +44,13 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
               <Well>
                 <Tab.Content animation>
                   <Tab.Pane eventKey="users">
-                    <Table striped bordered condensed hover>
-                      <thead>
-                          <tr>
-                              <th>Username</th>
-                              <th>First Name</th>
-                              <th>Last Name</th>
-                              <th>E-Mail</th>
-                              <th>Is Admin</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.users.map(u => { return (<UserListView key={u.id} user={u} />)})}
-                      </tbody>
-                      </Table>
+                    <UserListView />
                   </Tab.Pane>
                   <Tab.Pane eventKey="groups">
                     <Jumbotron><h2>Groups - In construction</h2></Jumbotron>
                   </Tab.Pane>
                   <Tab.Pane eventKey="posts">
-                  <Table striped bordered condensed hover>
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Created On</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.posts.map(p => { return (<PostListView key={p.id} post={p} />)})}
-                    </tbody>
-                    </Table>
+                    <PostListView />
                   </Tab.Pane>
                 </Tab.Content>
               </Well>

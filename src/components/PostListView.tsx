@@ -1,18 +1,87 @@
 import * as React from "react";
 import DbPost from "../model/DbPost";
+import { Tab, Row, Col, NavItem, Nav, Table, Jumbotron, Well, ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import IBaseProps from "../domain/IBaseProps";
 
-export interface PostListViewProps{
-  post: DbPost
+export interface PostListViewState {
+  posts: Array<DbPost>;
 }
 
-const PostListView = (props: PostListViewProps) => (
-  <LinkContainer key={`${props.post.title}_link`} to={`/post/${props.post.id}`}>
-    <tr>
-        <td>{props.post.title}</td>
-        <td>{props.post.created_on}</td>
-    </tr>
-  </LinkContainer>
-);
+export default class PostListView extends React.PureComponent<IBaseProps, PostListViewState> {
+  constructor (props: IBaseProps) {
+    super(props);
 
-export default PostListView;
+    this.state = {
+      posts: []
+    };
+
+    this.fetchPosts = this.fetchPosts.bind(this);
+  }
+
+  fetchPosts () {
+    return fetch("/posts",
+    {
+      credentials: 'include'
+    })
+    .then(results => {
+      return results.json();
+    })
+    .then((posts: Array<DbPost>) => {
+        this.setState({
+            posts: posts
+        });
+    });
+  }
+
+  componentDidMount() {
+    this.fetchPosts();
+  }
+
+  render () {
+    return (
+      <div>
+        <ButtonToolbar>
+          <ButtonGroup>
+            <LinkContainer key={"newLink"} to={"/post/new"}>
+              <Button bsStyle="default">New Post</Button>
+            </LinkContainer>
+          </ButtonGroup>
+        </ButtonToolbar>
+        <Table striped bordered condensed hover>
+          <thead>
+              <tr>
+                  <th>Content</th>
+                  <th>Created On</th>
+              </tr>
+          </thead>
+          <tbody>
+            {
+              this.state.posts.map(p => {
+                let content = p.content || "";
+                content = content.trim();
+
+                let firstLineBreak = content.indexOf("\n");
+
+                if (firstLineBreak !== -1) {
+                  content = content.substr(0, firstLineBreak);
+                }
+
+                content = content.replace(/[#]*/g, "");
+
+                return (
+                  <LinkContainer key={`${p.id}_link`} to={`/post/${p.id}`}>
+                    <tr>
+                    <td>{content}</td>
+                    <td>{new Date(p.created_on).toTimeString()}</td>
+                    </tr>
+                  </LinkContainer>
+                );
+              })
+            }
+          </tbody>
+          </Table>
+        </div>
+      );
+  }
+}

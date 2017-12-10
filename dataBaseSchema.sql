@@ -91,8 +91,7 @@ ALTER TABLE certification OWNER TO postgres;
 CREATE TABLE post (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     content text,
-    created_on timestamp without time zone DEFAULT timezone('utc'::text, now()),
-    title character varying(255)
+    created_on timestamp without time zone DEFAULT timezone('utc'::text, now())
 );
 
 
@@ -129,6 +128,7 @@ CREATE TABLE "user" (
 
 
 ALTER TABLE "user" OWNER TO postgres;
+
 
 --
 -- Data for Name: user; Type: TABLE DATA; Schema: open_certification_trainer; Owner: postgres
@@ -284,4 +284,3 @@ GRANT ALL ON TABLE "user" TO dev;
 
 --
 -- PostgreSQL database dump complete
---

@@ -28,18 +28,30 @@ export let getPost = (req: Request, res: Response) => {
   });
 }
 
+export let deletePost = (req: Request, res: Response) => {
+  let postId = req.params.postId;
+
+  pool.query("DELETE from open_certification_trainer.post WHERE id=$1;", [postId])
+  .then(result => {
+    res.json(result.rows);
+  })
+  .catch(err => {
+    res.status(500).send(err.message);
+  });
+}
+
 export let upsertPost = (req: Request, res: Response) => {
   let postId = req.params.postId;
   let post = req.body as DbPost;
 
-  let query = ["INSERT INTO open_certification_trainer.post(id, title, content)",
-               "VALUES ($1, $2, $3)",
+  let query = ["INSERT INTO open_certification_trainer.post(id, content)",
+               "VALUES ($1, $2)",
                "ON CONFLICT(id) DO",
-               "UPDATE SET title=$2, content=$3",
+               "UPDATE SET content=$2",
                "WHERE open_certification_trainer.post.id=$1;"]
               .join("\n");
 
-  let values = [postId, post.title, post.content];
+  let values = [postId, post.content];
 
   pool.query(query, values)
   .then(result => {

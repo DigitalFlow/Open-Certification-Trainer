@@ -47,6 +47,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       this.reset = this.reset.bind(this);
       this.save = this.save.bind(this);
       this.onNameChange = this.onNameChange.bind(this);
+      this.onVersionChange = this.onVersionChange.bind(this);
       this.onQuestionChange = this.onQuestionChange.bind(this);
       this.addQuestion = this.addQuestion.bind(this);
       this.addMultipleQuestions = this.addMultipleQuestions.bind(this);
@@ -258,6 +259,16 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     });
   }
 
+  onVersionChange(e: any){
+    let cert = this.state.certification;
+    let newVersion = e.target.value;
+    let update = {...cert, version: newVersion};
+
+    this.setState({
+      certification: update
+    });
+  }
+
   onPublishedChange(e: any){
     let cert = this.state.certification;
     let isPublished = e.target.checked;
@@ -361,6 +372,11 @@ export default class CertificationManagement extends React.Component<IBaseProps,
               id={this.state.certification.id + "uniqueName"}
               control={{type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange}}
               label="Certification Unique Name"
+            />
+            <FieldGroup
+              id={this.state.certification.id + "version"}
+              control={{type: "text", value: this.state.certification.version, onChange: this.onVersionChange}}
+              label="Version"
             />
             <Checkbox key={this.state.certification.id + "_isPublished"} checked={this.state.certification.isPublished} onChange={this.onPublishedChange}>Is Published</Checkbox>
             {this.state.certification.questions ? (this.state.certification.questions.map((q, index) =>

@@ -10,7 +10,7 @@ export interface PostViewProps {
 
 const PostView = ( props: PostViewProps ) => (
   <Panel>
-    <h3>{props.post.created_on.toLocaleString()}</h3>
+    <p style={{"text-align": "right"}}>{new Date(props.post.created_on).toTimeString()}</p>
 
     <ReactMarkdown
       key={props.post.id}

@@ -145,6 +145,10 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   shuffle<T>(array: Array<T>): void {
     let j, x, i;
 
+    if (!array) {
+      return;
+    }
+
     for (i = array.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
         x = array[i];
@@ -153,7 +157,9 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     }
   }
 
-  shuffleAnswers(certification: Certification) {
+  shuffleCertification(certification: Certification) {
+    this.shuffle<Question>(certification.questions);
+
     for (let i = 0; certification.questions && i < certification.questions.length; i++) {
       let question = certification.questions[i];
 
@@ -175,7 +181,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         return results.json();
       })
       .then(data => {
-        this.shuffleAnswers(data);
+        this.shuffleCertification(data);
 
         this.setState({certification: data as Certification, session: this.getDefaultState().session, activeQuestion: 0});
       });
@@ -333,6 +339,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
 
             content = (
               <div>
+                <p style={{"text-align": "right"}}>Version {this.state.certification.version}</p>
                 <h1>{this.state.certification.name}</h1>
                 <ProgressBar striped now={progress} />
                 <QuestionView checkedAnswers={this.state.checkedAnswers} onAnswerChange={this.answerChangedHandler} question={activeQuestion} key={activeQuestion.id} highlightCorrectAnswers={this.state.checkingAnswers} highlightIncorrectAnswers={this.state.checkingAnswers} answersDisabled={this.state.checkingAnswers} />

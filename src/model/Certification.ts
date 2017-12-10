@@ -2,6 +2,7 @@ import Question from "./Question"
 
 export interface CertificationProps {
     name?: string;
+    version?: string;
     uniqueName?: string;
     questions?: Array<Question>;
     isPublished?: boolean;
@@ -10,6 +11,7 @@ export interface CertificationProps {
 
 export default class Certification {
     name?: string;
+    version?: string;
     questions?: Array<Question>;
     uniqueName?: string;
     isPublished?: boolean;
@@ -17,6 +19,7 @@ export default class Certification {
 
     constructor(props: CertificationProps) {
         this.name = props.name || "";
+        this.version = props.version || "";
         this.uniqueName = props.uniqueName || "";
         this.questions = props.questions;
         this.isPublished = props.isPublished || false;

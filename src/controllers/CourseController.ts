@@ -43,6 +43,7 @@ let retrieveCourse = (courseName: string) => {
       certification.id = dbCert.id;
       certification.name = dbCert.name;
       certification.uniqueName = dbCert.unique_name;
+      certification.version = dbCert.version;
       certification.isPublished = dbCert.is_published;
 
       return dbCert.id;
@@ -124,9 +125,9 @@ export let postUpload = (req: Request, res: Response) => {
   // Upsert certification first
   let query = [
     "BEGIN;",
-    `INSERT INTO open_certification_trainer.certification (id, name, unique_name, is_published) VALUES ('${data.id}', '${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}', ${data.isPublished || false})
+    `INSERT INTO open_certification_trainer.certification (id, name, unique_name, is_published, version) VALUES ('${data.id}', '${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}', ${data.isPublished || false}, '${escapeSpecialCharacters(data.version)}')
      ON CONFLICT(id) DO
-	     UPDATE SET (name, unique_name, is_published) = ('${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}', ${data.isPublished || false})
+	     UPDATE SET (name, unique_name, is_published, version) = ('${escapeSpecialCharacters(data.name)}', '${escapeSpecialCharacters(data.uniqueName)}', ${data.isPublished || false}, '${escapeSpecialCharacters(data.version)}')
        WHERE open_certification_trainer.certification.id = '${data.id}';`
   ];
 

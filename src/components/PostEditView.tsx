@@ -4,6 +4,8 @@ import DbPost from "../model/DbPost";
 import IBaseProps from "../domain/IBaseProps";
 import * as ReactMarkdown from "react-markdown";
 import MessageBar from "./MessageBar";
+import * as CodeMirror from "react-codemirror";
+import * as uuid from "uuid/v4";
 
 interface PostEditViewState {
   post: DbPost;
@@ -24,6 +26,7 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
         this.retrievePost = this.retrievePost.bind(this);
         this.markdownChanged = this.markdownChanged.bind(this);
         this.save = this.save.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     componentDidMount(){
@@ -32,6 +35,12 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
 
     retrievePost(){
       let postId = this.props.match.params.postId;
+
+      if (postId === "new") {
+        return this.setState({
+          post: {...this.state.post, id: uuid()}
+        });
+      }
 
       fetch(`/posts/${postId}`,
       {
@@ -53,19 +62,40 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
       });
     }
 
+    delete(){
+      let postId = this.state.post.id;
+
+      fetch(`/posts/${postId}`,
+      {
+        method: "DELETE",
+        credentials: 'include'
+      })
+      .then(() => {
+          this.setState({
+              errors: [],
+              message: "Successfully deleted post"
+          });
+      })
+      .catch(err => {
+        this.setState({
+          errors: [err]
+        });
+      });
+    }
+
     save(){
-      let postId = this.props.match.params.postId;
+      let postId = this.state.post.id;
+      let headers = new Headers();
+      headers.set("Content-Type", "application/json");
 
       fetch(`/posts/${postId}`,
       {
         method: "POST",
         credentials: 'include',
-        body: JSON.stringify(this.state.post)
+        body: JSON.stringify(this.state.post),
+        headers: headers
       })
-      .then(results => {
-        return results.json();
-      })
-      .then((posts: Array<DbPost>) => {
+      .then(() => {
           this.setState({
               errors: [],
               message: "Successfully saved post"
@@ -90,16 +120,17 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
               <ButtonGroup>
                 <Button bsStyle="default" onClick={this.save}>Save</Button>
               </ButtonGroup>
+              <ButtonGroup>
+                <Button bsStyle="danger" onClick={this.delete}>Delete</Button>
+              </ButtonGroup>
             </ButtonToolbar>
-            <Well>
-              <textarea className="col-xs-6" value={this.state.post.content} onChange={this.markdownChanged} />
+              <textarea className="col-xs-6" style={{"height": "100vh"}} value={this.state.post.content} onChange={this.markdownChanged} />
               <ReactMarkdown
                 className="result col-xs-6"
                 source={this.state.post.content}
                 skipHtml={true}
                 escapeHtml={true}
               />
-            </Well>
           </div>
         );
     }

@@ -99,6 +99,7 @@ app.delete("/assessmentSession/:certificationUniqueName", IsAuthenticated, asses
 app.get("/posts", IsAuthenticated, postController.getPosts);
 app.get("/posts/:postId", IsAuthenticated, postController.getPost);
 app.post("/posts/:postId", IsAdmin, postController.upsertPost);
+app.delete("/posts/:postId", IsAdmin, postController.deletePost);
 
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);

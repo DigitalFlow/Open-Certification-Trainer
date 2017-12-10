@@ -1,6 +1,5 @@
 export default class DbPost {
-  created_on: Date;
-  title: string;
+  created_on: string;
   content: string;
   id: string;
 }

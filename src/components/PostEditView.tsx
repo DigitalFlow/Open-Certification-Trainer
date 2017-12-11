@@ -4,7 +4,6 @@ import DbPost from "../model/DbPost";
 import IBaseProps from "../domain/IBaseProps";
 import * as ReactMarkdown from "react-markdown";
 import MessageBar from "./MessageBar";
-import * as CodeMirror from "react-codemirror";
 import * as uuid from "uuid/v4";
 
 interface PostEditViewState {

@@ -10,6 +10,9 @@ import IBaseProps from "../domain/IBaseProps";
 import * as uuid from "uuid/v4";
 import IAssociativeArray from "../domain/IAssociativeArray";
 import UserPromptModal from "./UserPromptModal";
+import { checkIfAnsweredCorrectly } from "../domain/AssessmentLogic";
+import AssessmentResultView from "./AssessmentResultView";
+import shuffle from "../domain/Shuffle";
 
 interface AssessmentState {
   certification: Certification;
@@ -18,9 +21,8 @@ interface AssessmentState {
   checkingAnswers: boolean;
   questionState: QuestionState;
   checkedAnswers: IAssociativeArray<boolean>;
+  previousSessions: Array<AssessmentSession>;
   session: AssessmentSession;
-  showCorrectQuestions: boolean;
-  showIncorrectQuestions: boolean;
   restartSessionModal: boolean;
 }
 
@@ -34,14 +36,13 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   getDefaultState = () => {
     return {
       certification: null,
-      activeQuestion: 0,
+      activeQuestion: -1,
       activeQuestionAnswered: false,
       checkingAnswers: false,
       questionState: QuestionState.Open,
       checkedAnswers: {},
+      previousSessions: [],
       session: new AssessmentSession({ sessionId: uuid(), certification: null, answers: {}}),
-      showCorrectQuestions: false,
-      showIncorrectQuestions: false,
       restartSessionModal: false,
     } as AssessmentState;
   }
@@ -53,14 +54,14 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
 
       this.loadCertification = this.loadCertification.bind(this);
       this.loadSession = this.loadSession.bind(this);
+      this.loadSessionCollection = this.loadSessionCollection.bind(this);
       this.loadHandler = this.loadHandler.bind(this);
+      this.start = this.start.bind(this);
       this.nextQuestion = this.nextQuestion.bind(this);
       this.checkAnswer = this.checkAnswer.bind(this);
       this.answerChangedHandler = this.answerChangedHandler.bind(this);
       this.reset = this.reset.bind(this);
       this.resetSession = this.resetSession.bind(this);
-      this.toggleShowCorrectQuestions = this.toggleShowCorrectQuestions.bind(this);
-      this.toggleShowIncorrectQuestions = this.toggleShowIncorrectQuestions.bind(this);
       this.showResetSessionPrompt = this.showResetSessionPrompt.bind(this);
       this.hideResetSessionPrompt = this.hideResetSessionPrompt.bind(this);
   }
@@ -90,15 +91,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       return true;
     }
 
-    if (this.state.certification && !nextState.certification) {
-      return true;
-    }
-
-    if (!this.state.certification && nextState.certification) {
-      return true;
-    }
-
-    if (this.state.certification && nextState.certification && this.state.certification.id !== nextState.certification.id) {
+    if (this.state.certification !== nextState.certification) {
       return true;
     }
 
@@ -114,23 +107,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       return true;
     }
 
-    if (this.state.session && !nextState.session){
-      return true;
-    }
-
-    if (!this.state.session && nextState.session){
-      return true;
-    }
-
-    if (this.state.session && nextState.session && this.state.session.sessionId !== nextState.session.sessionId){
-      return true;
-    }
-
-    if (this.state.showCorrectQuestions !== nextState.showCorrectQuestions) {
-      return true;
-    }
-
-    if (this.state.showIncorrectQuestions !== nextState.showIncorrectQuestions) {
+    if (this.state.session !== nextState.session){
       return true;
     }
 
@@ -141,29 +118,13 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     return false;
   }
 
-  // Shuffles array in-place
-  shuffle<T>(array: Array<T>): void {
-    let j, x, i;
-
-    if (!array) {
-      return;
-    }
-
-    for (i = array.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = array[i];
-        array[i] = array[j];
-        array[j] = x;
-    }
-  }
-
   shuffleCertification(certification: Certification) {
-    this.shuffle<Question>(certification.questions);
+    shuffle<Question>(certification.questions);
 
     for (let i = 0; certification.questions && i < certification.questions.length; i++) {
       let question = certification.questions[i];
 
-      this.shuffle<Answer>(question.answers);
+      shuffle<Answer>(question.answers);
     }
   }
 
@@ -183,7 +144,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       .then(data => {
         this.shuffleCertification(data);
 
-        this.setState({certification: data as Certification, session: this.getDefaultState().session, activeQuestion: 0});
+        this.setState({certification: data as Certification, session: this.getDefaultState().session, activeQuestion: -1});
       });
   }
 
@@ -202,17 +163,40 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       });
   }
 
+  loadSessionCollection (props: IBaseProps){
+    let courseName = props.match.params.courseName;
+
+    if (!courseName) {
+      return Promise.resolve();
+    }
+
+    return fetch("/assessmentSessionCollection/" + courseName, {
+      credentials: 'include'
+    })
+      .then(results => {
+        return results.json();
+      })
+      .then((sessions: Array<AssessmentSession>) => {
+        this.setState({previousSessions: sessions});
+      });
+  }
+
   loadHandler(props: IBaseProps) {
     this.loadSession(props)
       .then((session: AssessmentSession) => {
         if (session && session.sessionId) {
           this.setState({certification: session.certification, session: session, activeQuestion: Object.keys(session.answers).length});
+          return true;
         }
-        else {
-          this.loadCertification(props);
-        }
-      })
 
+        return false;
+      })
+      .then(loadedSession => {
+        return !loadedSession ? this.loadSessionCollection(props) : null;
+      })
+      .then(() => {
+        this.loadCertification(props);
+      });
   }
 
   componentDidMount(){
@@ -227,6 +211,15 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     this.loadHandler(props);
   }
 
+  start(){
+    this.setState({
+      activeQuestion: this.state.activeQuestion + 1,
+      checkingAnswers: false,
+      questionState: QuestionState.Open,
+      checkedAnswers: {}
+    });
+  }
+
   nextQuestion(){
     this.setState({
       activeQuestion: this.state.activeQuestion + 1,
@@ -236,31 +229,11 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     });
   }
 
-  checkIfAnsweredCorrectly(answers: Array<Answer>, checkedAnswers: IAssociativeArray<boolean>){
-    let questionAnsweredCorrectly = true;
-
-    for (let i = 0; answers && i < answers.length; i++){
-      let answer = answers[i];
-
-      if (answer.isCorrect && !checkedAnswers[answer.id]) {
-        questionAnsweredCorrectly = false;
-        break;
-      }
-
-      if(!answer.isCorrect && checkedAnswers[answer.id]) {
-        questionAnsweredCorrectly = false;
-        break;
-      }
-    }
-
-    return questionAnsweredCorrectly;
-  }
-
   checkAnswer(){
     let question = this.state.certification.questions[this.state.activeQuestion]
     let answers = question.answers;
     let checkedAnswers = Object.keys(this.state.checkedAnswers).filter(k => this.state.checkedAnswers[k]);
-    let questionAnsweredCorrectly = this.checkIfAnsweredCorrectly(answers, this.state.checkedAnswers);
+    let questionAnsweredCorrectly = checkIfAnsweredCorrectly(answers, this.state.checkedAnswers);
 
     let sessionAnswers = { ...this.state.session.answers };
     sessionAnswers[question.id] = checkedAnswers;
@@ -315,14 +288,6 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     });
   }
 
-  toggleShowCorrectQuestions() {
-    this.setState({showCorrectQuestions: !this.state.showCorrectQuestions});
-  }
-
-  toggleShowIncorrectQuestions() {
-    this.setState({showIncorrectQuestions: !this.state.showIncorrectQuestions});
-  }
-
   render(){
       let content = (<div>Please select a course from the sidenav</div>);
 
@@ -330,18 +295,16 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       {
         if (this.state.certification.questions && this.state.certification.questions.length)
         {
-          let activeQuestion = this.state.certification.questions[this.state.activeQuestion];
-          let assessmentInProgress = this.state.activeQuestion < this.state.certification.questions.length;
+          if (this.state.activeQuestion > -1) {
+            let activeQuestion = this.state.certification.questions[this.state.activeQuestion];
+            let assessmentInProgress = this.state.activeQuestion < this.state.certification.questions.length;
 
-          if (assessmentInProgress)
-          {
-            let progress = ((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100;
-
-            content = (
+            content = assessmentInProgress ?
+            (
               <div>
                 <p style={{"text-align": "right"}}>Version {this.state.certification.version}</p>
                 <h1>{this.state.certification.name}</h1>
-                <ProgressBar striped now={progress} />
+                <ProgressBar striped now={((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100} />
                 <QuestionView checkedAnswers={this.state.checkedAnswers} onAnswerChange={this.answerChangedHandler} question={activeQuestion} key={activeQuestion.id} highlightCorrectAnswers={this.state.checkingAnswers} highlightIncorrectAnswers={this.state.checkingAnswers} answersDisabled={this.state.checkingAnswers} />
                 {this.state.questionState === QuestionState.Open ? (<Button onClick={this.checkAnswer}>Check Answer</Button>) : <div/>}
                 {this.state.questionState === QuestionState.Correct ? <span style={{color:"green"}}>Correct Response</span> : <div/>}
@@ -349,82 +312,17 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
                 {this.state.checkingAnswers && (<Button onClick={this.nextQuestion}>Next</Button>)}
                 {assessmentInProgress && Object.keys(this.state.session.answers).length ? <Button className="pull-right" onClick={this.showResetSessionPrompt}>Restart</Button> : ""}
               </div>
-            );
+            )
+            : (<AssessmentResultView session={this.state.session} />);
           }
-          else
-          {
-            let questions = this.state.certification.questions;
-            let questionCount = questions.length;
-            let correctAnswers = new Array<string>();
-
-            let correctAnswerCount = questions.reduce((acc: number, val: Question) => {
-              let answeredCorrectly = this.checkIfAnsweredCorrectly(val.answers, this.state.session.answers[val.id].reduce((acc: IAssociativeArray<boolean>, val: string) => {
-                acc[val] = true;
-                return acc;
-              }, { }));
-
-              if (answeredCorrectly){
-                correctAnswers.push(val.id);
-                return ++acc;
-              }
-              return acc;
-            }, 0);
-
-            let resultPercentage = (correctAnswerCount / questionCount) * 100;
-            let text = null;
-
-            if (resultPercentage >= 70)
-            {
-              text = (
-                <div>
-                  <h2>Congratulations!</h2>
-                  <p>You passed the exam with {correctAnswerCount} correct answers out of {questionCount} questions.
-                  <br/>
-                  In respect to the 70% correct answer passing ratio, you passed having {resultPercentage}% of the questions answered correctly.
-                  </p>
-                </div>
-              );
-            }
-            else
-            {
-              text = (
-                <div>
-                  <h2>Sorry!</h2>
-                  <p>You did not pass the exam with {correctAnswerCount} correct answers out of {questionCount} questions.
-                  <br/>
-                  In respect to the 70% correct answer passing ratio, you failed having {resultPercentage}% of the questions answered correctly.
-                  Try again and don't give up!
-                  </p>
-                </div>
-              );
-            }
-
+          else {
             content = (
               <div>
-                {text}
-                <Button onClick={this.toggleShowCorrectQuestions}>
-                  Correctly answered questions
-                </Button>
-                <Panel collapsible expanded={this.state.showCorrectQuestions}>
-                  {
-                    this.state.certification.questions.filter(q => correctAnswers.indexOf(q.id) !== -1).map(activeQuestion => {
-                      return <QuestionView checkedAnswers={this.state.session.answers[activeQuestion.id].reduce((acc, val) => {acc[val] = true; return acc;}, {} as IAssociativeArray<boolean>)} question={activeQuestion} key={activeQuestion.id} highlightCorrectAnswers={true} highlightIncorrectAnswers={true} answersDisabled={true} />;
-                    })
-                  }
-                </Panel>
-
-                <Button onClick={this.toggleShowIncorrectQuestions}>
-                  Incorrectly answered questions
-                </Button>
-                <Panel collapsible expanded={this.state.showIncorrectQuestions}>
-                {
-                  this.state.certification.questions.filter(q => correctAnswers.indexOf(q.id) === -1).map(activeQuestion => {
-                    return <QuestionView checkedAnswers={this.state.session.answers[activeQuestion.id].reduce((acc, val) => {acc[val] = true; return acc;}, {} as IAssociativeArray<boolean>)} question={activeQuestion} key={activeQuestion.id} highlightCorrectAnswers={true} highlightIncorrectAnswers={true} answersDisabled={true} />;
-                  })
-                }
-                </Panel>
+                <p style={{"text-align": "right"}}>Version {this.state.certification.version}</p>
+                <h1>{this.state.certification.name}</h1>
+                <Button onClick={this.start}>Start</Button>
               </div>
-            )
+            );
           }
         }
         else

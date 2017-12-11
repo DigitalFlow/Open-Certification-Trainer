@@ -93,6 +93,7 @@ app.get("/certificationApi/:courseName", IsAdmin, courseController.downloadCert)
 app.delete("/certificationApi/:courseName", IsAdmin, courseController.deleteCert);
 
 app.get("/assessmentSession/:certificationUniqueName", IsAuthenticated, assessmentSessionController.getAssessmentSession);
+app.get("/assessmentSessionCollection/:certificationUniqueName", IsAuthenticated, assessmentSessionController.getCertificationSessions);
 app.post("/assessmentSession", IsAuthenticated, assessmentSessionController.postAssessmentSession);
 app.delete("/assessmentSession/:certificationUniqueName", IsAuthenticated, assessmentSessionController.deleteAssessmentSession);
 

@@ -356,6 +356,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
                 <p style={{"text-align": "right"}}>Version {this.state.certification.version}</p>
                 <h1>{this.state.certification.name}</h1>
                 <QuestionSelectionList questions={this.state.certification.questions} onSelectionChange={this.onSelectionChange} selectedQuestions={this.state.selectedQuestions} previousSessions={this.state.previousSessions} />
+                <br />
                 <Button disabled={!Object.keys(this.state.selectedQuestions).some(k => this.state.selectedQuestions[k])} onClick={this.start}>Start</Button>
               </div>
             );

@@ -63,7 +63,8 @@ CREATE TABLE assessment_session (
     user_id uuid,
     certification_id uuid,
     session json,
-    in_progress boolean
+    in_progress boolean,
+    created_on timestamp without time zone DEFAULT timezone('utc'::text, now())
 );
 
 
@@ -284,3 +285,4 @@ GRANT ALL ON TABLE "user" TO dev;
 
 --
 -- PostgreSQL database dump complete
+--

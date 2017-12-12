@@ -3,11 +3,12 @@ import { InputGroup, FormControl, MenuItem, Well } from "react-bootstrap";
 import Question from "../model/Question";
 import FieldGroup from "./FieldGroup";
 import IBaseProps from "../domain/IBaseProps";
+import IAssociativeArray from "../domain/IAssociativeArray";
 
 export interface QuestionSelectionProps extends IBaseProps {
   question: Question;
   isSelected: boolean;
-  onSelectionChange: (questionId: string, selected: boolean) => void;
+  onSelectionChange: (questions: IAssociativeArray<boolean>) => void;
 }
 
 export default class QuestionSelection extends React.PureComponent<QuestionSelectionProps, undefined> {
@@ -19,8 +20,11 @@ export default class QuestionSelection extends React.PureComponent<QuestionSelec
 
   onChange(e: any) {
     let checked = e.target.checked;
+    let update = {} as IAssociativeArray<boolean>;
 
-    this.props.onSelectionChange(this.props.question.id, checked);
+    update[this.props.question.id] = checked;
+
+    this.props.onSelectionChange(update);
   }
 
   render(){

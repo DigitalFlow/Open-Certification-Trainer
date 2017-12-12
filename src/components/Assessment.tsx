@@ -26,6 +26,7 @@ interface AssessmentState {
   session: AssessmentSession;
   restartSessionModal: boolean;
   selectedQuestions: IAssociativeArray<boolean>;
+  selectionTrigger: boolean;
 }
 
 enum QuestionState {
@@ -46,7 +47,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       previousSessions: [],
       session: new AssessmentSession({ sessionId: uuid(), certification: null, answers: {}}),
       restartSessionModal: false,
-      selectedQuestions: {}
+      selectedQuestions: {},
+      selectionTrigger: false
     } as AssessmentState;
   }
 
@@ -116,6 +118,10 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     }
 
     if (this.state.restartSessionModal !== nextState.restartSessionModal) {
+      return true;
+    }
+
+    if (this.state.selectionTrigger !== nextState.selectionTrigger) {
       return true;
     }
 
@@ -300,12 +306,20 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     });
   }
 
-  onSelectionChange(questionId: string, checked: boolean){
+  onSelectionChange (questions: IAssociativeArray<boolean>) {
     let update = { ...this.state.selectedQuestions };
-    update[questionId] = checked;
+
+    for (let key in questions) {
+      if (!questions.hasOwnProperty(key)) {
+        continue;
+      }
+
+      update[key] = questions[key];
+    }
 
     this.setState({
-      selectedQuestions: update
+      selectedQuestions: update,
+      selectionTrigger: !this.state.selectionTrigger
     });
   }
 
@@ -328,9 +342,9 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
                 <ProgressBar striped now={((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100} />
                 <QuestionView checkedAnswers={this.state.checkedAnswers} onAnswerChange={this.answerChangedHandler} question={activeQuestion} key={activeQuestion.id} highlightCorrectAnswers={this.state.checkingAnswers} highlightIncorrectAnswers={this.state.checkingAnswers} answersDisabled={this.state.checkingAnswers} />
                 {this.state.questionState === QuestionState.Open ? (<Button onClick={this.checkAnswer}>Check Answer</Button>) : <div/>}
-                {this.state.questionState === QuestionState.Correct ? <span style={{color:"green"}}>Correct Response</span> : <div/>}
-                {this.state.questionState === QuestionState.Incorrect ? <span style={{color:"red"}}>Incorrect Response</span> : <div/>}
                 {this.state.checkingAnswers && (<Button onClick={this.nextQuestion}>Next</Button>)}
+                {this.state.questionState === QuestionState.Correct ? <p style={{color:"green"}}>Correct Response</p> : <div/>}
+                {this.state.questionState === QuestionState.Incorrect ? <p style={{color:"red"}}>Incorrect Response</p> : <div/>}
                 {assessmentInProgress && Object.keys(this.state.session.answers).length ? <Button className="pull-right" onClick={this.showResetSessionPrompt}>Restart</Button> : ""}
               </div>
             )
@@ -341,8 +355,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
               <div>
                 <p style={{"text-align": "right"}}>Version {this.state.certification.version}</p>
                 <h1>{this.state.certification.name}</h1>
-                <QuestionSelectionList questions={this.state.certification.questions} onSelectionChange={this.onSelectionChange} selectedQuestions={this.state.selectedQuestions} />
-                <Button disabled={Object.keys(this.state.selectedQuestions).some(k => this.state.selectedQuestions[k])} onClick={this.start}>Start</Button>
+                <QuestionSelectionList questions={this.state.certification.questions} onSelectionChange={this.onSelectionChange} selectedQuestions={this.state.selectedQuestions} previousSessions={this.state.previousSessions} />
+                <Button disabled={!Object.keys(this.state.selectedQuestions).some(k => this.state.selectedQuestions[k])} onClick={this.start}>Start</Button>
               </div>
             );
           }

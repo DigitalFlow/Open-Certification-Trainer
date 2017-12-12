@@ -13,6 +13,7 @@ import UserPromptModal from "./UserPromptModal";
 import { checkIfAnsweredCorrectly } from "../domain/AssessmentLogic";
 import AssessmentResultView from "./AssessmentResultView";
 import shuffle from "../domain/Shuffle";
+import QuestionSelectionList from "./QuestionSelectionList";
 
 interface AssessmentState {
   certification: Certification;
@@ -24,6 +25,7 @@ interface AssessmentState {
   previousSessions: Array<AssessmentSession>;
   session: AssessmentSession;
   restartSessionModal: boolean;
+  selectedQuestions: IAssociativeArray<boolean>;
 }
 
 enum QuestionState {
@@ -44,6 +46,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       previousSessions: [],
       session: new AssessmentSession({ sessionId: uuid(), certification: null, answers: {}}),
       restartSessionModal: false,
+      selectedQuestions: {}
     } as AssessmentState;
   }
 
@@ -64,6 +67,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       this.resetSession = this.resetSession.bind(this);
       this.showResetSessionPrompt = this.showResetSessionPrompt.bind(this);
       this.hideResetSessionPrompt = this.hideResetSessionPrompt.bind(this);
+      this.onSelectionChange = this.onSelectionChange.bind(this);
   }
 
   answerChangedHandler(answer: Answer){
@@ -126,6 +130,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
 
       shuffle<Answer>(question.answers);
     }
+
+    return certification;
   }
 
   loadCertification(props: IBaseProps){
@@ -142,8 +148,6 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         return results.json();
       })
       .then(data => {
-        this.shuffleCertification(data);
-
         this.setState({certification: data as Certification, session: this.getDefaultState().session, activeQuestion: -1});
       });
   }
@@ -192,10 +196,15 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         return false;
       })
       .then(loadedSession => {
-        return !loadedSession ? this.loadSessionCollection(props) : null;
+        if(!loadedSession) {
+          this.loadSessionCollection(props)
+        }
+        return loadedSession;
       })
-      .then(() => {
-        this.loadCertification(props);
+      .then(loadedSession => {
+        if (!loadedSession) {
+          this.loadCertification(props);
+        }
       });
   }
 
@@ -212,7 +221,10 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   start(){
+    let filteredCertification = {...this.state.certification, questions: this.state.certification.questions.filter(q => this.state.selectedQuestions[q.id])};
+
     this.setState({
+      certification: this.shuffleCertification(filteredCertification),
       activeQuestion: this.state.activeQuestion + 1,
       checkingAnswers: false,
       questionState: QuestionState.Open,
@@ -288,6 +300,15 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     });
   }
 
+  onSelectionChange(questionId: string, checked: boolean){
+    let update = { ...this.state.selectedQuestions };
+    update[questionId] = checked;
+
+    this.setState({
+      selectedQuestions: update
+    });
+  }
+
   render(){
       let content = (<div>Please select a course from the sidenav</div>);
 
@@ -320,7 +341,8 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
               <div>
                 <p style={{"text-align": "right"}}>Version {this.state.certification.version}</p>
                 <h1>{this.state.certification.name}</h1>
-                <Button onClick={this.start}>Start</Button>
+                <QuestionSelectionList questions={this.state.certification.questions} onSelectionChange={this.onSelectionChange} selectedQuestions={this.state.selectedQuestions} />
+                <Button disabled={Object.keys(this.state.selectedQuestions).some(k => this.state.selectedQuestions[k])} onClick={this.start}>Start</Button>
               </div>
             );
           }

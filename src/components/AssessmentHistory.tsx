@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Well } from "react-bootstrap";
+import { Well, Panel } from "react-bootstrap";
 import AssessmentSession from "../model/AssessmentSession";
 import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
@@ -60,14 +60,30 @@ export default class AssessmentHistory extends React.Component<IBaseProps, Asses
   }
 
   render(){
-      return (
+    let content = (<div>Please select a course from the sidenav</div>);
+
+    if (this.props.match.params.courseName) {
+      content = (
         <div>
-          <SideNav redirectComponent="assessmentHistory" />
-          <Well className="col-xs-10 pull-right">
-            <h1>{this.props.match.params.courseName}: History</h1>
-            {this.state.previousSessions.map(s => <SessionRecap session={s} />)}
-          </Well>
+          <h1>{this.props.match.params.courseName}: History</h1>
+          {this.state.previousSessions.map(s => {
+            return (
+              <Panel>
+                <SessionRecap session={s} />
+              </Panel>
+            );
+          })}
         </div>
       );
+    }
+
+    return (
+      <div>
+        <SideNav redirectComponent="assessmentHistory" />
+        <Well className="col-xs-10 pull-right">
+          {content}
+        </Well>
+      </div>
+    );
   }
 }

@@ -15,7 +15,7 @@ export interface QuestionSelectionListProps extends IBaseProps {
   selectedQuestions: IAssociativeArray<boolean>;
 }
 
-export default class QuestionSelectionList extends React.Component<QuestionSelectionListProps, undefined> {
+export default class QuestionSelectionList extends React.PureComponent<QuestionSelectionListProps, undefined> {
   constructor(props: QuestionSelectionListProps) {
     super(props);
 

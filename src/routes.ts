@@ -3,6 +3,7 @@ import CertificationOverview from "./components/CertificationOverview";
 import CertificationManagement from "./components/CertificationManagement";
 import PortalManagement from "./components/PortalManagement";
 import Assessment from "./components/Assessment";
+import AssessmentHistory from "./components/AssessmentHistory";
 import WelcomePage from "./components/WelcomePage";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
@@ -44,6 +45,10 @@ const routes = new Array<RouteConfig>(
 	{
 		path: "/assessment/:courseName?",
 		component: Assessment
+	},
+	{
+		path: "/assessmentHistory/:courseName?",
+		component: AssessmentHistory
 	},
 	{
 		path: "/certificationManagement/:courseName?",

@@ -49,10 +49,10 @@ export let getCertificationSessions = (req: Request, res: Response) => {
   let userId = req.user;
   let certificationUniqueName = req.params.certificationUniqueName;
 
-  pool.query("SELECT session FROM open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id=$1 AND cert.unique_name=$2 ORDER BY session.created_on DESC",
+  pool.query("SELECT session.* FROM open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id=$1 AND cert.unique_name=$2 ORDER BY session.created_on DESC",
     [userId, certificationUniqueName])
     .then(result => {
-      return res.json(result.rows.map((r: any) => r.session));
+      return res.json(result.rows.map((r: any) => { return { ...r.session, created_on: r.created_on } }));
     })
     .catch(err => {
       return res.status(500).send(err.message);

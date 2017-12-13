@@ -2,7 +2,7 @@ import Certification from "./Certification";
 import Question from "./Question";
 import IAssociativeArray from "../domain/IAssociativeArray";
 
-export interface AssessmentProps {
+export interface AssessmentSessionProps {
   sessionId: string;
   certification: Certification;
   created_on?: string;
@@ -18,7 +18,7 @@ export default class AssessmentSession {
   answers: IAssociativeArray<Array<string>>;
   created_on: string;
 
-  constructor(props: AssessmentProps)
+  constructor(props: AssessmentSessionProps)
   {
     this.sessionId = props.sessionId;
     this.certification = props.certification;

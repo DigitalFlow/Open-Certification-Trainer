@@ -73,7 +73,7 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
                   <LinkContainer key={`${p.id}_link`} to={`/post/${p.id}`}>
                     <tr>
                     <td>{content}</td>
-                    <td>{new Date(p.created_on).toTimeString()}</td>
+                    <td>{p.created_on}</td>
                     </tr>
                   </LinkContainer>
                 );

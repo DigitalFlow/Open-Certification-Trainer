@@ -20,6 +20,7 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
     "bootstrap": "^3.3.7",
+    "chart.js": "^2.7.1",
     "cookie-parser": "^1.4.3",
     "dotenv": "^4.0.0",
     "ejs": "^2.5.7",
@@ -29,6 +30,7 @@
     "morgan": "^1.9.0",
     "pg": "^7.4.0",
     "react": "^15.6.1",
+    "react-chartjs-2": "^2.6.4",
     "react-dom": "^15.6.1",
     "react-markdown": "^3.1.0",
     "react-router-bootstrap": "^0.24.4",
@@ -41,6 +43,7 @@
   "devDependencies": {
     "@types/bcrypt-nodejs": "0.0.30",
     "@types/body-parser": "^1.16.8",
+    "@types/chart.js": "^2.7.3",
     "@types/cookie-parser": "^1.4.1",
     "@types/dotenv": "^4.0.2",
     "@types/express": "^4.0.39",

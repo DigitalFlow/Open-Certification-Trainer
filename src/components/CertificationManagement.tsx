@@ -23,6 +23,7 @@ interface CertificationManagementState {
   uploadingFile: boolean;
   deletionRequested: boolean;
   addingMultipleQuestions: boolean;
+  regeneratingKeys: boolean;
 }
 
 export default class CertificationManagement extends React.Component<IBaseProps, CertificationManagementState> {
@@ -34,7 +35,8 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       message: "",
       uploadingFile: false,
       deletionRequested: false,
-      addingMultipleQuestions: false
+      addingMultipleQuestions: false,
+      regeneratingKeys: false
     } as CertificationManagementState;
   }
 
@@ -52,7 +54,9 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       this.addQuestion = this.addQuestion.bind(this);
       this.addMultipleQuestions = this.addMultipleQuestions.bind(this);
       this.openMultipleQuestionsModal = this.openMultipleQuestionsModal.bind(this);
+      this.openKeyRegenerationModal = this.openKeyRegenerationModal.bind(this);
       this.hideMultipleQuestionsModal = this.hideMultipleQuestionsModal.bind(this);
+      this.hideKeyRegenerationModal = this.hideKeyRegenerationModal.bind(this);
       this.deleteQuestion = this.deleteQuestion.bind(this);
       this.setIds = this.setIds.bind(this);
       this.import = this.import.bind(this);
@@ -63,6 +67,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       this.hideDeletionPrompt = this.hideDeletionPrompt.bind(this);
       this.onUniqueNameChange = this.onUniqueNameChange.bind(this);
       this.onPublishedChange = this.onPublishedChange.bind(this);
+      this.regenerateKeys = this.regenerateKeys.bind(this);
   }
 
   export () {
@@ -132,7 +137,11 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       return true;
     }
 
-    if (this.state.addingMultipleQuestions != nextState.addingMultipleQuestions){
+    if (this.state.addingMultipleQuestions != nextState.addingMultipleQuestions) {
+      return true;
+    }
+
+    if (this.state.regeneratingKeys != nextState.regeneratingKeys) {
       return true;
     }
 
@@ -337,12 +346,26 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     this.setState({certification: update});
   }
 
+  regenerateKeys(prefix: string) {
+    let questions = this.state.certification.questions.map((q, index) => {return {...q, key: `${prefix}${index + 1}`}});
+
+    this.setState({certification: {...this.state.certification, questions: questions}});
+  }
+
   openMultipleQuestionsModal(){
     this.setState({addingMultipleQuestions: true});
   }
 
+  openKeyRegenerationModal(){
+    this.setState({regeneratingKeys: true});
+  }
+
   hideMultipleQuestionsModal() {
     this.setState({addingMultipleQuestions: false});
+  }
+
+  hideKeyRegenerationModal(){
+    this.setState({regeneratingKeys: false});
   }
 
   import(){
@@ -389,6 +412,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
                 <SideNav redirectComponent="certificationManagement" showUnpublished={true} />
                 {this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={"Are you sure you want to delete " + this.state.certification.name + "?"} key="DeletionPromptModal" yesCallBack={this.delete} finally={this.hideDeletionPrompt} />}
                 {this.state.addingMultipleQuestions && <TextInputModal title="Add multiple Questions" text={"How many questions do you want to add?"} key="AddMultipleQuestionsModal" yesCallBack={this.addMultipleQuestions} finally={this.hideMultipleQuestionsModal} />}
+                {this.state.regeneratingKeys && <TextInputModal title="Regenerate question keys" text={"Please select a prefix for the index, i.e. 'NO. ' will give 'NO. 1' and so on."} key="RegenerateKeysModal" yesCallBack={this.regenerateKeys} finally={this.hideKeyRegenerationModal} />}
                 {this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={this.loadImportedFile} />}
                 <div className="col-xs-10 pull-right">
                   <ButtonToolbar>
@@ -400,6 +424,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
                       {this.state.certification && <Button bsStyle="default" onClick={this.export}>Export</Button>}
                       {this.state.certification && <Button bsStyle="default" onClick={this.addQuestion}>Add Question</Button>}
                       {this.state.certification && <Button bsStyle="default" onClick={this.openMultipleQuestionsModal}>Add Multiple Questions</Button>}
+                      {this.state.certification && <Button bsStyle="default" onClick={this.openKeyRegenerationModal}>Regenerate Keys</Button>}
                       {this.state.certification && <Button bsStyle="default" onClick={this.save}>Save</Button>}
                       {this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={this.verifyAndDelete}>Delete</Button>}
                     </ButtonGroup>

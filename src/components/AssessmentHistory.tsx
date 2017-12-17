@@ -35,7 +35,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
     let courseName = props.match.params.courseName;
 
     if (!courseName) {
-      return Promise.resolve();
+      return Promise.resolve({} as Certification);
     }
 
     return fetch("/courses/" + courseName, {
@@ -45,11 +45,11 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
         return results.json();
       })
       .then(data => {
-        this.setState({certification: data as Certification});
+        return data as Certification;
       });
   }
 
-  loadSessionCollection (props: IBaseProps){
+  loadSessionCollection (props: IBaseProps, certification: Certification){
     let courseName = props.match.params.courseName;
 
     if (!courseName) {
@@ -63,15 +63,22 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
         return results.json();
       })
       .then((sessions: Array<AssessmentSession>) => {
-        this.setState({previousSessions: sessions});
+        this.setState({
+          certification: certification,
+          previousSessions: sessions
+        });
       });
   }
 
-  componentDidMount(){
-    this.loadCertification(this.props)
-    .then(() => {
-      this.loadSessionCollection(this.props);
+  loadHandler(props: IBaseProps) {
+    this.loadCertification(props)
+    .then(certification => {
+      this.loadSessionCollection(props, certification);
     });
+  }
+
+  componentDidMount(){
+    this.loadHandler(this.props);
   }
 
   reset () {
@@ -83,7 +90,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
       this.reset();
     }
 
-    this.loadSessionCollection(props);
+    this.loadHandler(props);
   }
 
   render(){
@@ -97,7 +104,14 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
       sortable.push(item);
     }
 
-    sortable.sort((a, b) => (a[1] as number) - (b[1] as number));
+    sortable = sortable.filter(arr => this.state.certification.questions && this.state.certification.questions.some(q => q.id === arr[0]));
+    sortable = sortable.map(arr => {
+      let question = this.state.certification.questions.find(q => q.id === arr[0]);
+
+      return [question.key, arr[1], question.position]
+    });
+
+    sortable = sortable.sort((a, b) => (a[2] as number) - (b[2] as number));
 
     if (this.props.match.params.courseName) {
       content = (

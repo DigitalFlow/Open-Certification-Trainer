@@ -67,7 +67,7 @@ let retrieveCourse = (courseName: string) => {
       for (let i = 0; dbQuestions && i < dbQuestions.length; i++){
         let dbQuestion = dbQuestions[i];
 
-        let question = new Question({id: dbQuestion.id, key: dbQuestion.key, text: new Text({value: dbQuestion.text}), answers: []});
+        let question = new Question({id: dbQuestion.id, key: dbQuestion.key, text: new Text({value: dbQuestion.text}), position: dbQuestion.position, answers: []});
 
         questions.push(
           pool.query("SELECT * from open_certification_trainer.answer AS answer WHERE answer.question_id = $1 ORDER BY answer.key", [question.id])

@@ -154,7 +154,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         return results.json();
       })
       .then(data => {
-        this.setState({certification: data as Certification, session: this.getDefaultState().session, activeQuestion: -1});
+        this.setState({certification: data as Certification, session: this.getDefaultState().session, activeQuestion: -1, selectedQuestions: {}});
       });
   }
 

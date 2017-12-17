@@ -108,7 +108,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
     sortable = sortable.map(arr => {
       let question = this.state.certification.questions.find(q => q.id === arr[0]);
 
-      return [question.key, arr[1], question.position]
+      return [question.key || question.id, arr[1], question.position]
     });
 
     sortable = sortable.sort((a, b) => (a[2] as number) - (b[2] as number));
@@ -163,6 +163,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
                 }]
               }}
               options={{
+
                 responsive: true,
                 scales: {
                   yAxes: [{

@@ -71,8 +71,8 @@ export default class SessionRecap extends React.PureComponent<SessionRecapProps,
               datasets: [{
                 label: `Session Score`,
                 borderWidth: 1,
-                backgroundColor: ['#008000', '#FF6384'],
-                hoverBackgroundColor: ['#008000', '#FF6384'],
+                backgroundColor: ['#008000', '#FF0000'],
+                hoverBackgroundColor: ['#008000', '#FF0000'],
                 data: [correctAnswerCount, incorrectAnswerCount]
               }]
             }}

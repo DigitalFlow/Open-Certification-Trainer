@@ -9,6 +9,14 @@ This website is able to host courses with questions and their corresponding answ
 You can view them and take assessments, where your knowledge is checked.
 More and more functions will be coming as the project progresses.
 
+## Features
+- Certification Management (Create, Edit)
+- User Management
+- Post (News) Management
+- Learn using overview modes
+- Train using assessment mode
+- Find your weaknesses using session history and charts
+
 ## Using
 You'll need to have [NodeJS](https://nodejs.org/en/) and [PostgreSQL](https://www.postgresql.org/) installed.
 Restore the database schema using the databaseSchema.sql file in the project root while following the instructions in there.
@@ -45,9 +53,6 @@ Select a certification / course and take a look at the questions contained inclu
 ![assessment](https://user-images.githubusercontent.com/4287938/32636137-beeb639e-c5b3-11e7-8cce-c28e3ffcb423.png)
 
 Take an assessment for a certification / course. You will have to answer all questions contained in the course. Once you're done, the course will be regarded as passed, if you answered 70% or more of the questions correctly.
-
-## Planned features
-- User Accounts
 
 ## License
 Licensed using the MIT license, happy learning!

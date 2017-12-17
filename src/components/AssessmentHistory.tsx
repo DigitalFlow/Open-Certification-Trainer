@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Well, Panel } from "react-bootstrap";
 import AssessmentSession from "../model/AssessmentSession";
+import Certification from "../model/Certification";
 import { calculateScore, calculateScorePerQuestion } from "../domain/AssessmentLogic";
 import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
@@ -8,12 +9,14 @@ import SessionRecap from "./SessionRecap";
 import { Line, Bar } from "react-chartjs-2";
 
 interface AssessmentHistoryState {
+  certification: Certification;
   previousSessions: Array<AssessmentSession>;
 }
 
-export default class AssessmentHistory extends React.Component<IBaseProps, AssessmentHistoryState> {
+export default class AssessmentHistory extends React.PureComponent<IBaseProps, AssessmentHistoryState> {
   getDefaultState = () => {
     return {
+      certification: null,
       previousSessions: [],
     } as AssessmentHistoryState;
   }
@@ -24,7 +27,26 @@ export default class AssessmentHistory extends React.Component<IBaseProps, Asses
       this.state = this.getDefaultState();
 
       this.loadSessionCollection = this.loadSessionCollection.bind(this);
+      this.loadCertification = this.loadCertification.bind(this);
       this.reset = this.reset.bind(this);
+  }
+
+  loadCertification(props: IBaseProps){
+    let courseName = props.match.params.courseName;
+
+    if (!courseName) {
+      return Promise.resolve();
+    }
+
+    return fetch("/courses/" + courseName, {
+      credentials: 'include'
+    })
+      .then(results => {
+        return results.json();
+      })
+      .then(data => {
+        this.setState({certification: data as Certification});
+      });
   }
 
   loadSessionCollection (props: IBaseProps){
@@ -46,7 +68,10 @@ export default class AssessmentHistory extends React.Component<IBaseProps, Asses
   }
 
   componentDidMount(){
-    this.loadSessionCollection(this.props);
+    this.loadCertification(this.props)
+    .then(() => {
+      this.loadSessionCollection(this.props);
+    });
   }
 
   reset () {
@@ -64,6 +89,15 @@ export default class AssessmentHistory extends React.Component<IBaseProps, Asses
   render(){
     let content = (<div>Please select a course from the sidenav</div>);
     let questionRatio = calculateScorePerQuestion(this.state.previousSessions);
+
+    let sortable = new Array<Array<string | number>>();
+
+    for (let questionId in questionRatio) {
+      let item = [questionId, questionRatio[questionId]];
+      sortable.push(item);
+    }
+
+    sortable.sort((a, b) => (a[1] as number) - (b[1] as number));
 
     if (this.props.match.params.courseName) {
       content = (
@@ -103,7 +137,7 @@ export default class AssessmentHistory extends React.Component<IBaseProps, Asses
             <h2>Question Scores</h2>
             <Bar height={75}
               data={{
-                labels: Object.keys(questionRatio),
+                labels: sortable.map(s => s[0] as string),
                 datasets: [{
                   label: 'Score per question',
                   backgroundColor: 'rgba(255,99,132,0.2)',
@@ -111,7 +145,7 @@ export default class AssessmentHistory extends React.Component<IBaseProps, Asses
                   borderWidth: 1,
                   hoverBackgroundColor: 'rgba(255,99,132,0.4)',
                   hoverBorderColor: 'rgba(255,99,132,1)',
-                  data: Object.keys(questionRatio).map(k => questionRatio[k])
+                  data: sortable.map(s => s[1] as number)
                 }]
               }}
               options={{

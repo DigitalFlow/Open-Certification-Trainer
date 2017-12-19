@@ -19,21 +19,21 @@ export default class QuestionSelection extends React.PureComponent<QuestionSelec
   }
 
   onChange(e: any) {
-    let checked = e.target.checked;
-    let update = {} as IAssociativeArray<boolean>;
+    const checked = e.target.checked;
+    const update = {} as IAssociativeArray<boolean>;
 
     update[this.props.question.id] = checked;
 
     this.props.onSelectionChange(update);
   }
 
-  render(){
+  render() {
       return (
         <InputGroup>
           <InputGroup.Addon>
-            <input type="checkbox" key={this.props.question.id + "_aC"} checked={this.props.isSelected} onChange={this.onChange} />
+            <input type="checkbox" key={ this.props.question.id + "_aC"} checked={ this.props.isSelected } onChange={ this.onChange } />
           </InputGroup.Addon>
-          <FormControl key={this.props.question.id + "_aT"} disabled type="text" value={this.props.question.text ? `${this.props.question.key}: ${this.props.question.text.value}` : ""} />
+          <FormControl key={ this.props.question.id + "_aT"} disabled type="text" value={ this.props.question.text ? `${ this.props.question.key }: ${ this.props.question.text.value }` : ""} />
         </InputGroup>
       );
   }

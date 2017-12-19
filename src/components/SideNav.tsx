@@ -19,34 +19,34 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
         super(props);
 
         this.state = {
-          courseList: new CourseList({courses: []})
-        }
+          courseList: new CourseList({ courses: []})
+        };
     }
 
-    componentDidMount(){
-      fetch(`/courses${this.props.showUnpublished ? "?showAll=true" : "/"}`, {
-        credentials: 'include'
+    componentDidMount() {
+      fetch(`/courses${ this.props.showUnpublished ? "?showAll=true" : "/"}`, {
+        credentials: "include"
       })
         .then(results => {
           return results.json();
         })
         .then(data => {
-          this.setState({courseList: data as CourseList});
+          this.setState({ courseList: data as CourseList });
         });
     }
 
-    render(){
+    render() {
         return (
           <Nav key="sidenav" bsStyle="pills" className="col-xs-2" stacked activeKey={1}>
-            <IndexLinkContainer key="topNav" to={"/" + this.props.redirectComponent}>
+            <IndexLinkContainer key="topNav" to={"/" + this.props.redirectComponent }>
               <NavItem key="courses">Courses</NavItem>
             </IndexLinkContainer>
-            {this.state.courseList.courses ? this.state.courseList.courses.map(c => {
-              let link = "/" + this.props.redirectComponent + "/" + c;
+            { this.state.courseList.courses ? this.state.courseList.courses.map(c => {
+              const link = "/" + this.props.redirectComponent + "/" + c;
 
               return (
-                <IndexLinkContainer key={link} to={link}>
-                  <NavItem key={link + "_navitem"}>{c}</NavItem>
+                <IndexLinkContainer key={ link } to={ link }>
+                  <NavItem key={ link + "_navitem"}>{ c }</NavItem>
                 </IndexLinkContainer>
               );
             }) : "" }

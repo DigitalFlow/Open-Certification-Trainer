@@ -10,12 +10,12 @@ export interface SignUpProps {
 }
 
 interface SignUpState {
-    userName: string,
-    firstName: string,
-    lastName: string,
-    password: string,
-    repeatPassword: string,
-    email: string,
+    userName: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    repeatPassword: string;
+    email: string;
     errors: Array<string>;
     message: string;
 }
@@ -27,15 +27,15 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
         super(props);
 
         this.state = {
-          userName: "",
-          firstName: "",
-          lastName: "",
-          password: "",
-          repeatPassword: "",
-          email: "",
-          errors: [],
-          message: ""
-        }
+            userName: "",
+            firstName: "",
+            lastName: "",
+            password: "",
+            repeatPassword: "",
+            email: "",
+            errors: [],
+            message: ""
+        };
 
         this.setUsername = this.setUsername.bind(this);
         this.setFirstName = this.setFirstName.bind(this);
@@ -46,36 +46,36 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
         this.signUp = this.signUp.bind(this);
     }
 
-    setUsername(e: any){
-        this.setState({userName: e.target.value})
+    setUsername(e: any) {
+        this.setState({ userName: e.target.value });
     }
 
-    setFirstName(e: any){
-        this.setState({firstName: e.target.value})
+    setFirstName(e: any) {
+        this.setState({ firstName: e.target.value });
     }
 
-    setLastName(e: any){
-        this.setState({lastName: e.target.value})
+    setLastName(e: any) {
+        this.setState({ lastName: e.target.value });
     }
 
-    setPassword(e: any){
-      this.setState({password: e.target.value})
+    setPassword(e: any) {
+      this.setState({ password: e.target.value });
     }
 
-    repeatPassword(e: any){
-      this.setState({repeatPassword: e.target.value})
+    repeatPassword(e: any) {
+      this.setState({ repeatPassword: e.target.value });
     }
 
-    setEmail(e: any){
-      this.setState({email: e.target.value})
+    setEmail(e: any) {
+      this.setState({ email: e.target.value });
     }
 
-    signUp(){
-      if (this.state.password !== this.state.repeatPassword){
-        return this.setState({errors: ["Password and repeat passwords don't match, please enter them again."]})
+    signUp() {
+      if (this.state.password !== this.state.repeatPassword) {
+        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."]});
       }
 
-      let headers = new Headers();
+      const headers = new Headers();
       headers.set("Content-Type", "application/json");
 
       fetch("/signUp",
@@ -89,7 +89,7 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
           password: this.state.password,
           email: this.state.email
         })),
-        credentials: 'include'
+        credentials: "include"
       })
       .then(results => {
         return results.json();
@@ -109,44 +109,44 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
       });
     }
 
-    render(){
+    render() {
         return (
           <Well>
-            <MessageBar message= {this.state.message} errors={this.state.errors} />
+            <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <Jumbotron>
               <h1>SignUp</h1>
-                <form action="javascript:void(0);">
+                <form action="javascript: void(0);">
                   <FieldGroup
                     id="firstNameText"
-                    control={{type: "text", placeholder:"Enter first name", onChange: this.setFirstName}}
+                    control={{ type: "text", placeholder: "Enter first name", onChange: this.setFirstName }}
                     label="First Name"
                   />
                   <FieldGroup
                     id="lastNameText"
-                    control={{type: "text", placeholder:"Enter last name", onChange: this.setLastName}}
+                    control={{ type: "text", placeholder: "Enter last name", onChange: this.setLastName }}
                     label="Last Name"
                   />
                   <FieldGroup
                     id="userNameText"
-                    control={{type: "text", placeholder:"Enter username", onChange: this.setUsername}}
+                    control={{ type: "text", placeholder: "Enter username", onChange: this.setUsername }}
                     label="Username"
                   />
                   <FieldGroup
                     id="formControlsEmail"
-                    control={{type: "text", placeholder:"Enter email", onChange: this.setEmail}}
+                    control={{ type: "text", placeholder: "Enter email", onChange: this.setEmail }}
                     label="E-Mail"
                   />
                   <FieldGroup
                     id="formControlsPassword"
-                    control={{type: "password", placeholder:"Enter password", onChange: this.setPassword}}
+                    control={{ type: "password", placeholder: "Enter password", onChange: this.setPassword }}
                     label="Password"
                   />
                   <FieldGroup
                     id="formControlsRepeatPassword"
-                    control={{type: "password", placeholder:"Repeat password", onChange: this.repeatPassword}}
+                    control={{ type: "password", placeholder: "Repeat password", onChange: this.repeatPassword }}
                     label="Repeat Password"
                   />
-                  <Button onClick={this.signUp} type="submit">
+                  <Button onClick={ this.signUp } type="submit">
                     Submit
                   </Button>
                 </form>

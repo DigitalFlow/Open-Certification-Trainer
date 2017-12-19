@@ -17,34 +17,33 @@ export default class UserPromptModal extends React.PureComponent<UserPromptModal
     this.callIfDefined = this.callIfDefined.bind(this);
   }
 
-  callIfDefined(callBack: () => void){
-    if (callBack){
+  callIfDefined(callBack: () => void) {
+    if (callBack) {
       callBack();
     }
   }
 
-  triggerCallback(choice: boolean){
-    if (choice){
+  triggerCallback(choice: boolean) {
+    if (choice) {
       this.callIfDefined(this.props.yesCallBack);
     }
-    else
-    {
+    else {
       this.callIfDefined(this.props.noCallBack);
     }
 
     this.callIfDefined(this.props.finally);
   }
 
-  render(){
+  render() {
     return (
       <div className="static-modal">
         <Modal.Dialog>
           <Modal.Header>
-            <Modal.Title>{this.props.title}</Modal.Title>
+            <Modal.Title>{ this.props.title }</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
-            <p>{this.props.text}</p>
+            <p>{ this.props.text }</p>
           </Modal.Body>
 
           <Modal.Footer>

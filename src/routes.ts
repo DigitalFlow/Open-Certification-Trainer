@@ -12,61 +12,61 @@ import SignUp from "./components/SignUp";
 import PostEditView from "./components/PostEditView";
 
 const routes = new Array<RouteConfig>(
-	{
-		path: "/",
-		exact: true,
-		component: WelcomePage
-	},
-  {
-		path: "/index",
-		exact: true,
-		component: WelcomePage
-	},
-	{
-		path: "/login",
-		exact: true,
-		component: Login
-	},
-	{
-		path: "/logout",
-		exact: true,
-		component: Logout
-	},
-	{
-		path: "/profile/:userId?",
-		exact: true,
-		component: Profile
-	},
-	{
-		path: "/signUp",
-		exact: true,
-		component: SignUp
-	},
-	{
-		path: "/assessment/:courseName?",
-		component: Assessment
-	},
-	{
-		path: "/assessmentHistory/:courseName?",
-		component: AssessmentHistory
-	},
-	{
-		path: "/certificationManagement/:courseName?",
-		component: CertificationManagement
-	},
-	{
-		path: "/certificationOverview/:courseName?",
-		component: CertificationOverview
-	},
-	{
-		path: "/portalManagement",
-		component: PortalManagement
-	},
-	{
-		path: "/post/:postId",
-		exact: true,
-		component: PostEditView
-	},
+    {
+        path: "/",
+        exact: true,
+        component: WelcomePage
+    },
+    {
+        path: "/index",
+        exact: true,
+        component: WelcomePage
+    },
+    {
+        path: "/login",
+        exact: true,
+        component: Login
+    },
+    {
+        path: "/logout",
+        exact: true,
+        component: Logout
+    },
+    {
+        path: "/profile/:userId?",
+        exact: true,
+        component: Profile
+    },
+    {
+        path: "/signUp",
+        exact: true,
+        component: SignUp
+    },
+    {
+        path: "/assessment/:courseName?",
+        component: Assessment
+    },
+    {
+        path: "/assessmentHistory/:courseName?",
+        component: AssessmentHistory
+    },
+    {
+        path: "/certificationManagement/:courseName?",
+        component: CertificationManagement
+    },
+    {
+        path: "/certificationOverview/:courseName?",
+        component: CertificationOverview
+    },
+    {
+        path: "/portalManagement",
+        component: PortalManagement
+    },
+    {
+        path: "/post/:postId",
+        exact: true,
+        component: PostEditView
+    }
 );
 
-export default routes
+export default routes;

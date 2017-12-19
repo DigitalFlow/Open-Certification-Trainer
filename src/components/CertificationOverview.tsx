@@ -12,11 +12,11 @@ interface CertificationOverviewState {
 export default class CertificationOverview extends React.Component<IBaseProps, CertificationOverviewState> {
   getDefaultState = () => {
     return {
-      certification: null
+      certification: undefined
     } as CertificationOverviewState;
   }
 
-  constructor(props: IBaseProps){
+  constructor(props: IBaseProps) {
       super(props);
 
       this.state = this.getDefaultState();
@@ -25,8 +25,8 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
       this.reset = this.reset.bind(this);
   }
 
-  shouldComponentUpdate(nextProps: IBaseProps, nextState: CertificationOverviewState){
-    if (this.props.location.pathname != nextProps.location.pathname){
+  shouldComponentUpdate(nextProps: IBaseProps, nextState: CertificationOverviewState) {
+    if (this.props.location.pathname != nextProps.location.pathname) {
       return true;
     }
 
@@ -37,50 +37,50 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
     return false;
   }
 
-  loadCourses(props: IBaseProps){
-    let courseName = props.match.params.courseName;
+  loadCourses(props: IBaseProps) {
+    const courseName = props.match.params.courseName;
 
     if (!courseName) {
       return;
     }
 
     fetch("/courses/" + courseName, {
-      credentials: 'include'
+      credentials: "include"
     })
       .then(results => {
         return results.json();
       })
       .then(data => {
-        this.setState({certification: data as Certification});
+        this.setState({ certification: data as Certification });
       });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.loadCourses(this.props);
   }
 
-  componentWillReceiveProps(props: IBaseProps){
-    if (this.props.location.pathname != props.location.pathname){
+  componentWillReceiveProps(props: IBaseProps) {
+    if (this.props.location.pathname != props.location.pathname) {
       this.reset();
     }
 
     this.loadCourses(props);
   }
 
-  reset(){
+  reset() {
     this.setState(this.getDefaultState());
   }
 
-  render(){
+  render() {
       let content = (<div>Please select a course from the sidenav</div>);
 
-      if (this.state.certification){
+      if (this.state.certification) {
         content = (
           <div>
-          <p style={{"text-align": "right"}}>Version {this.state.certification.version}</p>
-            <h1>{this.state.certification.name}</h1>
-            {this.state.certification.questions ? (this.state.certification.questions.map(q =>
-              (<QuestionView question={q} key={q.id} highlightCorrectAnswers={true} highlightIncorrectAnswers={false} answersDisabled={true} />)
+          <p style={{"text-align": "right"}}>Version { this.state.certification.version }</p>
+            <h1>{ this.state.certification.name }</h1>
+            { this.state.certification.questions ? (this.state.certification.questions.map(q =>
+              (<QuestionView question={ q } key={ q.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ false } answersDisabled={ true } />)
             )) : <span>No questions found</span>}
           </div>);
       }
@@ -88,7 +88,7 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
       return (<div>
               <SideNav redirectComponent="certificationOverview" />
               <Well className="col-xs-10 pull-right">
-                {content}
+                { content }
               </Well>
           </div>);
   }

@@ -39,7 +39,7 @@ pool.query("set schema 'open_certification_trainer'")
   });
 
 // Connect to MySql
-process.on('SIGINT', function() {
+process.on("SIGINT", function() {
   console.log("Closing database connection");
 
   pool.end()
@@ -74,8 +74,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, "..", "dist")));
 
 /**
-* Primary app routes.
-*/
+ * Primary app routes.
+ */
 app.post("/login", userController.postLogin);
 app.post("/logout", userController.postLogout);
 app.get("/retrieveProfile/:userId", IsAdmin, userController.getProfile);
@@ -108,16 +108,16 @@ app.get("*", homeController.getAll);
 const PORT = process.env.PORT || 8080;
 
 let appHost = app;
-let host = process.env.CERT_TRAINER_VHOST || "localhost";
+const host = process.env.CERT_TRAINER_VHOST || "localhost";
 
-if(process.env.CERT_TRAINER_VHOST){
+if (process.env.CERT_TRAINER_VHOST) {
   appHost = express();
   appHost.use(vhost(process.env.CERT_TRAINER_VHOST, app)); // Serves top level domain via Main server app
 }
 
 let server;
 
-if (process.env.CERT_TRAINER_HTTPS){
+if (process.env.CERT_TRAINER_HTTPS) {
   const options = {
     cert: fs.readFileSync(process.env.CERT_TRAINER_CERT),
     key: fs.readFileSync(process.env.CERT_TRAINER_KEY)

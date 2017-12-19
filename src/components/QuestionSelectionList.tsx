@@ -47,34 +47,34 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
     this.setFilterValue = this.setFilterValue.bind(this);
   }
 
-  selectNone(e: any){
+  selectNone(e: any) {
     this.props.onSelectionChange(this.props.questions.reduce((acc, val) => { acc[val.id] = false; return acc; }, {} as IAssociativeArray<boolean>));
     this.hideByQuestionScoreFilter();
   }
 
-  selectAll(e: any){
+  selectAll(e: any) {
     this.props.onSelectionChange(this.props.questions.reduce((acc, val) => { acc[val.id] = true; return acc; }, {} as IAssociativeArray<boolean>));
     this.hideByQuestionScoreFilter();
   }
 
-  selectAnsweredIncorrectlyLastTime(e: any){
+  selectAnsweredIncorrectlyLastTime(e: any) {
     if (!e.target.checked) {
       return;
     }
 
     // Sorted by created on descending in SQL query
-    let lastSession = this.props.previousSessions[0];
-    let incorrectLastTime = lastSession.certification.questions.filter(q => !checkIfAnsweredCorrectly(q.answers, lastSession.answers[q.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>)));
+    const lastSession = this.props.previousSessions[0];
+    const incorrectLastTime = lastSession.certification.questions.filter(q => !checkIfAnsweredCorrectly(q.answers, lastSession.answers[q.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>)));
 
     this.props.onSelectionChange(this.props.questions.reduce((acc, val) => { acc[val.id] = incorrectLastTime.some(q => q.id === val.id); return acc; }, {} as IAssociativeArray<boolean>));
     this.hideByQuestionScoreFilter();
   }
 
-  selectByQuestionScore(e: any){
-    let ratios = calculateScorePerQuestion(this.props.previousSessions);
+  selectByQuestionScore(e: any) {
+    const ratios = calculateScorePerQuestion(this.props.previousSessions);
 
     // Sorted by created on descending in SQL query
-    let filteredRatios = Object.keys(ratios).filter(key => this.state.filterType === FilterType.LessEqual ? ratios[key] <= this.state.filterValue : ratios[key] >= this.state.filterValue );
+    const filteredRatios = Object.keys(ratios).filter(key => this.state.filterType === FilterType.LessEqual ? ratios[key] <= this.state.filterValue : ratios[key] >= this.state.filterValue );
     this.props.onSelectionChange(this.props.questions.reduce((acc, val) => { acc[val.id] = filteredRatios.some(q => q === val.id); return acc; }, {} as IAssociativeArray<boolean>));
   }
 
@@ -112,35 +112,35 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
     });
   }
 
-  render(){
+  render() {
     return (
       <div>
         <p>Please select the questions you want to train during this assessment</p>
 
         <ButtonToolbar style={{"padding-bottom": "20px"}}>
           <ToggleButtonGroup type="radio" name="options" defaultValue={1}>
-            <ToggleButton onClick={this.selectNone} value={1}>None</ToggleButton>
-            <ToggleButton onClick={this.selectAll} value={2}>All</ToggleButton>
-            <ToggleButton disabled={!this.props.previousSessions || !this.props.previousSessions.length} onClick={this.selectAnsweredIncorrectlyLastTime} value={3}>Answered Incorrectly Last Time</ToggleButton>
-            <ToggleButton disabled={!this.props.previousSessions || !this.props.previousSessions.length} onClick={this.showByQuestionScoreFilter} value={4}>Filter by Question Score</ToggleButton>
+            <ToggleButton onClick={ this.selectNone } value={1}>None</ToggleButton>
+            <ToggleButton onClick={ this.selectAll } value={2}>All</ToggleButton>
+            <ToggleButton disabled={!this.props.previousSessions || !this.props.previousSessions.length } onClick={ this.selectAnsweredIncorrectlyLastTime } value={3}>Answered Incorrectly Last Time</ToggleButton>
+            <ToggleButton disabled={!this.props.previousSessions || !this.props.previousSessions.length } onClick={ this.showByQuestionScoreFilter } value={4}>Filter by Question Score</ToggleButton>
           </ToggleButtonGroup>
         </ButtonToolbar>
 
-        {this.state.selectionByQuestionScoreEnabled &&
+        { this.state.selectionByQuestionScoreEnabled &&
           <div style={{"padding-bottom": "20px"}}>
             <InputGroup style={{"padding-bottom": "10px"}}>
-              <DropdownButton defaultValue="1" componentClass={InputGroup.Button} id="input-dropdown" title={this.state.filterType === FilterType.LessEqual ? "Less Equal" : "Greater Equal"}>
-                <MenuItem onClick={this.setFilterToLessEqual} key="1">Less Equal</MenuItem>
-                <MenuItem onClick={this.setFilterToGreaterEqual} key="2">Greater Equal</MenuItem>
+              <DropdownButton defaultValue="1" componentClass={ InputGroup.Button } id="input-dropdown" title={ this.state.filterType === FilterType.LessEqual ? "Less Equal" : "Greater Equal"}>
+                <MenuItem onClick={ this.setFilterToLessEqual } key="1">Less Equal</MenuItem>
+                <MenuItem onClick={ this.setFilterToGreaterEqual } key="2">Greater Equal</MenuItem>
               </DropdownButton>
-              <FormControl type="number" value={this.state.filterValue} onChange={this.setFilterValue} />
+              <FormControl type="number" value={ this.state.filterValue } onChange={ this.setFilterValue } />
             </InputGroup>
-            <Button onClick={this.selectByQuestionScore}>Apply</Button>
+            <Button onClick={ this.selectByQuestionScore }>Apply</Button>
           </div>
         }
 
         {
-          this.props.questions.map(q => <QuestionSelection key={q.id} question={q} isSelected={this.props.selectedQuestions[q.id]} onSelectionChange={this.props.onSelectionChange} />)
+          this.props.questions.map(q => <QuestionSelection key={ q.id } question={ q } isSelected={ this.props.selectedQuestions[q.id]} onSelectionChange={ this.props.onSelectionChange } />)
         }
       </div>
     );

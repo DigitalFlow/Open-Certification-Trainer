@@ -23,16 +23,16 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
     }
 
     onChange (e: any) {
-      let checked = e.target.checked;
+      const checked = e.target.checked;
 
-      if (this.props.onAnswerChange){
-        this.props.onAnswerChange({...this.props.answer, isCorrect: checked});
+      if (this.props.onAnswerChange) {
+        this.props.onAnswerChange({...this.props.answer, isCorrect: checked });
       }
 
-      this.setState({checked: checked});
+      this.setState({ checked: checked });
     }
 
-    render(){
+    render() {
         let color = "";
 
         if (this.props.highlightIfCorrect && this.props.answer.isCorrect) {
@@ -42,13 +42,13 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
           color = "red";
         }
 
-        let style = {
+        const style = {
           "color": color,
           "fontWeight": (this.props.answer.isCorrect && this.props.highlightIfCorrect ? "bold" : "normal") as React.CSSWideKeyword
         };
 
         return (
-            <Checkbox disabled={this.props.disabled} key={this.props.answer.id + "_cb"} checked={this.props.checked} onChange={this.onChange}><span style={style}>{this.props.answer.text.value}</span></Checkbox>
+            <Checkbox disabled={ this.props.disabled } key={ this.props.answer.id + "_cb"} checked={ this.props.checked } onChange={ this.onChange }><span style={ style }>{ this.props.answer.text.value }</span></Checkbox>
         );
     }
 }

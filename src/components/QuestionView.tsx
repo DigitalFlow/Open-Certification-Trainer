@@ -26,27 +26,25 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
 
         this.state = {
           isCorrect: false
-        }
+        };
     }
 
-    render(){
-        let content = null;
-
-        content =
-            <div style={{whiteSpace: "pre-wrap"}}>
-                <h3>{this.props.question.key}</h3>
-                <p>{this.props.question.text.value}</p>
+    render() {
+        const content =
+            <div style={{ whiteSpace: "pre-wrap"}}>
+                <h3>{ this.props.question.key }</h3>
+                <p>{ this.props.question.text.value }</p>
                 <ButtonGroup vertical block>
-                  {this.props.question.answers ? (this.props.question.answers.map(a => (
-                    <AnswerView onAnswerChange={this.props.onAnswerChange} disabled={this.props.answersDisabled} checked={this.props.checkedAnswers ? (this.props.checkedAnswers[a.id] || false) : false} answer={a} key={a.id} highlightIfCorrect={this.props.highlightCorrectAnswers} highlightIfIncorrect={this.props.highlightIncorrectAnswers} />
+                  { this.props.question.answers ? (this.props.question.answers.map(a => (
+                    <AnswerView onAnswerChange={ this.props.onAnswerChange } disabled={ this.props.answersDisabled } checked={ this.props.checkedAnswers ? (this.props.checkedAnswers[a.id] || false) : false } answer={ a } key={ a.id } highlightIfCorrect={ this.props.highlightCorrectAnswers } highlightIfIncorrect={ this.props.highlightIncorrectAnswers } />
                   ))) : <span>No answers found</span>}
                 </ButtonGroup>
             </div>;
 
         return (
-        <div key={this.props.question.key}>
+        <div key={ this.props.question.key }>
             <Panel>
-                {content}
+                { content }
             </Panel>
         </div>);
     }

@@ -26,43 +26,42 @@ export default class TextInputModal extends React.PureComponent<TextInputModalPr
     this.setValue = this.setValue.bind(this);
   }
 
-  callIfDefined(callBack: (value?: string) => void, value?: string){
-    if (callBack){
+  callIfDefined(callBack: (value?: string) => void, value?: string) {
+    if (callBack) {
       callBack(value);
     }
   }
 
-  setValue (e: any){
-    let text = e.target.value;
+  setValue (e: any) {
+    const text = e.target.value;
 
     this.setState({
       value: text
     });
   }
 
-  triggerCallback(choice: boolean){
-    if (choice){
+  triggerCallback(choice: boolean) {
+    if (choice) {
       this.callIfDefined(this.props.yesCallBack, this.state.value);
     }
-    else
-    {
+    else {
       this.callIfDefined(this.props.noCallBack);
     }
 
     this.callIfDefined(this.props.finally);
   }
 
-  render(){
+  render() {
     return (
       <div className="static-modal">
         <Modal.Dialog>
           <Modal.Header>
-            <Modal.Title>{this.props.title}</Modal.Title>
+            <Modal.Title>{ this.props.title }</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
-            <p>{this.props.text}</p>
-            <input type="text" value={this.state.value} onChange={this.setValue}/>
+            <p>{ this.props.text }</p>
+            <input type="text" value={ this.state.value } onChange={ this.setValue }/>
           </Modal.Body>
 
           <Modal.Footer>

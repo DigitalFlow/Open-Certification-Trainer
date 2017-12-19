@@ -1,7 +1,7 @@
 export class Context {
   props: any;
 
-  constructor(){
+  constructor() {
     this.props = {};
   }
 
@@ -12,7 +12,7 @@ export class Context {
   getProperty = <T>(name: string) => {
     return this.props[name] as T;
   }
-};
+}
 
-let context = new Context();
+const context = new Context();
 export default context;

@@ -29,7 +29,7 @@ interface CertificationManagementState {
 export default class CertificationManagement extends React.Component<IBaseProps, CertificationManagementState> {
   getDefaultState = () => {
     return {
-      certification: null,
+      certification: undefined,
       activeQuestion: 0,
       errors: [],
       message: "",
@@ -40,7 +40,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     } as CertificationManagementState;
   }
 
-  constructor(props: IBaseProps){
+  constructor(props: IBaseProps) {
       super(props);
 
       this.state = this.getDefaultState();
@@ -71,49 +71,49 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   }
 
   export () {
-    window.open("/certificationApi/" + this.state.certification.uniqueName, "about:blank");
+    window.open("/certificationApi/" + this.state.certification.uniqueName, "about: blank");
   }
 
   delete () {
-    let headers = new Headers();
+    const headers = new Headers();
     headers.set("Content-Type", "application/json");
 
     fetch("/certificationApi/" + this.state.certification.uniqueName,
     {
       method: "DELETE",
       headers: headers,
-      credentials: 'include'
+      credentials: "include"
     })
     .then(results => {
       return results.json();
     })
     .then((data: ValidationResult) => {
-      if (data.success){
-        this.setState({message: data.message, errors: []});
+      if (data.success) {
+        this.setState({ message: data.message, errors: [] });
       }
       else {
-        this.setState({errors: data.errors});
+        this.setState({ errors: data.errors });
       }
     })
     .catch(err => {
-        this.setState({errors: [err.message]});
+        this.setState({ errors: [err.message] });
     });
   }
 
   loadImportedFile(data: any) {
     let cert = data as Certification;
 
-    if(!cert) {
-      this.setState({uploadingFile: false});
+    if (!cert) {
+      this.setState({ uploadingFile: false });
     }
-    else{
+    else {
       cert = this.setIds(cert);
-      this.setState({uploadingFile: false, certification: cert});
+      this.setState({ uploadingFile: false, certification: cert });
     }
   }
 
-  shouldComponentUpdate(nextProps: IBaseProps, nextState: CertificationManagementState){
-    if (this.props.location.pathname != nextProps.location.pathname){
+  shouldComponentUpdate(nextProps: IBaseProps, nextState: CertificationManagementState) {
+    if (this.props.location.pathname != nextProps.location.pathname) {
       return true;
     }
 
@@ -129,7 +129,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       return true;
     }
 
-    if(this.state.deletionRequested != nextState.deletionRequested) {
+    if (this.state.deletionRequested != nextState.deletionRequested) {
       return true;
     }
 
@@ -152,20 +152,20 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     return false;
   }
 
-  setIds(cert: Certification){
+  setIds(cert: Certification) {
     if (!cert.id) {
       cert.id = uuid();
     }
 
-    for (let i = 0; cert.questions && i < cert.questions.length; i++){
-      let question = cert.questions[i];
+    for (let i = 0; cert.questions && i < cert.questions.length; i++) {
+      const question = cert.questions[i];
 
       if (!question.id) {
         question.id = uuid();
       }
 
-      for (let j = 0; question.answers && j < question.answers.length; j++){
-        let answer = question.answers[j];
+      for (let j = 0; question.answers && j < question.answers.length; j++) {
+        const answer = question.answers[j];
 
         if (!answer.id) {
           answer.id = uuid();
@@ -176,262 +176,262 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     return cert;
   }
 
-  loadCourses(props: IBaseProps){
-    let courseName = props.match.params.courseName;
+  loadCourses(props: IBaseProps) {
+    const courseName = props.match.params.courseName;
 
     if (!courseName) {
       return;
     }
-    else if(courseName === "new") {
-      this.setState({certification: new Certification({id: uuid()})});
+    else if (courseName === "new") {
+      this.setState({ certification: new Certification({ id: uuid()})});
       return;
     }
 
-    fetch(`/courses/${courseName}`, {
-      credentials: 'include'
+    fetch(`/courses/${ courseName }`, {
+      credentials: "include"
     })
       .then(results => {
         return results.json();
       })
       .then(data => {
-        let cert = this.setIds(data as Certification);
+        const cert = this.setIds(data as Certification);
 
-        this.setState({certification: cert});
+        this.setState({ certification: cert });
       });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.loadCourses(this.props);
   }
 
-  componentWillReceiveProps(props: IBaseProps){
-    if (this.props.location.pathname != props.location.pathname){
+  componentWillReceiveProps(props: IBaseProps) {
+    if (this.props.location.pathname != props.location.pathname) {
       this.reset();
     }
 
     this.loadCourses(props);
   }
 
-  reset(){
+  reset() {
     this.setState(this.getDefaultState());
   }
 
-  setKeys(cert: Certification){
-    for (let i = 0; cert.questions && i < cert.questions.length; i++){
-      let question = cert.questions[i];
+  setKeys(cert: Certification) {
+    for (let i = 0; cert.questions && i < cert.questions.length; i++) {
+      const question = cert.questions[i];
       question.position = i + 1;
 
-      for (let j = 0; question.answers && j < question.answers.length; j++){
-        let answer = question.answers[j];
+      for (let j = 0; question.answers && j < question.answers.length; j++) {
+        const answer = question.answers[j];
 
-        answer.key = `${j + 1}`;
+        answer.key = `${ j + 1}`;
       }
     }
 
     return cert;
   }
 
-  save(){
-    let headers = new Headers();
+  save() {
+    const headers = new Headers();
     headers.set("Content-Type", "application/json");
 
     fetch("/certificationApi",
     {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(this.setKeys({...this.state.certification})),
-      credentials: 'include'
+      body: JSON.stringify(this.setKeys({...this.state.certification })),
+      credentials: "include"
     })
     .then(results => {
       return results.json();
     })
     .then((data: ValidationResult) => {
-      if (data.success){
-        this.setState({message: "Saved successfully", errors: []});
+      if (data.success) {
+        this.setState({ message: "Saved successfully", errors: []});
       }
       else {
-        this.setState({errors: data.errors});
+        this.setState({ errors: data.errors });
       }
     })
     .catch(err => {
-        this.setState({errors: [err.message]});
+        this.setState({ errors: [err.message]});
     });
   }
 
-  onNameChange(e: any){
-    let cert = this.state.certification;
-    let newName = e.target.value;
-    let update = {...cert, name: newName};
+  onNameChange(e: any) {
+    const cert = this.state.certification;
+    const newName = e.target.value;
+    const update = {...cert, name: newName };
 
     this.setState({
       certification: update
     });
   }
 
-  onVersionChange(e: any){
-    let cert = this.state.certification;
-    let newVersion = e.target.value;
-    let update = {...cert, version: newVersion};
+  onVersionChange(e: any) {
+    const cert = this.state.certification;
+    const newVersion = e.target.value;
+    const update = {...cert, version: newVersion };
 
     this.setState({
       certification: update
     });
   }
 
-  onPublishedChange(e: any){
-    let cert = this.state.certification;
-    let isPublished = e.target.checked;
-    let update = {...cert, isPublished: isPublished};
+  onPublishedChange(e: any) {
+    const cert = this.state.certification;
+    const isPublished = e.target.checked;
+    const update = {...cert, isPublished: isPublished };
 
     this.setState({
       certification: update
     });
   }
 
-  onUniqueNameChange(e: any){
-    let cert = this.state.certification;
-    let newName = e.target.value;
-    let update = {...cert, uniqueName: newName};
+  onUniqueNameChange(e: any) {
+    const cert = this.state.certification;
+    const newName = e.target.value;
+    const update = {...cert, uniqueName: newName };
 
     this.setState({
       certification: update
     });
   }
 
-  onQuestionChange(index: number, question: Question){
-    let certification = this.state.certification;
-    let questions = (certification.questions || []).map((value, i) => i != index ? value : question);
-    let update = {...certification, questions: questions};
+  onQuestionChange(index: number, question: Question) {
+    const certification = this.state.certification;
+    const questions = (certification.questions || []).map((value, i) => i != index ? value : question);
+    const update = {...certification, questions: questions };
 
-    this.setState({certification: update});
+    this.setState({ certification: update });
   }
 
   deleteQuestion = (index: number) => {
-    let certification = this.state.certification;
-    let questions = (certification.questions || []).filter((value, i) => i != index);
-    let update = {...certification, questions: questions};
+    const certification = this.state.certification;
+    const questions = (certification.questions || []).filter((value, i) => i != index);
+    const update = {...certification, questions: questions };
 
-    this.setState({certification: update});
+    this.setState({ certification: update });
   }
 
-  appendQuestion(certification: Certification){
-    let questions = (certification.questions || []).concat(new Question({
+  appendQuestion(certification: Certification) {
+    const questions = (certification.questions || []).concat(new Question({
       id: uuid(),
-      answers: [0, 0, 0, 0].map(() => new Answer({id: uuid(), isCorrect: false}))
+      answers: [0, 0, 0, 0].map(() => new Answer({ id: uuid(), isCorrect: false }))
     }));
-    let update = {...certification, questions: questions};
+    const update = {...certification, questions: questions };
 
     return update;
   }
 
-  addQuestion(){
-    let update = this.appendQuestion(this.state.certification);
+  addQuestion() {
+    const update = this.appendQuestion(this.state.certification);
 
-    this.setState({certification: update});
+    this.setState({ certification: update });
   }
 
   addMultipleQuestions(value: string) {
-    let count = parseInt(value);
+    const count = parseInt(value);
 
-    if(isNaN(count)){
+    if (isNaN(count)) {
       return;
     }
 
     let update = this.state.certification;
 
-    for (let i = 0; i < count; i++){
+    for (let i = 0; i < count; i++) {
       update = this.appendQuestion(update);
     }
 
-    this.setState({certification: update});
+    this.setState({ certification: update });
   }
 
   regenerateKeys(prefix: string) {
-    let questions = this.state.certification.questions.map((q, index) => {return {...q, key: `${prefix}${index + 1}`}});
+    const questions = this.state.certification.questions.map((q, index) => { return {...q, key: `${ prefix }${ index + 1}`}; });
 
-    this.setState({certification: {...this.state.certification, questions: questions}});
+    this.setState({ certification: {...this.state.certification, questions: questions }});
   }
 
-  openMultipleQuestionsModal(){
-    this.setState({addingMultipleQuestions: true});
+  openMultipleQuestionsModal() {
+    this.setState({ addingMultipleQuestions: true });
   }
 
-  openKeyRegenerationModal(){
-    this.setState({regeneratingKeys: true});
+  openKeyRegenerationModal() {
+    this.setState({ regeneratingKeys: true });
   }
 
   hideMultipleQuestionsModal() {
-    this.setState({addingMultipleQuestions: false});
+    this.setState({ addingMultipleQuestions: false });
   }
 
-  hideKeyRegenerationModal(){
-    this.setState({regeneratingKeys: false});
+  hideKeyRegenerationModal() {
+    this.setState({ regeneratingKeys: false });
   }
 
-  import(){
-    this.setState({uploadingFile: true});
+  import() {
+    this.setState({ uploadingFile: true });
   }
 
-  verifyAndDelete(){
-    this.setState({deletionRequested: true});
+  verifyAndDelete() {
+    this.setState({ deletionRequested: true });
   }
 
-  hideDeletionPrompt(){
-    this.setState({deletionRequested: false});
+  hideDeletionPrompt() {
+    this.setState({ deletionRequested: false });
   }
 
-  render(){
+  render() {
       let content = (<div>Please select a course from the sidenav, or click the new button for creating a new course</div>);
 
-      if (this.state.certification){
+      if (this.state.certification) {
         content = (
-          <div id={this.state.certification.id + "header"}>
+          <div id={ this.state.certification.id + "header"}>
             <FieldGroup
-              id={this.state.certification.id + "name"}
-              control={{type: "text", value: this.state.certification.name, onChange: this.onNameChange}}
+              id={ this.state.certification.id + "name"}
+              control={{ type: "text", value: this.state.certification.name, onChange: this.onNameChange }}
               label="Certification Name"
             />
             <FieldGroup
-              id={this.state.certification.id + "uniqueName"}
-              control={{type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange}}
+              id={ this.state.certification.id + "uniqueName"}
+              control={{ type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange }}
               label="Certification Unique Name"
             />
             <FieldGroup
-              id={this.state.certification.id + "version"}
-              control={{type: "text", value: this.state.certification.version, onChange: this.onVersionChange}}
+              id={ this.state.certification.id + "version"}
+              control={{ type: "text", value: this.state.certification.version, onChange: this.onVersionChange }}
               label="Version"
             />
-            <Checkbox key={this.state.certification.id + "_isPublished"} checked={this.state.certification.isPublished} onChange={this.onPublishedChange}>Is Published</Checkbox>
-            {this.state.certification.questions ? (this.state.certification.questions.map((q, index) =>
-              (<QuestionEditView onQuestionChange={(q: Question) => this.onQuestionChange(index, q)} requestDeletion={() => this.deleteQuestion(index)} question={q} key={q.id} />)
+            <Checkbox key={ this.state.certification.id + "_isPublished"} checked={ this.state.certification.isPublished } onChange={ this.onPublishedChange }>Is Published</Checkbox>
+            { this.state.certification.questions ? (this.state.certification.questions.map((q, index) =>
+              (<QuestionEditView onQuestionChange={(q: Question) => this.onQuestionChange(index, q)} requestDeletion={() => this.deleteQuestion(index)} question={ q } key={ q.id } />)
             )) : <span>No questions found</span>}
             </div>);
       }
 
       return (<div>
-                <SideNav redirectComponent="certificationManagement" showUnpublished={true} />
-                {this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={"Are you sure you want to delete " + this.state.certification.name + "?"} key="DeletionPromptModal" yesCallBack={this.delete} finally={this.hideDeletionPrompt} />}
-                {this.state.addingMultipleQuestions && <TextInputModal title="Add multiple Questions" text={"How many questions do you want to add?"} key="AddMultipleQuestionsModal" yesCallBack={this.addMultipleQuestions} finally={this.hideMultipleQuestionsModal} />}
-                {this.state.regeneratingKeys && <TextInputModal title="Regenerate question keys" text={"Please select a prefix for the index, i.e. 'NO. ' will give 'NO. 1' and so on."} key="RegenerateKeysModal" yesCallBack={this.regenerateKeys} finally={this.hideKeyRegenerationModal} />}
-                {this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={this.loadImportedFile} />}
+                <SideNav redirectComponent="certificationManagement" showUnpublished={ true } />
+                { this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={"Are you sure you want to delete " + this.state.certification.name + "?"} key="DeletionPromptModal" yesCallBack={ this.delete } finally={ this.hideDeletionPrompt } />}
+                { this.state.addingMultipleQuestions && <TextInputModal title="Add multiple Questions" text={"How many questions do you want to add?"} key="AddMultipleQuestionsModal" yesCallBack={ this.addMultipleQuestions } finally={ this.hideMultipleQuestionsModal } />}
+                { this.state.regeneratingKeys && <TextInputModal title="Regenerate question keys" text={"Please select a prefix for the index, i.e. 'NO. ' will give 'NO. 1' and so on."} key="RegenerateKeysModal" yesCallBack={ this.regenerateKeys } finally={ this.hideKeyRegenerationModal } />}
+                { this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={ this.loadImportedFile } />}
                 <div className="col-xs-10 pull-right">
                   <ButtonToolbar>
                     <ButtonGroup>
                       <LinkContainer key={"newLink"} to={"/certificationManagement/new"}>
                         <Button bsStyle="default">Create New Certification</Button>
                       </LinkContainer>
-                      {this.state.certification && <Button bsStyle="default" onClick={this.import}>Import</Button>}
-                      {this.state.certification && <Button bsStyle="default" onClick={this.export}>Export</Button>}
-                      {this.state.certification && <Button bsStyle="default" onClick={this.addQuestion}>Add Question</Button>}
-                      {this.state.certification && <Button bsStyle="default" onClick={this.openMultipleQuestionsModal}>Add Multiple Questions</Button>}
-                      {this.state.certification && <Button bsStyle="default" onClick={this.openKeyRegenerationModal}>Regenerate Keys</Button>}
-                      {this.state.certification && <Button bsStyle="default" onClick={this.save}>Save</Button>}
-                      {this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={this.verifyAndDelete}>Delete</Button>}
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.import }>Import</Button>}
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.export }>Export</Button>}
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.addQuestion }>Add Question</Button>}
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.openMultipleQuestionsModal }>Add Multiple Questions</Button>}
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.openKeyRegenerationModal }>Regenerate Keys</Button>}
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.save }>Save</Button>}
+                      { this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={ this.verifyAndDelete }>Delete</Button>}
                     </ButtonGroup>
                   </ButtonToolbar>
-                  <MessageBar message={this.state.message} errors={this.state.errors} />
+                  <MessageBar message={ this.state.message } errors={ this.state.errors } />
                   <Well>
-                    {content}
+                    { content }
                   </Well>
                 </div>
               </div>);

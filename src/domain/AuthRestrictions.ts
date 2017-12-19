@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 import  pool from "./DbConnection";
 import DbUser from "../model/DbUser";
 
@@ -8,20 +8,20 @@ export function IsAuthenticated(req: Request, res: Response, next: Function) {
     }
 
     return next();
-};
+}
 
 export function IsAdmin(req: Request, res: Response, next: Function) {
   if (!req.user) {
     return res.sendStatus(401);
   }
 
-  pool.query(`SELECT is_admin FROM open_certification_trainer.user WHERE id = '${req.user}'`)
+  pool.query(`SELECT is_admin FROM open_certification_trainer.user WHERE id = '${ req.user }'`)
   .then(result => {
     if (result.rowCount < 1) {
       return res.sendStatus(401);
     }
 
-    let user = result.rows[0] as DbUser;
+    const user = result.rows[0] as DbUser;
 
     if (!user.is_admin) {
       return res.sendStatus(401);
@@ -32,5 +32,5 @@ export function IsAdmin(req: Request, res: Response, next: Function) {
   })
   .catch(err => {
     return res.sendStatus(401);
-  })
+  });
 }

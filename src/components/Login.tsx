@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Well, Button, Jumbotron, FormGroup, ControlLabel, FormControl, HelpBlock } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
-import UserDetail from "../model/UserDetail"
+import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
@@ -11,8 +11,8 @@ export interface LoginProps extends IBaseProps {
 }
 
 interface LoginState {
-    userName: string,
-    password: string,
+    userName: string;
+    password: string;
     errors: Array<string>;
 }
 
@@ -26,30 +26,30 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
           userName: "",
           password: "",
           errors: []
-        }
+        };
 
         this.setUsername = this.setUsername.bind(this);
         this.setPassword = this.setPassword.bind(this);
         this.login = this.login.bind(this);
     }
 
-    setUsername(e: any){
-        this.setState({userName: e.target.value})
+    setUsername(e: any) {
+        this.setState({ userName: e.target.value });
     }
 
-    setPassword(e: any){
-      this.setState({password: e.target.value})
+    setPassword(e: any) {
+      this.setState({ password: e.target.value });
     }
 
-    login(){
-      let headers = new Headers();
+    login() {
+      const headers = new Headers();
       headers.set("Content-Type", "application/json");
 
       fetch("/login",
       {
         method: "POST",
         headers: headers,
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify(new UserDetail({
           userName: this.state.userName,
           password: this.state.password
@@ -72,24 +72,24 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
       });
     }
 
-    render(){
+    render() {
         return (
           <Well>
-            <MessageBar errors={this.state.errors} />
+            <MessageBar errors={ this.state.errors } />
             <Jumbotron>
               <h1>Login</h1>
-                <form action="javascript:void(0);">
+                <form action="javascript: void(0);">
                   <FieldGroup
                     id="userNameText"
-                    control={{type: "text", placeholder:"Enter username", onChange: this.setUsername}}
+                    control={{ type: "text", placeholder: "Enter username", onChange: this.setUsername }}
                     label="Username"
                   />
                   <FieldGroup
                     id="foEditorrmControlsPassword"
-                    control={{type: "password", placeholder:"Enter password", onChange: this.setPassword}}
+                    control={{ type: "password", placeholder: "Enter password", onChange: this.setPassword }}
                     label="Password"
                   />
-                  <Button onClick={this.login} type="submit">
+                  <Button onClick={ this.login } type="submit">
                     Submit
                   </Button>
                 </form>

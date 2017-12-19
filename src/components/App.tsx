@@ -9,57 +9,57 @@ export interface AppState {
 }
 
 export default class App extends React.PureComponent<any, AppState> {
-  constructor(props: any){
+  constructor(props: any) {
     super(props);
 
     this.state = {
-      user: null
+      user: undefined
     };
 
     this.setUser = this.setUser.bind(this);
     this.triggerUserReload = this.triggerUserReload.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.setUser();
   }
 
-  setUser(){
+  setUser() {
     fetch("/login",
     {
       method: "POST",
       headers: [
         ["Content-Type", "application/json"]
       ],
-      credentials: 'include',
+      credentials: "include",
       body: JSON.stringify({})
     })
     .then(results => {
       return results.json();
     })
     .then((result: ValidationResult) => {
-      if (result.success){
-          this.setState({user: result.userInfo});
+      if (result.success) {
+          this.setState({ user: result.userInfo });
       }
       else {
-          this.setState({user: null});
+          this.setState({ user: undefined });
       }
     });
   }
 
-  shouldComponentUpdate(nextProps: any){
+  shouldComponentUpdate(nextProps: any) {
     return true;
   }
 
-  triggerUserReload(){
+  triggerUserReload() {
     this.setUser();
   }
 
-  render(){
+  render() {
     return (
       <div>
-        <Header user={this.state.user} triggerUserReload={this.triggerUserReload} />
-        <Main user={this.state.user} triggerUserReload={this.triggerUserReload}/>
+        <Header user={ this.state.user } triggerUserReload={ this.triggerUserReload } />
+        <Main user={ this.state.user } triggerUserReload={ this.triggerUserReload }/>
       </div>
     );
   }

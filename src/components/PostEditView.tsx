@@ -17,10 +17,10 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
         super(props);
 
         this.state = {
-          post: null,
+          post: undefined,
           message: "",
           errors: []
-        }
+        };
 
         this.retrievePost = this.retrievePost.bind(this);
         this.markdownChanged = this.markdownChanged.bind(this);
@@ -28,12 +28,12 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
         this.delete = this.delete.bind(this);
     }
 
-    componentDidMount(){
+    componentDidMount() {
       this.retrievePost();
     }
 
-    retrievePost(){
-      let postId = this.props.match.params.postId;
+    retrievePost() {
+      const postId = this.props.match.params.postId;
 
       if (postId === "new") {
         return this.setState({
@@ -41,9 +41,9 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
         });
       }
 
-      fetch(`/posts/${postId}`,
+      fetch(`/posts/${ postId }`,
       {
-        credentials: 'include'
+        credentials: "include"
       })
       .then(results => {
         return results.json();
@@ -55,19 +55,19 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
       });
     }
 
-    markdownChanged(e: any){
+    markdownChanged(e: any) {
       this.setState({
         post: {...this.state.post, content: e.target.value }
       });
     }
 
-    delete(){
-      let postId = this.state.post.id;
+    delete() {
+      const postId = this.state.post.id;
 
-      fetch(`/posts/${postId}`,
+      fetch(`/posts/${ postId }`,
       {
         method: "DELETE",
-        credentials: 'include'
+        credentials: "include"
       })
       .then(() => {
           this.setState({
@@ -82,15 +82,15 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
       });
     }
 
-    save(){
-      let postId = this.state.post.id;
-      let headers = new Headers();
+    save() {
+      const postId = this.state.post.id;
+      const headers = new Headers();
       headers.set("Content-Type", "application/json");
 
-      fetch(`/posts/${postId}`,
+      fetch(`/posts/${ postId }`,
       {
         method: "POST",
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify(this.state.post),
         headers: headers
       })
@@ -107,28 +107,28 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
       });
     }
 
-    render(){
+    render() {
         if (!this.state.post) {
           return <p>Loading</p>;
         }
 
         return (
           <div>
-            <MessageBar message= {this.state.message} errors={this.state.errors} />
+            <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <ButtonToolbar>
               <ButtonGroup>
-                <Button bsStyle="default" onClick={this.save}>Save</Button>
+                <Button bsStyle="default" onClick={ this.save }>Save</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button bsStyle="danger" onClick={this.delete}>Delete</Button>
+                <Button bsStyle="danger" onClick={ this.delete }>Delete</Button>
               </ButtonGroup>
             </ButtonToolbar>
-              <textarea className="col-xs-6" style={{"height": "100vh"}} value={this.state.post.content} onChange={this.markdownChanged} />
+              <textarea className="col-xs-6" style={{"height": "100vh"}} value={ this.state.post.content } onChange={ this.markdownChanged } />
               <ReactMarkdown
                 className="result col-xs-6"
-                source={this.state.post.content}
-                skipHtml={true}
-                escapeHtml={true}
+                source={ this.state.post.content }
+                skipHtml={ true }
+                escapeHtml={ true }
               />
           </div>
         );

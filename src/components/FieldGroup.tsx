@@ -5,15 +5,15 @@ interface FieldGroupProps {
   id: string;
   label: string;
   help?: string;
-  control: FormControlProps
+  control: FormControlProps;
 }
 
 const FieldGroup = ( props: FieldGroupProps ) => (
-    <FormGroup controlId={props.id}>
-      <ControlLabel>{props.label}</ControlLabel>
-      <FormControl {...props.control} />
-      {props.help && <HelpBlock>{props.help}</HelpBlock>}
+    <FormGroup controlId={ props.id }>
+      <ControlLabel>{ props.label }</ControlLabel>
+      <FormControl {...props.control } />
+      { props.help && <HelpBlock>{ props.help }</HelpBlock>}
     </FormGroup>
-)
+);
 
-export default FieldGroup
+export default FieldGroup;

@@ -13,7 +13,7 @@ export class PortalManagementState {
 }
 
 export default class PortalManagement extends React.Component<IBaseProps, PortalManagementState> {
-    constructor(props: IBaseProps){
+    constructor(props: IBaseProps) {
       super(props);
 
       this.state = {
@@ -23,7 +23,7 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
       };
     }
 
-    render(){
+    render() {
       return (
         <Tab.Container id="left-tabs-example" defaultActiveKey="users">
           <Row className="clearfix">

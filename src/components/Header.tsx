@@ -9,7 +9,7 @@ import ValidationResult from "../model/ValidationResult";
 import IBaseProps from "../domain/IBaseProps";
 
 export default class Header extends React.PureComponent<IBaseProps, undefined> {
-  constructor(props: IBaseProps){
+  constructor(props: IBaseProps) {
       super(props);
   }
 
@@ -26,27 +26,27 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
           </Navbar.Header>
           <Navbar.Collapse>
           <Nav>
-              {this.props.user &&
+              { this.props.user &&
                 <IndexLinkContainer to="/certificationOverview">
                   <NavItem>Certification Overview</NavItem>
                 </IndexLinkContainer>
               }
-              {this.props.user &&
+              { this.props.user &&
                 <IndexLinkContainer to="/assessment">
                   <NavItem>Assessment</NavItem>
                 </IndexLinkContainer>
               }
-              {this.props.user &&
+              { this.props.user &&
                 <IndexLinkContainer to="/assessmentHistory">
                   <NavItem>Assessment History</NavItem>
                 </IndexLinkContainer>
               }
-              {this.props.user && this.props.user.is_admin &&
+              { this.props.user && this.props.user.is_admin &&
                 <IndexLinkContainer to="/certificationManagement">
                   <NavItem>Certification Management</NavItem>
                 </IndexLinkContainer>
               }
-              {this.props.user && this.props.user.is_admin &&
+              { this.props.user && this.props.user.is_admin &&
                 <IndexLinkContainer to="/portalManagement">
                   <NavItem>Portal Management</NavItem>
                 </IndexLinkContainer>
@@ -59,10 +59,10 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
             {!this.props.user && <IndexLinkContainer to="/signUp">
               <NavItem>Sign Up</NavItem>
             </IndexLinkContainer>}
-            {this.props.user && <IndexLinkContainer to="/profile">
+            { this.props.user && <IndexLinkContainer to="/profile">
               <NavItem>Profile</NavItem>
             </IndexLinkContainer>}
-            {this.props.user && <IndexLinkContainer to="/logout">
+            { this.props.user && <IndexLinkContainer to="/logout">
               <NavItem>Logout</NavItem>
             </IndexLinkContainer>}
           </Nav>

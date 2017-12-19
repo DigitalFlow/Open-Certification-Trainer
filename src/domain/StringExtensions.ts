@@ -1,7 +1,7 @@
-export let escapeSpecialCharacters = (text: string) => {
-  if (!text){
+export const escapeSpecialCharacters = (text: string) => {
+  if (!text) {
     return "";
   }
 
   return text.replace(/'/g, "''");
-}
+};

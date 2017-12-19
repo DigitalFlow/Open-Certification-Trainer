@@ -8,13 +8,13 @@ import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
 
 interface ProfileState {
-    userName: string,
-    firstName: string,
-    lastName: string,
-    password: string,
-    repeatPassword: string,
-    email: string,
-    isAdmin: boolean,
+    userName: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    repeatPassword: string;
+    email: string;
+    isAdmin: boolean;
     errors: Array<string>;
     message: string;
 }
@@ -35,7 +35,7 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
           isAdmin: false,
           errors: [],
           message: ""
-        }
+        };
 
         this.setUsername = this.setUsername.bind(this);
         this.setFirstName = this.setFirstName.bind(this);
@@ -48,16 +48,16 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
         this.retrieveUser = this.retrieveUser.bind(this);
     }
 
-    componentDidMount(){
+    componentDidMount() {
       this.retrieveUser();
     }
 
-    retrieveUser(){
-      let userId = this.props.match.params.userId;
+    retrieveUser() {
+      const userId = this.props.match.params.userId;
 
-      fetch(`/retrieveProfile${userId ? `/${userId}` : ""}`,
+      fetch(`/retrieveProfile${ userId ? `/${ userId }` : ""}`,
       {
-        credentials: 'include'
+        credentials: "include"
       })
       .then(results => {
         return results.json();
@@ -77,45 +77,45 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
       });
     }
 
-    setUsername(e: any){
-        this.setState({userName: e.target.value})
+    setUsername(e: any) {
+        this.setState({ userName: e.target.value });
     }
 
-    setFirstName(e: any){
-        this.setState({firstName: e.target.value})
+    setFirstName(e: any) {
+        this.setState({ firstName: e.target.value });
     }
 
-    setLastName(e: any){
-        this.setState({lastName: e.target.value})
+    setLastName(e: any) {
+        this.setState({ lastName: e.target.value });
     }
 
-    setPassword(e: any){
-      this.setState({password: e.target.value})
+    setPassword(e: any) {
+      this.setState({ password: e.target.value });
     }
 
-    repeatPassword(e: any){
-      this.setState({repeatPassword: e.target.value})
+    repeatPassword(e: any) {
+      this.setState({ repeatPassword: e.target.value });
     }
 
-    setEmail(e: any){
-      this.setState({email: e.target.value})
+    setEmail(e: any) {
+      this.setState({ email: e.target.value });
     }
 
-    setIsAdmin(e: any){
-      this.setState({isAdmin: e.target.checked})
+    setIsAdmin(e: any) {
+      this.setState({ isAdmin: e.target.checked });
     }
 
-    update(){
-      if (this.state.password !== this.state.repeatPassword){
-        return this.setState({errors: ["Password and repeat passwords don't match, please enter them again."]})
+    update() {
+      if (this.state.password !== this.state.repeatPassword) {
+        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."]});
       }
 
-      let headers = new Headers();
+      const headers = new Headers();
       headers.set("Content-Type", "application/json");
 
-      let userId = this.props.match.params.userId;
+      const userId = this.props.match.params.userId;
 
-      fetch(`/profile${userId ? `/${userId}` : ""}`,
+      fetch(`/profile${ userId ? `/${ userId }` : ""}`,
       {
         method: "POST",
         headers: headers,
@@ -127,7 +127,7 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
           email: this.state.email,
           isAdmin: this.state.isAdmin
         })),
-        credentials: 'include'
+        credentials: "include"
       })
       .then(results => {
         return results.json();
@@ -147,45 +147,45 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
       });
     }
 
-    render(){
+    render() {
         return (
           <Well>
-            <MessageBar message= {this.state.message} errors={this.state.errors} />
+            <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <Jumbotron>
               <h1>Profile</h1>
-                <form action="javascript:void(0);">
+                <form action="javascript: void(0);">
                   <FieldGroup
                     id="firstNameText"
-                    control={{type: "text", value:this.state.firstName, placeholder:"Enter first name", onChange: this.setFirstName}}
+                    control={{ type: "text", value: this.state.firstName, placeholder: "Enter first name", onChange: this.setFirstName }}
                     label="First Name"
                   />
                   <FieldGroup
                     id="lastNameText"
-                    control={{type: "text", value:this.state.lastName, placeholder:"Enter last name", onChange: this.setLastName}}
+                    control={{ type: "text", value: this.state.lastName, placeholder: "Enter last name", onChange: this.setLastName }}
                     label="Last Name"
                   />
                   <FieldGroup
                     id="userNameText"
-                    control={{type: "text", value:this.state.userName, placeholder:"Enter username", onChange: this.setUsername}}
+                    control={{ type: "text", value: this.state.userName, placeholder: "Enter username", onChange: this.setUsername }}
                     label="Username"
                   />
                   <FieldGroup
                     id="formControlsEmail"
-                    control={{type: "text", value:this.state.email, placeholder:"Enter email", onChange: this.setEmail}}
+                    control={{ type: "text", value: this.state.email, placeholder: "Enter email", onChange: this.setEmail }}
                     label="E-Mail"
                   />
                   <FieldGroup
                     id="formControlsPassword"
-                    control={{type: "password", value:this.state.password, placeholder:"Leave empty for not updating", onChange: this.setPassword}}
+                    control={{ type: "password", value: this.state.password, placeholder: "Leave empty for not updating", onChange: this.setPassword }}
                     label="Password"
                   />
                   <FieldGroup
                     id="formControlsRepeatPassword"
-                    control={{type: "password", value:this.state.repeatPassword, placeholder:"Leave empty for not updating", onChange: this.repeatPassword}}
+                    control={{ type: "password", value: this.state.repeatPassword, placeholder: "Leave empty for not updating", onChange: this.repeatPassword }}
                     label="Repeat Password"
                   />
-                  {this.props.user && this.props.user.is_admin && <Checkbox key={`${this.state.userName}_isAdmin`} checked={this.state.isAdmin} onChange={this.setIsAdmin}>Is Admin</Checkbox>}
-                  <Button onClick={this.update} type="submit">
+                  { this.props.user && this.props.user.is_admin && <Checkbox key={`${ this.state.userName }_isAdmin`} checked={ this.state.isAdmin } onChange={ this.setIsAdmin }>Is Admin</Checkbox>}
+                  <Button onClick={ this.update } type="submit">
                     Submit
                   </Button>
                 </form>

@@ -9,46 +9,46 @@ export interface LogoutState {
 }
 
 export default class Logout extends React.PureComponent<IBaseProps, LogoutState> {
-  constructor(props: IBaseProps){
-      super(props);
+    constructor(props: IBaseProps) {
+        super(props);
 
-      this.state = {
-        errors: []
-      }
-  }
+        this.state = {
+            errors: []
+        };
+    }
 
-  componentDidMount(){
-    fetch("/logout",
-    {
-      method: "POST",
-      headers: [
-        ["Content-Type", "application/json"]
-      ],
-      credentials: 'include',
-      body: JSON.stringify({})
-    })
-    .then(results => {
-      return results.json();
-    })
-    .then((result: ValidationResult) => {
-      if (result.success){
-        this.props.triggerUserReload();
-        this.props.history.push("/index");
-      }
-      else {
-        this.setState({errors: result.errors});
-      }
-    })
-    .catch(err => {
-      this.setState({errors: [err.message]});
-    });
-  }
+    componentDidMount() {
+        fetch("/logout",
+        {
+            method: "POST",
+            headers: [
+                ["Content-Type", "application/json"]
+            ],
+            credentials: "include",
+            body: JSON.stringify({})
+        })
+        .then(results => {
+          return results.json();
+        })
+        .then((result: ValidationResult) => {
+          if (result.success) {
+            this.props.triggerUserReload();
+            this.props.history.push("/index");
+          }
+          else {
+            this.setState({ errors: result.errors });
+          }
+        })
+        .catch(err => {
+          this.setState({ errors: [err.message]});
+        });
+    }
 
-  render() {
-      return (
-        <Well>
-        <MessageBar errors={this.state.errors} />
-        </Well>
-      );
-  }
+    render() {
+        return (
+            <Well>
+            <MessageBar errors={ this.state.errors } />
+            </Well>
+        );
+    }
 }

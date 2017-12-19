@@ -22,7 +22,7 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
   fetchPosts () {
     return fetch("/posts",
     {
-      credentials: 'include'
+      credentials: "include"
     })
     .then(results => {
       return results.json();
@@ -61,7 +61,7 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
                 let content = p.content || "";
                 content = content.trim();
 
-                let firstLineBreak = content.indexOf("\n");
+                const firstLineBreak = content.indexOf("\n");
 
                 if (firstLineBreak !== -1) {
                   content = content.substr(0, firstLineBreak);
@@ -70,10 +70,10 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
                 content = content.replace(/[#]*/g, "");
 
                 return (
-                  <LinkContainer key={`${p.id}_link`} to={`/post/${p.id}`}>
+                  <LinkContainer key={`${ p.id }_link`} to={`/post/${ p.id }`}>
                     <tr>
-                    <td>{content}</td>
-                    <td>{p.created_on}</td>
+                    <td>{ content }</td>
+                    <td>{ p.created_on }</td>
                     </tr>
                   </LinkContainer>
                 );

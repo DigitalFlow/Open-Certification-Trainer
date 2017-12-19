@@ -19,10 +19,10 @@ export default class UserListView extends React.PureComponent<IBaseProps, PostLi
     this.fetchUsers = this.fetchUsers.bind(this);
   }
 
-  fetchUsers(){
+  fetchUsers() {
     return fetch("/userList",
     {
-      credentials: 'include'
+      credentials: "include"
     })
     .then(results => {
       return results.json();
@@ -53,13 +53,13 @@ export default class UserListView extends React.PureComponent<IBaseProps, PostLi
         <tbody>
           {
             this.state.users.map(user =>
-              <LinkContainer key={`${user.user_name}_link`} to={`/profile/${user.id}`}>
+              <LinkContainer key={`${ user.user_name }_link`} to={`/profile/${ user.id }`}>
                 <tr>
-                    <td>{user.user_name}</td>
-                    <td>{user.first_name}</td>
-                    <td>{user.last_name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.is_admin ? "True" : "False"}</td>
+                    <td>{ user.user_name }</td>
+                    <td>{ user.first_name }</td>
+                    <td>{ user.last_name }</td>
+                    <td>{ user.email }</td>
+                    <td>{ user.is_admin ? "True" : "False"}</td>
                 </tr>
               </LinkContainer>)
           }

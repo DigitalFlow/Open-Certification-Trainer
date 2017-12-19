@@ -1,4 +1,4 @@
-export interface DbUserProps{
+export interface DbUserProps {
   email: string;
   password_hash: string;
   user_name: string;
@@ -26,4 +26,4 @@ export default class DbUser {
     this.first_name = props.first_name;
     this.last_name = props.last_name;
   }
-};
+}

@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import * as jwt from 'jsonwebtoken';
+import { Request, Response } from "express";
+import * as jwt from "jsonwebtoken";
 import Token from "../model/Token";
 
 export function Authentication(req: Request, res: Response, next: Function) {
-    req.user = null;
+    req.user = undefined;
 
     function clearTokenAndNext() {
         res.clearCookie("token");
@@ -28,4 +28,4 @@ export function Authentication(req: Request, res: Response, next: Function) {
         req.user = decodedToken.userId;
         next();
     });
-};
+}

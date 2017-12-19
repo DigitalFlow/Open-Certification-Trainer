@@ -7,18 +7,17 @@ interface MessageBarProps {
 }
 
 const MessageBar = ( props: MessageBarProps ) => {
-  if (props.message || (props.errors && props.errors.length))
-  {
+  if (props.message || (props.errors && props.errors.length)) {
     return (
       <Panel>
-        {props.message ? <div><span style={{color: "green"}}>{props.message}</span></div> : <div/>}
-        {props.errors.map(e => (<div key={e}><span style={{color:"red"}}>{e}</span><br /></div>))}
+        { props.message ? <div><span style={{ color: "green"}}>{ props.message }</span></div> : <div/>}
+        { props.errors.map(e => (<div key={ e }><span style={{ color: "red"}}>{ e }</span><br /></div>))}
       </Panel>
-    )
+    );
   }
   else {
     return (<div/>);
   }
-}
+};
 
-export default MessageBar
+export default MessageBar;

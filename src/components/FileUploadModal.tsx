@@ -14,35 +14,35 @@ export default class FileUploadModal extends React.PureComponent<FileUploadModal
   }
 
   receivedText(e: Event) {
-      let target: any = e.target;
-      let data = JSON.parse(target.result);
+      const target: any = e.target;
+      const data = JSON.parse(target.result);
 
       this.props.fileCallBack(data);
   }
 
-  loadFile(e: any) : void {
-      let fileInput = e.target as HTMLInputElement;
+  loadFile(e: any): void {
+      const fileInput = e.target as HTMLInputElement;
 
       if (!fileInput.files) {
-        this.props.fileCallBack(null);
+        this.props.fileCallBack(undefined);
       }
 
-      if (!fileInput.files || fileInput.files.length < 1){
+      if (!fileInput.files || fileInput.files.length < 1) {
         return;
       }
 
-      let file = fileInput.files[0];
+      const file = fileInput.files[0];
 
       if (!file) {
-        this.props.fileCallBack(null);
+        this.props.fileCallBack(undefined);
       }
 
-      let fileReader = new FileReader();
+      const fileReader = new FileReader();
       fileReader.onload = this.receivedText;
       fileReader.readAsText(file);
   }
 
-  render(){
+  render() {
     return (
       <div className="static-modal">
         <Modal.Dialog>
@@ -51,11 +51,11 @@ export default class FileUploadModal extends React.PureComponent<FileUploadModal
           </Modal.Header>
 
           <Modal.Body>
-            <input type="file" id="fileInput" onChange={this.loadFile} />
+            <input type="file" id="fileInput" onChange={ this.loadFile } />
           </Modal.Body>
 
           <Modal.Footer>
-            <Button onClick={this.loadFile} bsStyle="primary">Close</Button>
+            <Button onClick={ this.loadFile } bsStyle="primary">Close</Button>
           </Modal.Footer>
         </Modal.Dialog>
       </div>);

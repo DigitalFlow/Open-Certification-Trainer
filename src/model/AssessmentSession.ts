@@ -18,8 +18,7 @@ export default class AssessmentSession {
   answers: IAssociativeArray<Array<string>>;
   created_on: string;
 
-  constructor(props: AssessmentSessionProps)
-  {
+  constructor(props: AssessmentSessionProps) {
     this.sessionId = props.sessionId;
     this.certification = props.certification;
     this.created_on = props.created_on;

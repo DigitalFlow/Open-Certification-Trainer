@@ -23,35 +23,35 @@ export default class AnswerEditView extends React.PureComponent<AnswerEditViewPr
     }
 
     onCheckChange (e: any) {
-      let checked = e.target.checked;
-      let answer = this.props.answer;
-      let update = {...answer, isCorrect: checked};
+      const checked = e.target.checked;
+      const answer = this.props.answer;
+      const update = {...answer, isCorrect: checked };
 
       this.props.onAnswerChange(update);
     }
 
     onTextChange (e: any) {
-      let value = e.target.value;
-      let answer = this.props.answer;
-      let update = {...answer, text: new Text({value: value})};
+      const value = e.target.value;
+      const answer = this.props.answer;
+      const update = {...answer, text: new Text({ value: value })};
 
       this.props.onAnswerChange(update);
     }
 
-    render(){
+    render() {
         return (
           <Form>
             <br />
             <div className="col-xs-11">
               <InputGroup>
                 <InputGroup.Addon>
-                  <input type="checkbox" key={this.props.answer.id + "_aC"} checked={this.props.answer.isCorrect} onChange={this.onCheckChange} />
+                  <input type="checkbox" key={ this.props.answer.id + "_aC"} checked={ this.props.answer.isCorrect } onChange={ this.onCheckChange } />
                 </InputGroup.Addon>
-                <FormControl key={this.props.answer.id + "_aT"} type="text" value={this.props.answer.text ? this.props.answer.text.value : ""} onChange={this.onTextChange} />
+                <FormControl key={ this.props.answer.id + "_aT"} type="text" value={ this.props.answer.text ? this.props.answer.text.value : ""} onChange={ this.onTextChange } />
               </InputGroup>
             </div>
             <div className="col-xs-1">
-              <Button bsStyle="danger" onClick={this.props.requestDeletion}>Delete</Button>
+              <Button bsStyle="danger" onClick={ this.props.requestDeletion }>Delete</Button>
             </div>
             <br />
           </Form>

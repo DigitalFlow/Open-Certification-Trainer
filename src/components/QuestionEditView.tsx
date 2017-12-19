@@ -23,6 +23,7 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
         this.addAnswer = this.addAnswer.bind(this);
         this.deleteAnswer = this.deleteAnswer.bind(this);
         this.onQuestionTextChange = this.onQuestionTextChange.bind(this);
+        this.onQuestionExplanationChange = this.onQuestionExplanationChange.bind(this);
         this.onQuestionKeyChange = this.onQuestionKeyChange.bind(this);
     }
 
@@ -35,6 +36,10 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
       }
 
       if (q.text !== nq.text) {
+        return true;
+      }
+
+      if (q.explanation !== nq.explanation) {
         return true;
       }
 
@@ -57,7 +62,6 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
       return false;
     }
 
-
     onAnswerChange(index: number, answer: Answer) {
       const question = this.props.question;
       const answers = (question.answers || []).map((value, i) => i != index ? value : answer);
@@ -79,6 +83,14 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
       const value = e.target.value;
       const question = this.props.question;
       const update = { ...question, text: new Text({ value: value }) };
+
+      this.props.onQuestionChange(update);
+    }
+
+    onQuestionExplanationChange (e: any) {
+      const value = e.target.value;
+      const question = this.props.question;
+      const update = { ...question, explanation: new Text({ value: value }) };
 
       this.props.onQuestionChange(update);
     }
@@ -110,6 +122,11 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
               id={ this.props.question.id + "_qText" }
               control={ { componentClass: "textarea", rows: 3, value: this.props.question.text ? this.props.question.text.value : "", onChange: this.onQuestionTextChange } }
               label="Question"
+            />
+            <FieldGroup
+              id={ this.props.question.id + "_qExplanation" }
+              control={ { componentClass: "textarea", rows: 3, value: this.props.question.explanation ? this.props.question.explanation.value : "", onChange: this.onQuestionExplanationChange } }
+              label="Explanation"
             />
             <Button bsStyle="success" onClick={ this.addAnswer }>Add Answer</Button>
             <ButtonGroup vertical block type="checkbox">

@@ -67,7 +67,7 @@ const retrieveCourse = (courseName: string) => {
       for (let i = 0; dbQuestions && i < dbQuestions.length; i++) {
         const dbQuestion = dbQuestions[i];
 
-        const question = new Question({ id: dbQuestion.id, key: dbQuestion.key, text: new Text({ value: dbQuestion.text }), position: dbQuestion.position, answers: [] });
+        const question = new Question({ id: dbQuestion.id, key: dbQuestion.key, text: new Text({ value: dbQuestion.text }), explanation: new Text({ value: dbQuestion.explanation }), position: dbQuestion.position, answers: [] });
 
         questions.push(
           pool.query("SELECT * from open_certification_trainer.answer AS answer WHERE answer.question_id = $1 ORDER BY answer.key", [question.id])
@@ -139,9 +139,9 @@ export const postUpload = (req: Request, res: Response) => {
 
     // Upsert question one by one
     query.push(
-      `INSERT INTO open_certification_trainer.question (id, key, text, certification_id, position) VALUES ('${ question.id }', '${ escapeSpecialCharacters(question.key) }', '${ question.text ? escapeSpecialCharacters(question.text.value) : "" }', '${ data.id }', '${ question.position }')
+      `INSERT INTO open_certification_trainer.question (id, key, text, explanation, certification_id, position) VALUES ('${ question.id }', '${ escapeSpecialCharacters(question.key) }', '${ question.text ? escapeSpecialCharacters(question.text.value) : "" }', '${ question.explanation ? escapeSpecialCharacters(question.explanation.value) : "" }', '${ data.id }', '${ question.position }')
        ON CONFLICT(id) DO
-           UPDATE SET (key, text, certification_id, position) = ('${ escapeSpecialCharacters(question.key) }', '${ question.text ? escapeSpecialCharacters(question.text.value) : "" }', '${ data.id }', '${ question.position }')
+           UPDATE SET (key, text, explanation, certification_id, position) = ('${ escapeSpecialCharacters(question.key) }', '${ question.text ? escapeSpecialCharacters(question.text.value) : "" }', '${ question.explanation ? escapeSpecialCharacters(question.explanation.value) : "" }', '${ data.id }', '${ question.position }')
          WHERE open_certification_trainer.question.id = '${ question.id }';`
      );
 

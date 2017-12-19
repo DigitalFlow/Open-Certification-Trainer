@@ -26,6 +26,7 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
         this.markdownChanged = this.markdownChanged.bind(this);
         this.save = this.save.bind(this);
         this.delete = this.delete.bind(this);
+        this.openHelp = this.openHelp.bind(this);
     }
 
     componentDidMount() {
@@ -107,6 +108,10 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
       });
     }
 
+    openHelp() {
+        window.open("https://github.github.com/gfm/", "about:blank");
+    }
+
     render() {
         if (!this.state.post) {
           return <p>Loading</p>;
@@ -117,6 +122,7 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
             <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <ButtonToolbar>
               <ButtonGroup>
+                <Button bsStyle="default" onClick={ this.openHelp }>Help</Button>
                 <Button bsStyle="default" onClick={ this.save }>Save</Button>
               </ButtonGroup>
               <ButtonGroup>

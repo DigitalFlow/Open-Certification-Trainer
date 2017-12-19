@@ -104,10 +104,11 @@ ALTER TABLE post OWNER TO postgres;
 
 CREATE TABLE question (
     id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    key character varying(255),
+    key character varying(255) NOT NULL,
     text text,
     certification_id uuid,
-    "position" integer
+    "position" integer,
+    explanation text
 );
 
 
@@ -170,6 +171,14 @@ ALTER TABLE ONLY certification
 
 ALTER TABLE ONLY post
     ADD CONSTRAINT post_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question question_key_certification_id_unique; Type: CONSTRAINT; Schema: open_certification_trainer; Owner: postgres
+--
+
+ALTER TABLE ONLY question
+    ADD CONSTRAINT question_key_certification_id_unique UNIQUE (key, certification_id);
 
 
 --

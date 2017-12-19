@@ -7,7 +7,7 @@ import { escapeSpecialCharacters } from "../domain/StringExtensions";
 export const getPosts = (req: Request, res: Response) => {
   const postCount = req.query.postCount;
 
-  pool.query(`SELECT * from open_certification_trainer.post ORDER BY created_on DESC ${ postCount ? `LIMIT $1` : ""};`, postCount ? [postCount] : [])
+  pool.query(`SELECT * from open_certification_trainer.post ORDER BY created_on DESC ${ postCount ? `LIMIT $1` : "" };`, postCount ? [postCount] : [])
   .then(result => {
     res.json(result.rows);
   })

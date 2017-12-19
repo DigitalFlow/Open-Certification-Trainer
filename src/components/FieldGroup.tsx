@@ -11,8 +11,8 @@ interface FieldGroupProps {
 const FieldGroup = ( props: FieldGroupProps ) => (
     <FormGroup controlId={ props.id }>
       <ControlLabel>{ props.label }</ControlLabel>
-      <FormControl {...props.control } />
-      { props.help && <HelpBlock>{ props.help }</HelpBlock>}
+      <FormControl { ...props.control } />
+      { props.help && <HelpBlock>{ props.help }</HelpBlock> }
     </FormGroup>
 );
 

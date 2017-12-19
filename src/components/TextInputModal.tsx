@@ -65,8 +65,8 @@ export default class TextInputModal extends React.PureComponent<TextInputModalPr
           </Modal.Body>
 
           <Modal.Footer>
-            <Button onClick={() => this.triggerCallback(true)} bsStyle="primary">Yes</Button>
-            <Button onClick={() => this.triggerCallback(false)} bsStyle="default">No</Button>
+            <Button onClick={ () => this.triggerCallback(true) } bsStyle="primary">Yes</Button>
+            <Button onClick={ () => this.triggerCallback(false) } bsStyle="default">No</Button>
           </Modal.Footer>
         </Modal.Dialog>
       </div>);

@@ -26,7 +26,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
       const checked = e.target.checked;
 
       if (this.props.onAnswerChange) {
-        this.props.onAnswerChange({...this.props.answer, isCorrect: checked });
+        this.props.onAnswerChange({ ...this.props.answer, isCorrect: checked });
       }
 
       this.setState({ checked: checked });
@@ -48,7 +48,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
         };
 
         return (
-            <Checkbox disabled={ this.props.disabled } key={ this.props.answer.id + "_cb"} checked={ this.props.checked } onChange={ this.onChange }><span style={ style }>{ this.props.answer.text.value }</span></Checkbox>
+            <Checkbox disabled={ this.props.disabled } key={ this.props.answer.id + "_cb" } checked={ this.props.checked } onChange={ this.onChange }><span style={ style }>{ this.props.answer.text.value }</span></Checkbox>
         );
     }
 }

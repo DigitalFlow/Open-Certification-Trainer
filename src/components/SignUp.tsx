@@ -72,7 +72,7 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
 
     signUp() {
       if (this.state.password !== this.state.repeatPassword) {
-        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."]});
+        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."] });
       }
 
       const headers = new Headers();
@@ -118,32 +118,32 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
                 <form action="javascript: void(0);">
                   <FieldGroup
                     id="firstNameText"
-                    control={{ type: "text", placeholder: "Enter first name", onChange: this.setFirstName }}
+                    control={ { type: "text", placeholder: "Enter first name", onChange: this.setFirstName } }
                     label="First Name"
                   />
                   <FieldGroup
                     id="lastNameText"
-                    control={{ type: "text", placeholder: "Enter last name", onChange: this.setLastName }}
+                    control={ { type: "text", placeholder: "Enter last name", onChange: this.setLastName } }
                     label="Last Name"
                   />
                   <FieldGroup
                     id="userNameText"
-                    control={{ type: "text", placeholder: "Enter username", onChange: this.setUsername }}
+                    control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }
                     label="Username"
                   />
                   <FieldGroup
                     id="formControlsEmail"
-                    control={{ type: "text", placeholder: "Enter email", onChange: this.setEmail }}
+                    control={ { type: "text", placeholder: "Enter email", onChange: this.setEmail } }
                     label="E-Mail"
                   />
                   <FieldGroup
                     id="formControlsPassword"
-                    control={{ type: "password", placeholder: "Enter password", onChange: this.setPassword }}
+                    control={ { type: "password", placeholder: "Enter password", onChange: this.setPassword } }
                     label="Password"
                   />
                   <FieldGroup
                     id="formControlsRepeatPassword"
-                    control={{ type: "password", placeholder: "Repeat password", onChange: this.repeatPassword }}
+                    control={ { type: "password", placeholder: "Repeat password", onChange: this.repeatPassword } }
                     label="Repeat Password"
                   />
                   <Button onClick={ this.signUp } type="submit">

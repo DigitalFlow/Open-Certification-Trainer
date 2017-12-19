@@ -32,7 +32,7 @@ export default class App extends React.PureComponent<any, AppState> {
         ["Content-Type", "application/json"]
       ],
       credentials: "include",
-      body: JSON.stringify({})
+      body: JSON.stringify({ })
     })
     .then(results => {
       return results.json();

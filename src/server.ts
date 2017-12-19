@@ -129,5 +129,5 @@ else {
   server = http.createServer(appHost).listen(PORT);
 }
 
-console.log(`App listening on host ${host} and port ${PORT}!`);
+console.log(`App listening on host ${ host } and port ${ PORT }!`);
 module.exports = server;

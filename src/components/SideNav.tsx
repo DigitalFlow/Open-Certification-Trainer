@@ -19,12 +19,12 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
         super(props);
 
         this.state = {
-          courseList: new CourseList({ courses: []})
+          courseList: new CourseList({ courses: [] })
         };
     }
 
     componentDidMount() {
-      fetch(`/courses${ this.props.showUnpublished ? "?showAll=true" : "/"}`, {
+      fetch(`/courses${ this.props.showUnpublished ? "?showAll=true" : "/" }`, {
         credentials: "include"
       })
         .then(results => {
@@ -37,8 +37,8 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
 
     render() {
         return (
-          <Nav key="sidenav" bsStyle="pills" className="col-xs-2" stacked activeKey={1}>
-            <IndexLinkContainer key="topNav" to={"/" + this.props.redirectComponent }>
+          <Nav key="sidenav" bsStyle="pills" className="col-xs-2" stacked activeKey={ 1 }>
+            <IndexLinkContainer key="topNav" to={ "/" + this.props.redirectComponent }>
               <NavItem key="courses">Courses</NavItem>
             </IndexLinkContainer>
             { this.state.courseList.courses ? this.state.courseList.courses.map(c => {
@@ -46,7 +46,7 @@ export default class SideNav extends React.PureComponent<SideNavProps, SideNavSt
 
               return (
                 <IndexLinkContainer key={ link } to={ link }>
-                  <NavItem key={ link + "_navitem"}>{ c }</NavItem>
+                  <NavItem key={ link + "_navitem" }>{ c }</NavItem>
                 </IndexLinkContainer>
               );
             }) : "" }

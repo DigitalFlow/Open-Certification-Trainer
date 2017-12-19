@@ -183,7 +183,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       return;
     }
     else if (courseName === "new") {
-      this.setState({ certification: new Certification({ id: uuid()})});
+      this.setState({ certification: new Certification({ id: uuid() }) });
       return;
     }
 
@@ -224,7 +224,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       for (let j = 0; question.answers && j < question.answers.length; j++) {
         const answer = question.answers[j];
 
-        answer.key = `${ j + 1}`;
+        answer.key = `${ j + 1 }`;
       }
     }
 
@@ -239,7 +239,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(this.setKeys({...this.state.certification })),
+      body: JSON.stringify(this.setKeys({ ...this.state.certification })),
       credentials: "include"
     })
     .then(results => {
@@ -247,21 +247,21 @@ export default class CertificationManagement extends React.Component<IBaseProps,
     })
     .then((data: ValidationResult) => {
       if (data.success) {
-        this.setState({ message: "Saved successfully", errors: []});
+        this.setState({ message: "Saved successfully", errors: [] });
       }
       else {
         this.setState({ errors: data.errors });
       }
     })
     .catch(err => {
-        this.setState({ errors: [err.message]});
+        this.setState({ errors: [err.message] });
     });
   }
 
   onNameChange(e: any) {
     const cert = this.state.certification;
     const newName = e.target.value;
-    const update = {...cert, name: newName };
+    const update = { ...cert, name: newName };
 
     this.setState({
       certification: update
@@ -271,7 +271,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   onVersionChange(e: any) {
     const cert = this.state.certification;
     const newVersion = e.target.value;
-    const update = {...cert, version: newVersion };
+    const update = { ...cert, version: newVersion };
 
     this.setState({
       certification: update
@@ -281,7 +281,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   onPublishedChange(e: any) {
     const cert = this.state.certification;
     const isPublished = e.target.checked;
-    const update = {...cert, isPublished: isPublished };
+    const update = { ...cert, isPublished: isPublished };
 
     this.setState({
       certification: update
@@ -291,7 +291,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   onUniqueNameChange(e: any) {
     const cert = this.state.certification;
     const newName = e.target.value;
-    const update = {...cert, uniqueName: newName };
+    const update = { ...cert, uniqueName: newName };
 
     this.setState({
       certification: update
@@ -301,7 +301,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   onQuestionChange(index: number, question: Question) {
     const certification = this.state.certification;
     const questions = (certification.questions || []).map((value, i) => i != index ? value : question);
-    const update = {...certification, questions: questions };
+    const update = { ...certification, questions: questions };
 
     this.setState({ certification: update });
   }
@@ -309,7 +309,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   deleteQuestion = (index: number) => {
     const certification = this.state.certification;
     const questions = (certification.questions || []).filter((value, i) => i != index);
-    const update = {...certification, questions: questions };
+    const update = { ...certification, questions: questions };
 
     this.setState({ certification: update });
   }
@@ -319,7 +319,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
       id: uuid(),
       answers: [0, 0, 0, 0].map(() => new Answer({ id: uuid(), isCorrect: false }))
     }));
-    const update = {...certification, questions: questions };
+    const update = { ...certification, questions: questions };
 
     return update;
   }
@@ -347,9 +347,9 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   }
 
   regenerateKeys(prefix: string) {
-    const questions = this.state.certification.questions.map((q, index) => { return {...q, key: `${ prefix }${ index + 1}`}; });
+    const questions = this.state.certification.questions.map((q, index) => { return { ...q, key: `${ prefix }${ index + 1 }` }; });
 
-    this.setState({ certification: {...this.state.certification, questions: questions }});
+    this.setState({ certification: { ...this.state.certification, questions: questions } });
   }
 
   openMultipleQuestionsModal() {
@@ -385,48 +385,48 @@ export default class CertificationManagement extends React.Component<IBaseProps,
 
       if (this.state.certification) {
         content = (
-          <div id={ this.state.certification.id + "header"}>
+          <div id={ this.state.certification.id + "header" }>
             <FieldGroup
-              id={ this.state.certification.id + "name"}
-              control={{ type: "text", value: this.state.certification.name, onChange: this.onNameChange }}
+              id={ this.state.certification.id + "name" }
+              control={ { type: "text", value: this.state.certification.name, onChange: this.onNameChange } }
               label="Certification Name"
             />
             <FieldGroup
-              id={ this.state.certification.id + "uniqueName"}
-              control={{ type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange }}
+              id={ this.state.certification.id + "uniqueName" }
+              control={ { type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange } }
               label="Certification Unique Name"
             />
             <FieldGroup
-              id={ this.state.certification.id + "version"}
-              control={{ type: "text", value: this.state.certification.version, onChange: this.onVersionChange }}
+              id={ this.state.certification.id + "version" }
+              control={ { type: "text", value: this.state.certification.version, onChange: this.onVersionChange } }
               label="Version"
             />
-            <Checkbox key={ this.state.certification.id + "_isPublished"} checked={ this.state.certification.isPublished } onChange={ this.onPublishedChange }>Is Published</Checkbox>
+            <Checkbox key={ this.state.certification.id + "_isPublished" } checked={ this.state.certification.isPublished } onChange={ this.onPublishedChange }>Is Published</Checkbox>
             { this.state.certification.questions ? (this.state.certification.questions.map((q, index) =>
-              (<QuestionEditView onQuestionChange={(q: Question) => this.onQuestionChange(index, q)} requestDeletion={() => this.deleteQuestion(index)} question={ q } key={ q.id } />)
-            )) : <span>No questions found</span>}
+              (<QuestionEditView onQuestionChange={ (q: Question) => this.onQuestionChange(index, q) } requestDeletion={ () => this.deleteQuestion(index) } question={ q } key={ q.id } />)
+            )) : <span>No questions found</span> }
             </div>);
       }
 
       return (<div>
                 <SideNav redirectComponent="certificationManagement" showUnpublished={ true } />
-                { this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={"Are you sure you want to delete " + this.state.certification.name + "?"} key="DeletionPromptModal" yesCallBack={ this.delete } finally={ this.hideDeletionPrompt } />}
-                { this.state.addingMultipleQuestions && <TextInputModal title="Add multiple Questions" text={"How many questions do you want to add?"} key="AddMultipleQuestionsModal" yesCallBack={ this.addMultipleQuestions } finally={ this.hideMultipleQuestionsModal } />}
-                { this.state.regeneratingKeys && <TextInputModal title="Regenerate question keys" text={"Please select a prefix for the index, i.e. 'NO. ' will give 'NO. 1' and so on."} key="RegenerateKeysModal" yesCallBack={ this.regenerateKeys } finally={ this.hideKeyRegenerationModal } />}
-                { this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={ this.loadImportedFile } />}
+                { this.state.deletionRequested && <UserPromptModal title="Delete Cert" text={ "Are you sure you want to delete " + this.state.certification.name + "?" } key="DeletionPromptModal" yesCallBack={ this.delete } finally={ this.hideDeletionPrompt } /> }
+                { this.state.addingMultipleQuestions && <TextInputModal title="Add multiple Questions" text={ "How many questions do you want to add?" } key="AddMultipleQuestionsModal" yesCallBack={ this.addMultipleQuestions } finally={ this.hideMultipleQuestionsModal } /> }
+                { this.state.regeneratingKeys && <TextInputModal title="Regenerate question keys" text={ "Please select a prefix for the index, i.e. 'NO. ' will give 'NO. 1' and so on." } key="RegenerateKeysModal" yesCallBack={ this.regenerateKeys } finally={ this.hideKeyRegenerationModal } /> }
+                { this.state.uploadingFile && <FileUploadModal key="FileUploadModal" fileCallBack={ this.loadImportedFile } /> }
                 <div className="col-xs-10 pull-right">
                   <ButtonToolbar>
                     <ButtonGroup>
-                      <LinkContainer key={"newLink"} to={"/certificationManagement/new"}>
+                      <LinkContainer key={ "newLink" } to={ "/certificationManagement/new" }>
                         <Button bsStyle="default">Create New Certification</Button>
                       </LinkContainer>
-                      { this.state.certification && <Button bsStyle="default" onClick={ this.import }>Import</Button>}
-                      { this.state.certification && <Button bsStyle="default" onClick={ this.export }>Export</Button>}
-                      { this.state.certification && <Button bsStyle="default" onClick={ this.addQuestion }>Add Question</Button>}
-                      { this.state.certification && <Button bsStyle="default" onClick={ this.openMultipleQuestionsModal }>Add Multiple Questions</Button>}
-                      { this.state.certification && <Button bsStyle="default" onClick={ this.openKeyRegenerationModal }>Regenerate Keys</Button>}
-                      { this.state.certification && <Button bsStyle="default" onClick={ this.save }>Save</Button>}
-                      { this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={ this.verifyAndDelete }>Delete</Button>}
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.import }>Import</Button> }
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.export }>Export</Button> }
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.addQuestion }>Add Question</Button> }
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.openMultipleQuestionsModal }>Add Multiple Questions</Button> }
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.openKeyRegenerationModal }>Regenerate Keys</Button> }
+                      { this.state.certification && <Button bsStyle="default" onClick={ this.save }>Save</Button> }
+                      { this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={ this.verifyAndDelete }>Delete</Button> }
                     </ButtonGroup>
                   </ButtonToolbar>
                   <MessageBar message={ this.state.message } errors={ this.state.errors } />

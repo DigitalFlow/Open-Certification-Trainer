@@ -31,13 +31,13 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
 
     render() {
         const content =
-            <div style={{ whiteSpace: "pre-wrap"}}>
+            <div style={ { whiteSpace: "pre-wrap" } }>
                 <h3>{ this.props.question.key }</h3>
                 <p>{ this.props.question.text.value }</p>
                 <ButtonGroup vertical block>
                   { this.props.question.answers ? (this.props.question.answers.map(a => (
                     <AnswerView onAnswerChange={ this.props.onAnswerChange } disabled={ this.props.answersDisabled } checked={ this.props.checkedAnswers ? (this.props.checkedAnswers[a.id] || false) : false } answer={ a } key={ a.id } highlightIfCorrect={ this.props.highlightCorrectAnswers } highlightIfIncorrect={ this.props.highlightIncorrectAnswers } />
-                  ))) : <span>No answers found</span>}
+                  ))) : <span>No answers found</span> }
                 </ButtonGroup>
             </div>;
 

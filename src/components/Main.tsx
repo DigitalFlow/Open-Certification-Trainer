@@ -19,7 +19,7 @@ export default class Main extends React.PureComponent<IBaseProps, undefined> {
     return (
       <main>
         <Switch>
-          { renderRoutes(routes, { user: this.props.user, triggerUserReload: this.props.triggerUserReload })}
+          { renderRoutes(routes, { user: this.props.user, triggerUserReload: this.props.triggerUserReload }) }
         </Switch>
       </main>
     );

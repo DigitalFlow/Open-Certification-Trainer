@@ -43,11 +43,11 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       activeQuestionAnswered: false,
       checkingAnswers: false,
       questionState: QuestionState.Open,
-      checkedAnswers: {},
+      checkedAnswers: { },
       previousSessions: [],
-      session: new AssessmentSession({ sessionId: uuid(), certification: undefined, answers: {}}),
+      session: new AssessmentSession({ sessionId: uuid(), certification: undefined, answers: { } }),
       restartSessionModal: false,
-      selectedQuestions: {},
+      selectedQuestions: { },
       selectionTrigger: false
     } as AssessmentState;
   }
@@ -78,10 +78,10 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     // If only one correct answer allowed, emulate select behavior, i.e. only one item selectable
     const sum = answers.map(a => a.isCorrect ? 1 : 0).reduce((acc: number, val: number) => acc + val, 0);
 
-    let copy = {...this.state.checkedAnswers };
+    let copy = { ...this.state.checkedAnswers };
 
     if (sum <= 1) {
-      copy = {};
+      copy = { };
     }
 
     copy[answer.id] = answer.isCorrect;
@@ -154,7 +154,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
         return results.json();
       })
       .then(data => {
-        this.setState({ certification: data as Certification, session: this.getDefaultState().session, activeQuestion: -1, selectedQuestions: {}});
+        this.setState({ certification: data as Certification, session: this.getDefaultState().session, activeQuestion: -1, selectedQuestions: { } });
       });
   }
 
@@ -227,14 +227,14 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   start() {
-    const filteredCertification = {...this.state.certification, questions: this.state.certification.questions.filter(q => this.state.selectedQuestions[q.id])};
+    const filteredCertification = { ...this.state.certification, questions: this.state.certification.questions.filter(q => this.state.selectedQuestions[q.id]) };
 
     this.setState({
       certification: this.shuffleCertification(filteredCertification),
       activeQuestion: this.state.activeQuestion + 1,
       checkingAnswers: false,
       questionState: QuestionState.Open,
-      checkedAnswers: {}
+      checkedAnswers: { }
     });
   }
 
@@ -243,7 +243,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       activeQuestion: this.state.activeQuestion + 1,
       checkingAnswers: false,
       questionState: QuestionState.Open,
-      checkedAnswers: {}
+      checkedAnswers: { }
     });
   }
 
@@ -335,15 +335,15 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
             content = assessmentInProgress ?
             (
               <div>
-                <p style={{"text-align": "right"}}>Version { this.state.certification.version }</p>
+                <p style={ { "text-align": "right" } }>Version { this.state.certification.version }</p>
                 <h1>{ this.state.certification.name }</h1>
-                <ProgressBar striped now={((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100} />
+                <ProgressBar striped now={ ((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100 } />
                 <QuestionView checkedAnswers={ this.state.checkedAnswers } onAnswerChange={ this.answerChangedHandler } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ this.state.checkingAnswers } highlightIncorrectAnswers={ this.state.checkingAnswers } answersDisabled={ this.state.checkingAnswers } />
-                { this.state.questionState === QuestionState.Open ? (<Button onClick={ this.checkAnswer }>Check Answer</Button>) : <div/>}
-                { this.state.checkingAnswers && (<Button onClick={ this.nextQuestion }>Next</Button>)}
-                { this.state.questionState === QuestionState.Correct ? <p style={{ color: "green"}}>Correct Response</p> : <div/>}
-                { this.state.questionState === QuestionState.Incorrect ? <p style={{ color: "red"}}>Incorrect Response</p> : <div/>}
-                { assessmentInProgress && Object.keys(this.state.session.answers).length ? <Button className="pull-right" onClick={ this.showResetSessionPrompt }>Restart</Button> : ""}
+                { this.state.questionState === QuestionState.Open ? (<Button onClick={ this.checkAnswer }>Check Answer</Button>) : <div/> }
+                { this.state.checkingAnswers && (<Button onClick={ this.nextQuestion }>Next</Button>) }
+                { this.state.questionState === QuestionState.Correct ? <p style={ { color: "green" } }>Correct Response</p> : <div/> }
+                { this.state.questionState === QuestionState.Incorrect ? <p style={ { color: "red" } }>Incorrect Response</p> : <div/> }
+                { assessmentInProgress && Object.keys(this.state.session.answers).length ? <Button className="pull-right" onClick={ this.showResetSessionPrompt }>Restart</Button> : "" }
               </div>
             )
             : (<AssessmentResultView session={ this.state.session } />);
@@ -351,11 +351,11 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
           else {
             content = (
               <div>
-                <p style={{"text-align": "right"}}>Version { this.state.certification.version }</p>
+                <p style={ { "text-align": "right" } }>Version { this.state.certification.version }</p>
                 <h1>{ this.state.certification.name }</h1>
                 <QuestionSelectionList questions={ this.state.certification.questions } onSelectionChange={ this.onSelectionChange } selectedQuestions={ this.state.selectedQuestions } previousSessions={ this.state.previousSessions } />
                 <br />
-                <Button disabled={!Object.keys(this.state.selectedQuestions).some(k => this.state.selectedQuestions[k])} onClick={ this.start }>Start</Button>
+                <Button disabled={ !Object.keys(this.state.selectedQuestions).some(k => this.state.selectedQuestions[k]) } onClick={ this.start }>Start</Button>
               </div>
             );
           }
@@ -372,7 +372,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       return (<div>
               <SideNav redirectComponent="assessment" />
               <Well className="col-xs-10 pull-right">
-                { this.state.restartSessionModal && <UserPromptModal yesCallBack={ this.resetSession } finally={ this.hideResetSessionPrompt } title="Restart Session" text="All your current progress will be lost and this session will be deleted. Continue?" />}
+                { this.state.restartSessionModal && <UserPromptModal yesCallBack={ this.resetSession } finally={ this.hideResetSessionPrompt } title="Restart Session" text="All your current progress will be lost and this session will be deleted. Continue?" /> }
                 { content }
               </Well>
           </div>);

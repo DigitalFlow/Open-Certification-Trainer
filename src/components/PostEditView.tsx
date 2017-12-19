@@ -37,7 +37,7 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
 
       if (postId === "new") {
         return this.setState({
-          post: {...this.state.post, id: uuid()}
+          post: { ...this.state.post, id: uuid() }
         });
       }
 
@@ -57,7 +57,7 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
 
     markdownChanged(e: any) {
       this.setState({
-        post: {...this.state.post, content: e.target.value }
+        post: { ...this.state.post, content: e.target.value }
       });
     }
 
@@ -123,7 +123,7 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
                 <Button bsStyle="danger" onClick={ this.delete }>Delete</Button>
               </ButtonGroup>
             </ButtonToolbar>
-              <textarea className="col-xs-6" style={{"height": "100vh"}} value={ this.state.post.content } onChange={ this.markdownChanged } />
+              <textarea className="col-xs-6" style={ { "height": "100vh" } } value={ this.state.post.content } onChange={ this.markdownChanged } />
               <ReactMarkdown
                 className="result col-xs-6"
                 source={ this.state.post.content }

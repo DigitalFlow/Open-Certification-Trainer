@@ -35,7 +35,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
     const courseName = props.match.params.courseName;
 
     if (!courseName) {
-      return Promise.resolve({} as Certification);
+      return Promise.resolve({ } as Certification);
     }
 
     return fetch("/courses/" + courseName, {
@@ -120,8 +120,8 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
 
           <Panel>
             <h2>Score Progress</h2>
-            <Line height={75}
-              data={{
+            <Line height={ 75 }
+              data={ {
                 labels: this.state.previousSessions.map(s => s.created_on).reverse(),
                 datasets: [{
                   label: `Score Progress ${ this.props.match.params.courseName }`,
@@ -132,8 +132,8 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
                   hoverBorderColor: "rgba(255,99,132,1)",
                   data: this.state.previousSessions.map(s => calculateScore(s.certification.questions, s.answers)).reverse(),
                 }]
-              }}
-              options={{
+              } }
+              options={ {
                 responsive: true,
                 scales: {
                   yAxes: [{
@@ -144,13 +144,13 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
                     }
                   }]
                 }
-              }}/>
+              } }/>
           </Panel>
 
           <Panel>
             <h2>Question Scores</h2>
-            <Bar height={75}
-              data={{
+            <Bar height={ 75 }
+              data={ {
                 labels: sortable.map(s => s[0] as string),
                 datasets: [{
                   label: "Score per question",
@@ -161,8 +161,8 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
                   hoverBorderColor: "rgba(255,99,132,1)",
                   data: sortable.map(s => s[1] as number)
                 }]
-              }}
-              options={{
+              } }
+              options={ {
 
                 responsive: true,
                 scales: {
@@ -174,7 +174,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
                     }
                   }]
                 }
-              }}/>
+              } }/>
           </Panel>
 
           { this.state.previousSessions.map(s => {
@@ -183,7 +183,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
                 <SessionRecap session={ s } />
               </Panel>
             );
-          })}
+          }) }
         </div>
       );
     }

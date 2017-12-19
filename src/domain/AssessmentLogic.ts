@@ -49,8 +49,8 @@ export function calculateScore(questions: Array<Question>, answers: IAssociative
 }
 
 export function calculateScorePerQuestion(sessions: Array<AssessmentSession>) {
-  const questionAnsweredCount = {} as IAssociativeArray<number>;
-  const questionAnsweredCorrectlyCount = {} as IAssociativeArray<number>;
+  const questionAnsweredCount = { } as IAssociativeArray<number>;
+  const questionAnsweredCorrectlyCount = { } as IAssociativeArray<number>;
 
   for (let i = 0; i < sessions.length; i++) {
     const session = sessions[i];
@@ -65,7 +65,7 @@ export function calculateScorePerQuestion(sessions: Array<AssessmentSession>) {
         questionAnsweredCount[question.id] = questionAnsweredCount[question.id] + 1;
       }
 
-      if (checkIfAnsweredCorrectly(question.answers, session.answers[question.id].reduce((acc, val) => { acc[val] = true; return acc; }, {} as IAssociativeArray<boolean>))) {
+      if (checkIfAnsweredCorrectly(question.answers, session.answers[question.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>))) {
         if (!questionAnsweredCorrectlyCount[question.id]) {
           questionAnsweredCorrectlyCount[question.id] = 1;
         }
@@ -79,7 +79,7 @@ export function calculateScorePerQuestion(sessions: Array<AssessmentSession>) {
   const ratio = Object.keys(questionAnsweredCount).reduce((acc, key) => {
     acc[key] = ((questionAnsweredCorrectlyCount[key] || 0) / questionAnsweredCount[key]) * 100;
     return acc;
-  }, {} as IAssociativeArray<number>);
+  }, { } as IAssociativeArray<number>);
 
   return ratio;
 }

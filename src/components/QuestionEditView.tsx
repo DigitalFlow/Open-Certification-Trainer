@@ -61,7 +61,7 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
     onAnswerChange(index: number, answer: Answer) {
       const question = this.props.question;
       const answers = (question.answers || []).map((value, i) => i != index ? value : answer);
-      const update = {...question, answers: answers };
+      const update = { ...question, answers: answers };
 
       this.props.onQuestionChange(update);
     }
@@ -70,7 +70,7 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
       const value = e.target.value;
       const question = this.props.question;
 
-      const update = {...question, key: value };
+      const update = { ...question, key: value };
 
       this.props.onQuestionChange(update);
     }
@@ -78,14 +78,14 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
     onQuestionTextChange (e: any) {
       const value = e.target.value;
       const question = this.props.question;
-      const update = {...question, text: new Text({ value: value })};
+      const update = { ...question, text: new Text({ value: value }) };
 
       this.props.onQuestionChange(update);
     }
 
     addAnswer() {
       const question = this.props.question;
-      const update = {...question, answers: (question.answers || []).concat(new Answer({ id: uuid(), isCorrect: false }))};
+      const update = { ...question, answers: (question.answers || []).concat(new Answer({ id: uuid(), isCorrect: false })) };
 
       this.props.onQuestionChange(update);
     }
@@ -93,29 +93,29 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
     deleteAnswer (index: number) {
       const question = this.props.question;
       const answers = (question.answers || []).filter((value, i) => i != index);
-      const update = {...question, answers: answers };
+      const update = { ...question, answers: answers };
 
       this.props.onQuestionChange(update);
     }
 
     render() {
         const content =
-          <div key={ this.props.question.id + "header"}>
+          <div key={ this.props.question.id + "header" }>
             <FieldGroup
-              id={ this.props.question.id + "_qKey"}
-              control={{ type: "text", value: this.props.question.key, onChange: this.onQuestionKeyChange }}
+              id={ this.props.question.id + "_qKey" }
+              control={ { type: "text", value: this.props.question.key, onChange: this.onQuestionKeyChange } }
               label="Key"
             />
             <FieldGroup
-              id={ this.props.question.id + "_qText"}
-              control={{ componentClass: "textarea", rows: 3, value: this.props.question.text ? this.props.question.text.value : "", onChange: this.onQuestionTextChange }}
+              id={ this.props.question.id + "_qText" }
+              control={ { componentClass: "textarea", rows: 3, value: this.props.question.text ? this.props.question.text.value : "", onChange: this.onQuestionTextChange } }
               label="Question"
             />
             <Button bsStyle="success" onClick={ this.addAnswer }>Add Answer</Button>
             <ButtonGroup vertical block type="checkbox">
               { this.props.question.answers && (this.props.question.answers.map((a, index) => {
-                  return (<AnswerEditView key={ a.id } onAnswerChange={(a: Answer) => this.onAnswerChange(index, a)} answer={ a } requestDeletion={() => this.deleteAnswer(index)} />);
-                }))}
+                  return (<AnswerEditView key={ a.id } onAnswerChange={ (a: Answer) => this.onAnswerChange(index, a) } answer={ a } requestDeletion={ () => this.deleteAnswer(index) } />);
+                })) }
             </ButtonGroup>
             <br />
             <br />

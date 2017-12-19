@@ -55,7 +55,7 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
     retrieveUser() {
       const userId = this.props.match.params.userId;
 
-      fetch(`/retrieveProfile${ userId ? `/${ userId }` : ""}`,
+      fetch(`/retrieveProfile${ userId ? `/${ userId }` : "" }`,
       {
         credentials: "include"
       })
@@ -107,7 +107,7 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
 
     update() {
       if (this.state.password !== this.state.repeatPassword) {
-        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."]});
+        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."] });
       }
 
       const headers = new Headers();
@@ -115,7 +115,7 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
 
       const userId = this.props.match.params.userId;
 
-      fetch(`/profile${ userId ? `/${ userId }` : ""}`,
+      fetch(`/profile${ userId ? `/${ userId }` : "" }`,
       {
         method: "POST",
         headers: headers,
@@ -156,35 +156,35 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
                 <form action="javascript: void(0);">
                   <FieldGroup
                     id="firstNameText"
-                    control={{ type: "text", value: this.state.firstName, placeholder: "Enter first name", onChange: this.setFirstName }}
+                    control={ { type: "text", value: this.state.firstName, placeholder: "Enter first name", onChange: this.setFirstName } }
                     label="First Name"
                   />
                   <FieldGroup
                     id="lastNameText"
-                    control={{ type: "text", value: this.state.lastName, placeholder: "Enter last name", onChange: this.setLastName }}
+                    control={ { type: "text", value: this.state.lastName, placeholder: "Enter last name", onChange: this.setLastName } }
                     label="Last Name"
                   />
                   <FieldGroup
                     id="userNameText"
-                    control={{ type: "text", value: this.state.userName, placeholder: "Enter username", onChange: this.setUsername }}
+                    control={ { type: "text", value: this.state.userName, placeholder: "Enter username", onChange: this.setUsername } }
                     label="Username"
                   />
                   <FieldGroup
                     id="formControlsEmail"
-                    control={{ type: "text", value: this.state.email, placeholder: "Enter email", onChange: this.setEmail }}
+                    control={ { type: "text", value: this.state.email, placeholder: "Enter email", onChange: this.setEmail } }
                     label="E-Mail"
                   />
                   <FieldGroup
                     id="formControlsPassword"
-                    control={{ type: "password", value: this.state.password, placeholder: "Leave empty for not updating", onChange: this.setPassword }}
+                    control={ { type: "password", value: this.state.password, placeholder: "Leave empty for not updating", onChange: this.setPassword } }
                     label="Password"
                   />
                   <FieldGroup
                     id="formControlsRepeatPassword"
-                    control={{ type: "password", value: this.state.repeatPassword, placeholder: "Leave empty for not updating", onChange: this.repeatPassword }}
+                    control={ { type: "password", value: this.state.repeatPassword, placeholder: "Leave empty for not updating", onChange: this.repeatPassword } }
                     label="Repeat Password"
                   />
-                  { this.props.user && this.props.user.is_admin && <Checkbox key={`${ this.state.userName }_isAdmin`} checked={ this.state.isAdmin } onChange={ this.setIsAdmin }>Is Admin</Checkbox>}
+                  { this.props.user && this.props.user.is_admin && <Checkbox key={ `${ this.state.userName }_isAdmin` } checked={ this.state.isAdmin } onChange={ this.setIsAdmin }>Is Admin</Checkbox> }
                   <Button onClick={ this.update } type="submit">
                     Submit
                   </Button>

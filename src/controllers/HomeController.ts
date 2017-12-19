@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from "express";
 import App from "../components/App";
 
 export const getAll = (req: Request, res: Response) => {
-    const props = { location: req.url, context: {} };
+    const props = { location: req.url, context: { } };
     const router = React.createElement(StaticRouter, props, React.createElement(App));
     const html = renderToString(router);
 

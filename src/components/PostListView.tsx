@@ -43,7 +43,7 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
       <div>
         <ButtonToolbar>
           <ButtonGroup>
-            <LinkContainer key={"newLink"} to={"/post/new"}>
+            <LinkContainer key={ "newLink" } to={ "/post/new" }>
               <Button bsStyle="default">New Post</Button>
             </LinkContainer>
           </ButtonGroup>
@@ -70,7 +70,7 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
                 content = content.replace(/[#]*/g, "");
 
                 return (
-                  <LinkContainer key={`${ p.id }_link`} to={`/post/${ p.id }`}>
+                  <LinkContainer key={ `${ p.id }_link` } to={ `/post/${ p.id }` }>
                     <tr>
                     <td>{ content }</td>
                     <td>{ p.created_on }</td>

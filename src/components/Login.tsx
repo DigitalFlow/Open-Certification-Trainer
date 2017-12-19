@@ -81,12 +81,12 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
                 <form action="javascript: void(0);">
                   <FieldGroup
                     id="userNameText"
-                    control={{ type: "text", placeholder: "Enter username", onChange: this.setUsername }}
+                    control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }
                     label="Username"
                   />
                   <FieldGroup
                     id="foEditorrmControlsPassword"
-                    control={{ type: "password", placeholder: "Enter password", onChange: this.setPassword }}
+                    control={ { type: "password", placeholder: "Enter password", onChange: this.setPassword } }
                     label="Password"
                   />
                   <Button onClick={ this.login } type="submit">

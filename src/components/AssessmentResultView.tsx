@@ -94,7 +94,7 @@ export default class AssessmentResultView extends React.PureComponent<Assessment
         <Panel collapsible expanded={ this.state.showCorrectQuestions }>
           {
             this.props.session.certification.questions.filter(q => correctAnswers.indexOf(q.id) !== -1).map(activeQuestion => {
-              return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, {} as IAssociativeArray<boolean>)} question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
+              return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>) } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
             })
           }
         </Panel>
@@ -105,7 +105,7 @@ export default class AssessmentResultView extends React.PureComponent<Assessment
         <Panel collapsible expanded={ this.state.showIncorrectQuestions }>
         {
           this.props.session.certification.questions.filter(q => correctAnswers.indexOf(q.id) === -1).map(activeQuestion => {
-            return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, {} as IAssociativeArray<boolean>)} question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
+            return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>) } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
           })
         }
         </Panel>

@@ -38,7 +38,7 @@ export const getAssessmentSession = (req: Request, res: Response) => {
   pool.query("SELECT session FROM open_certification_trainer.assessment_session as session INNER JOIN open_certification_trainer.certification as cert ON session.certification_id = cert.id WHERE session.user_id=$1 AND cert.unique_name=$2 AND in_progress",
     [userId, certificationUniqueName])
     .then(result => {
-      return res.send(result.rows && result.rows.length ? result.rows[0].session : "{}");
+      return res.send(result.rows && result.rows.length ? result.rows[0].session : "{ }");
     })
     .catch(err => {
       return res.status(500).send(err.message);

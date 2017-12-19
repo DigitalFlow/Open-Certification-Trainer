@@ -124,7 +124,7 @@ export const postSignup = (req: Request, res: Response) => {
   pool.query("SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER($1)", [auth.userName])
     .then(result => {
       if (result.rows.length > 0) {
-        return res.status(200).json(new ValidationResult({ success: false, errors: [`User name is already in use, please choose another one.`]}));
+        return res.status(200).json(new ValidationResult({ success: false, errors: [`User name is already in use, please choose another one.`] }));
       }
 
       hashPassword(auth.password, (err: Error, hash: string) => {
@@ -134,12 +134,12 @@ export const postSignup = (req: Request, res: Response) => {
             return res.status(200).json(new ValidationResult({ success: true }));
           })
           .catch(err => {
-            return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+            return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
           });
       });
     })
     .catch(err => {
-      return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+      return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
     });
 };
 
@@ -151,12 +151,12 @@ export const postLogin = (req: Request, res: Response) => {
     return pool.query("SELECT * FROM open_certification_trainer.user WHERE id = $1", [req.user])
     .then(result => {
       if (!result.rows.length) {
-        return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`]}));
+        return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`] }));
       }
 
       const user = new DbUser(result.rows[0]);
 
-      return res.status(200).json(new ValidationResult({ success: true, userInfo: new UserInfo(user)}));
+      return res.status(200).json(new ValidationResult({ success: true, userInfo: new UserInfo(user) }));
     })
     .catch(err => {
       console.log(`Error in postLogin: ${ err.message }`);
@@ -166,14 +166,14 @@ export const postLogin = (req: Request, res: Response) => {
   pool.query(`SELECT * FROM open_certification_trainer.user WHERE LOWER(user_name) = LOWER($1)`, [auth.userName])
   .then(result => {
     if (!result.rows.length) {
-      return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`]}));
+      return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`] }));
     }
 
     const user = new DbUser(result.rows[0]);
 
     bcrypt.compare(auth.password, user.password_hash, (err: Error, isMatch: boolean) => {
       if (err) {
-        return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+        return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
       }
 
       if (isMatch) {
@@ -186,21 +186,21 @@ export const postLogin = (req: Request, res: Response) => {
         const signedToken = jwt.sign(token, process.env.JWT_SECRET, { expiresIn: week });
            res.status(200)
                .cookie("token", signedToken, { maxAge: week, httpOnly: true, secure: false })
-               .json(new ValidationResult({ success: true, userInfo: new UserInfo(user)}));
+               .json(new ValidationResult({ success: true, userInfo: new UserInfo(user) }));
       }
       else {
-        return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`]}));
+        return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`] }));
       }
     });
   })
   .catch(err => {
-    return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+    return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
   });
 };
 
 export const postLogout = (req: Request, res: Response) => {
   if (!req.user) {
-    return res.status(200).json(new ValidationResult({ success: false, errors: [`You must be logged in for logging out`]}));
+    return res.status(200).json(new ValidationResult({ success: false, errors: [`You must be logged in for logging out`] }));
   }
 
   res.clearCookie("token");
@@ -213,7 +213,7 @@ export const getProfile = (req: Request, res: Response) => {
   pool.query("SELECT user_name, first_name, last_name, email, is_admin FROM open_certification_trainer.user WHERE id = $1", [userId])
   .then(result => {
     if (result.rows.length < 1) {
-      return res.status(200).json(new ValidationResult({ success: false, errors: [`User not found.`]}));
+      return res.status(200).json(new ValidationResult({ success: false, errors: [`User not found.`] }));
     }
 
     const user = result.rows[0] as DbUser;
@@ -221,7 +221,7 @@ export const getProfile = (req: Request, res: Response) => {
     return res.json(user);
   })
   .catch(err => {
-    return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+    return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
   });
 };
 
@@ -233,7 +233,7 @@ export const getUserList = (req: Request, res: Response) => {
     return res.json(users);
   })
   .catch(err => {
-    return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+    return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
   });
 };
 
@@ -250,17 +250,17 @@ export const postProfile = (req: Request, res: Response) => {
   pool.query("SELECT is_admin FROM open_certification_trainer.user WHERE id = $1", [req.user])
   .then(result => {
     if (result.rows.length < 1) {
-      return res.status(200).json(new ValidationResult({ success: false, errors: [`Executing user not found.`]}));
+      return res.status(200).json(new ValidationResult({ success: false, errors: [`Executing user not found.`] }));
     }
 
     const executingUser = result.rows[0] as DbUser;
 
     if (!executingUser.is_admin && req.params.userId && req.params.userId !== req.user) {
-      return res.status(200).json(new ValidationResult({ success: false, errors: [`Only admins may update other user's profiles.`]}));
+      return res.status(200).json(new ValidationResult({ success: false, errors: [`Only admins may update other user's profiles.`] }));
     }
 
     if (!executingUser.is_admin && auth.isAdmin) {
-      return res.status(200).json(new ValidationResult({ success: false, errors: [`An administrator has to make you admin.`]}));
+      return res.status(200).json(new ValidationResult({ success: false, errors: [`An administrator has to make you admin.`] }));
     }
 
     if (auth.password) {
@@ -271,7 +271,7 @@ export const postProfile = (req: Request, res: Response) => {
             return res.status(200).json(new ValidationResult({ success: true }));
           })
           .catch(err => {
-            return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+            return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
           });
       });
     }
@@ -282,7 +282,7 @@ export const postProfile = (req: Request, res: Response) => {
           return res.status(200).json(new ValidationResult({ success: true }));
         })
         .catch(err => {
-          return res.status(200).json(new ValidationResult({ success: false, errors: [err.message]}));
+          return res.status(200).json(new ValidationResult({ success: false, errors: [err.message] }));
         });
     }
   });

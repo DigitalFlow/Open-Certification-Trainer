@@ -27,7 +27,7 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
       return (
         <Tab.Container id="left-tabs-example" defaultActiveKey="users">
           <Row className="clearfix">
-            <Col sm={1}>
+            <Col sm={ 1 }>
               <Nav bsStyle="pills" stacked>
                 <NavItem eventKey="users">
                   Users
@@ -40,7 +40,7 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
                 </NavItem>
               </Nav>
             </Col>
-            <Col sm={11}>
+            <Col sm={ 11 }>
               <Well>
                 <Tab.Content animation>
                   <Tab.Pane eventKey="users">

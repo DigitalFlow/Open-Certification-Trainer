@@ -62,11 +62,11 @@ export default class SessionRecap extends React.PureComponent<SessionRecapProps,
           <p>Correct Questions: { correctAnswerCount }</p>
           <p>Incorrect Questions: { incorrectAnswerCount }</p>
           <p>Score: { resultPercentage }%</p>
-          <p>Passed: { resultPercentage >= 70 ? "Yes" : "No"}</p>
+          <p>Passed: { resultPercentage >= 70 ? "Yes" : "No" }</p>
         </div>
         <div className="col-xs-9">
-          <Doughnut height={75}
-            data={{
+          <Doughnut height={ 75 }
+            data={ {
               labels: ["Correct", "Incorrect"],
               datasets: [{
                 label: `Session Score`,
@@ -75,10 +75,10 @@ export default class SessionRecap extends React.PureComponent<SessionRecapProps,
                 hoverBackgroundColor: ["#008000", "#FF0000"],
                 data: [correctAnswerCount, incorrectAnswerCount]
               }]
-            }}
-            options={{
+            } }
+            options={ {
               responsive: true
-            }}/>
+            } }/>
         </div>
         <div className="col-xs-12">
           <Button onClick={ this.toggleShowCorrectQuestions }>
@@ -87,7 +87,7 @@ export default class SessionRecap extends React.PureComponent<SessionRecapProps,
           <Panel collapsible expanded={ this.state.showCorrectQuestions }>
             {
               this.props.session.certification.questions.filter(q => correctAnswers.indexOf(q.id) !== -1).map(activeQuestion => {
-                return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, {} as IAssociativeArray<boolean>)} question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
+                return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>) } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
               })
             }
           </Panel>
@@ -98,7 +98,7 @@ export default class SessionRecap extends React.PureComponent<SessionRecapProps,
           <Panel collapsible expanded={ this.state.showIncorrectQuestions }>
           {
             this.props.session.certification.questions.filter(q => correctAnswers.indexOf(q.id) === -1).map(activeQuestion => {
-              return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, {} as IAssociativeArray<boolean>)} question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
+              return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>) } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
             })
           }
           </Panel>

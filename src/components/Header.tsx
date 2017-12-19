@@ -53,18 +53,18 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
               }
           </Nav>
           <Nav pullRight>
-            {!this.props.user && <IndexLinkContainer to="/login">
+            { !this.props.user && <IndexLinkContainer to="/login">
               <NavItem>Login</NavItem>
-            </IndexLinkContainer>}
-            {!this.props.user && <IndexLinkContainer to="/signUp">
+            </IndexLinkContainer> }
+            { !this.props.user && <IndexLinkContainer to="/signUp">
               <NavItem>Sign Up</NavItem>
-            </IndexLinkContainer>}
+            </IndexLinkContainer> }
             { this.props.user && <IndexLinkContainer to="/profile">
               <NavItem>Profile</NavItem>
-            </IndexLinkContainer>}
+            </IndexLinkContainer> }
             { this.props.user && <IndexLinkContainer to="/logout">
               <NavItem>Logout</NavItem>
-            </IndexLinkContainer>}
+            </IndexLinkContainer> }
           </Nav>
           </Navbar.Collapse>
         </Navbar>

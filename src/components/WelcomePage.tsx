@@ -39,14 +39,14 @@ export default class WelcomePage extends React.PureComponent<IBaseProps, Welcome
           <Well>
             <Jumbotron>
               <h1>Welcome { this.props.user && this.props.user.first_name }</h1>
-              <p>Study certifications, test yourself and take assessments!{ this.props.user ? "" : " Sign up or log in to get started"}</p>
+              <p>Study certifications, test yourself and take assessments!{ this.props.user ? "" : " Sign up or log in to get started" }</p>
             </Jumbotron>
           </Well>
         </div>
         <div className="col-xs-6">
           <Well>
             <h1>News</h1>
-            { this.props.user ? this.state.posts.map(p => <PostView key={ p.id } post={ p } />) : ""}
+            { this.props.user ? this.state.posts.map(p => <PostView key={ p.id } post={ p } />) : "" }
           </Well>
         </div>
     </div>

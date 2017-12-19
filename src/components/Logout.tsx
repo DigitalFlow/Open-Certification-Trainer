@@ -25,7 +25,7 @@ export default class Logout extends React.PureComponent<IBaseProps, LogoutState>
                 ["Content-Type", "application/json"]
             ],
             credentials: "include",
-            body: JSON.stringify({})
+            body: JSON.stringify({ })
         })
         .then(results => {
           return results.json();
@@ -40,7 +40,7 @@ export default class Logout extends React.PureComponent<IBaseProps, LogoutState>
           }
         })
         .catch(err => {
-          this.setState({ errors: [err.message]});
+          this.setState({ errors: [err.message] });
         });
     }
 

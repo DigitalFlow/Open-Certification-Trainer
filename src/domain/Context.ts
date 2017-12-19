@@ -2,7 +2,7 @@ export class Context {
   props: any;
 
   constructor() {
-    this.props = {};
+    this.props = { };
   }
 
   setProperty = (name: string, value: any) => {

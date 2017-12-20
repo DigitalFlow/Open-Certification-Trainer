@@ -68,7 +68,7 @@ app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:htt
 app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(path.resolve(__dirname, "..", "dist")));

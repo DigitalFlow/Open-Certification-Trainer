@@ -18,11 +18,12 @@ More and more functions will be coming as the project progresses.
 - Find your weaknesses using session history and charts
 
 ## Using
+This project was tested on Arch Linux, Ubuntu and Windows 10.
 You'll need to have [NodeJS](https://nodejs.org/en/) and [PostgreSQL](https://www.postgresql.org/) installed.
 Restore the database schema using the databaseSchema.sql file in the project root while following the instructions in there.
 
-For restoring, you should use psql, which is bundled with every PostgreSql installation.
-For me it was installed at C:\Program Files\PostgreSQL\10\bin. I added it to my Windows path, so that it can be used without having to specify the full folder every time.
+For restoring, you should use psql, which is bundled with every PostgreSQL installation.
+For me it was installed at `C:\Program Files\PostgreSQL\10\bin`. I added it to my Windows path, so that it can be used without having to specify the full folder every time. When installing PostgreSQL on Linux, psql should become available automatically.
 
 For importing the database schema, open your PowerShell and enter:
 `psql -U postgres -h localhost -d postgres -f "C:\Open-Certification-Trainer\dataBaseSchema.sql"`
@@ -43,6 +44,8 @@ Afterwards the site can be accessed on http://localhost:8080. You can also confi
 Use the CERT_TRAINER_VHOST variable and set it to the domain name you'd like.
 Afterwards make sure to edit the /etc/hosts file (Linux + Windows) on your host server.
 If you plan on using this tool in your company, you need to configure your company's DNS server to redirect to your host server for the domain you configured.
+
+For production use, consider running the server using [forever](https://github.com/foreverjs/forever).
 
 ## Courses
 Courses can be imported using the Certification Management page.

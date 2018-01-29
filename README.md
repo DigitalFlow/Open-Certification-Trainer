@@ -17,9 +17,10 @@ More and more functions will be coming as the project progresses.
 - Train using assessment mode
 - Find your weaknesses using session history and charts
 
-## Using
+## Installation
 This project was tested on Arch Linux, Ubuntu and Windows 10.
-You'll need to have [NodeJS](https://nodejs.org/en/) and [PostgreSQL](https://www.postgresql.org/) installed.
+You'll need to have [NodeJS](https://nodejs.org/en/) and [PostgreSQL](https://www.postgresql.org/) installed. For NodeJS, the latest LTS version is recommended, which is 8.9.4 at the time of writing. PostgreSQL should be used in at least version 10.1.
+
 Restore the database schema using the databaseSchema.sql file in the project root while following the instructions in there.
 
 For restoring, you should use psql, which is bundled with every PostgreSQL installation.
@@ -40,7 +41,17 @@ When done, you can start the website by running
 
 `npm start`.
 
-Afterwards the site can be accessed on http://localhost:8080. You can also configure the site to be accessed using a DNS name.
+Afterwards the site can be accessed on http://localhost:8080. 
+
+If you're receiving an error like 
+
+`const { token } = req.cookies;
+
+SyntaxError: Unexpected token {`
+
+you should consider updating your node server. As described above, we recommend using the latest LTS version, which is 8.9.4 at the time of writing.
+
+You can also configure the site to be accessed using a DNS name.
 Use the CERT_TRAINER_VHOST variable and set it to the domain name you'd like.
 Afterwards make sure to edit the /etc/hosts file (Linux + Windows) on your host server.
 If you plan on using this tool in your company, you need to configure your company's DNS server to redirect to your host server for the domain you configured.

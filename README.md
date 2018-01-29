@@ -20,13 +20,22 @@ More and more functions will be coming as the project progresses.
 ## Using
 You'll need to have [NodeJS](https://nodejs.org/en/) and [PostgreSQL](https://www.postgresql.org/) installed.
 Restore the database schema using the databaseSchema.sql file in the project root while following the instructions in there.
-After restoring the database, there will be an admin user for open certification trainer with user name and password root.
 
+For restoring, you should use psql, which is bundled with every PostgreSql installation.
+For me it was installed at C:\Program Files\PostgreSQL\10\bin. I added it to my Windows path, so that it can be used without having to specify the full folder every time.
+
+For importing the database schema, open your PowerShell and enter:
+`psql -U postgres -h localhost -d postgres -f "C:\Open-Certification-Trainer\dataBaseSchema.sql"`
+
+Where -U is the user name of your root user (usually postgres), -h is the server (can be ommitted if localhost), -d is the database (postgres is the default database) and -f is the file location of your database schema.
+
+After restoring the database, there will be an admin user for open certification trainer with user name and password root.
 Afterwards, clone the project, navigate to the project folder using your PowerShell / Bash, and launch
 
 `npm install`
 
-Once this installed all packages, you can start the website by running
+Once this installed all packages, you can edit the .env.config, where you'll have to update the database user login settings for your environment. For production use, you should generate some key for usage as your own JWT secret.
+When done, you can start the website by running
 
 `npm start`.
 

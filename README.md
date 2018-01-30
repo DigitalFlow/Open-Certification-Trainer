@@ -45,9 +45,11 @@ Afterwards the site can be accessed on http://localhost:8080.
 
 If you're receiving an error like 
 
-`const { token } = req.cookies;
+```JavaScript
+const { token } = req.cookies;
 
-SyntaxError: Unexpected token {`
+SyntaxError: Unexpected token {
+```
 
 you should consider updating your node server. As described above, we recommend using the latest LTS version, which is 8.9.4 at the time of writing.
 

@@ -26,6 +26,7 @@ Restore the database schema using the databaseSchema.sql file in the project roo
 For restoring, you should use psql, which is bundled with every PostgreSQL installation.
 For me it was installed at `C:\Program Files\PostgreSQL\10\bin`. I added it to my Windows path, so that it can be used without having to specify the full folder every time. When installing PostgreSQL on Linux, psql should become available automatically.
 
+Create a user named dev and give it a password using the command `sudo -u postgres createuser -P -d dev`.
 For importing the database schema, open your PowerShell and enter:
 `psql -U postgres -h localhost -d postgres -f "C:\Open-Certification-Trainer\dataBaseSchema.sql"`
 

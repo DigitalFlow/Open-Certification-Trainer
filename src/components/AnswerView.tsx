@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Button, Panel, ButtonToolbar, Checkbox } from "react-bootstrap";
 import Answer from "../model/Answer";
+import * as ReactMarkdown from "react-markdown";
 
 export interface AnswerViewProps {
     answer: Answer;
@@ -44,11 +45,22 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
 
         const style = {
           "color": color,
+          "display": "flex",
           "fontWeight": (this.props.answer.isCorrect && this.props.highlightIfCorrect ? "bold" : "normal") as React.CSSWideKeyword
         };
 
         return (
-            <Checkbox disabled={ this.props.disabled } key={ this.props.answer.id + "_cb" } checked={ this.props.checked } onChange={ this.onChange }><span style={ style }>{ this.props.answer.text.value }</span></Checkbox>
+            <Checkbox disabled={ this.props.disabled } key={ this.props.answer.id + "_cb" } checked={ this.props.checked } onChange={ this.onChange }>
+              <span style={ style }>
+                <ReactMarkdown
+                  key={ this.props.answer.id }
+                  className="answer"
+                  source={ this.props.answer.text ? this.props.answer.text.value : "" }
+                  skipHtml={ true }
+                  escapeHtml={ true }
+                />
+              </span>
+            </Checkbox>
         );
     }
 }

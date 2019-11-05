@@ -50,7 +50,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
         };
 
         return (
-            <Checkbox disabled={ this.props.disabled } key={ this.props.answer.id + "_cb" } checked={ this.props.checked } onChange={ this.onChange }>
+            <Checkbox className={!color ? undefined : `answer${color}` } disabled={ this.props.disabled } key={ this.props.answer.id + "_cb" } checked={ this.props.checked } onChange={ this.onChange }>
               <span style={ style }>
                 <ReactMarkdown
                   key={ this.props.answer.id }

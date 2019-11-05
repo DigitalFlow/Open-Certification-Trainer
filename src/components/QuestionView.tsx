@@ -34,7 +34,13 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
         const content =
             <div style={ { whiteSpace: "pre-wrap" } }>
                 <h3>{ this.props.question.key }</h3>
-                <p>{ this.props.question.text ? this.props.question.text.value : "" }</p>
+                <ReactMarkdown
+                          key={ this.props.question.id + "_question" }
+                          className="result"
+                          source={ this.props.question.text ? this.props.question.text.value : "" }
+                          skipHtml={ true }
+                          escapeHtml={ true }
+                />
                 <ButtonGroup vertical block>
                   { this.props.question.answers ? (this.props.question.answers.map(a => (
                     <AnswerView onAnswerChange={ this.props.onAnswerChange } disabled={ this.props.answersDisabled } checked={ this.props.checkedAnswers ? (this.props.checkedAnswers[a.id] || false) : false } answer={ a } key={ a.id } highlightIfCorrect={ this.props.highlightCorrectAnswers } highlightIfIncorrect={ this.props.highlightIncorrectAnswers } />
@@ -44,7 +50,7 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
                     (<div>
                         <h4>Explanation</h4>
                         <ReactMarkdown
-                          key={ this.props.question.id }
+                          key={ this.props.question.id + "_explanation" }
                           className="result"
                           source={ this.props.question.explanation ? this.props.question.explanation.value : "" }
                           skipHtml={ true }

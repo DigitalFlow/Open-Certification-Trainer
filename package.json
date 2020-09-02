@@ -60,7 +60,7 @@
     "@types/validator": "^6.3.0",
     "awesome-typescript-loader": "^3.5.0",
     "base64url": "^2.0.0",
-    "bestzip": "^1.1.4",
+    "bestzip": "^2.1.7",
     "chart.js": "^2.9.2",
     "cpx": "^1.5.0",
     "gh-pages": "^2.1.1",

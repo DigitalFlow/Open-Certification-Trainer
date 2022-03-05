@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Request, Response, NextFunction } from "express";
-import pool from "../domain/DbConnection";
+import { pool } from "../domain/DbConnection";
 import DbPost from "../model/DbPost";
 import { escapeSpecialCharacters } from "../domain/StringExtensions";
 

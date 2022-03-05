@@ -91,7 +91,7 @@ export default class AssessmentResultView extends React.PureComponent<Assessment
         <Button onClick={ this.toggleShowCorrectQuestions }>
           Correctly answered questions
         </Button>
-        <Panel collapsible expanded={ this.state.showCorrectQuestions }>
+        <Panel expanded={ this.state.showCorrectQuestions }>
           {
             this.props.session.certification.questions.filter(q => correctAnswers.indexOf(q.id) !== -1).map(activeQuestion => {
               return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>) } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;
@@ -102,7 +102,7 @@ export default class AssessmentResultView extends React.PureComponent<Assessment
         <Button onClick={ this.toggleShowIncorrectQuestions }>
           Incorrectly answered questions
         </Button>
-        <Panel collapsible expanded={ this.state.showIncorrectQuestions }>
+        <Panel expanded={ this.state.showIncorrectQuestions }>
         {
           this.props.session.certification.questions.filter(q => correctAnswers.indexOf(q.id) === -1).map(activeQuestion => {
             return <QuestionView checkedAnswers={ this.props.session.answers[activeQuestion.id].reduce((acc, val) => { acc[val] = true; return acc; }, { } as IAssociativeArray<boolean>) } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ true } answersDisabled={ true } />;

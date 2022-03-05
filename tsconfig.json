@@ -3,11 +3,10 @@
         "outDir": "./dist/",
         "sourceMap": true,
         "noImplicitAny": true,
-        "module": "ES6",
+        "module": "CommonJS",
         "moduleResolution": "node",
         "baseUrl": ".",
-        "module": "es6",
-        "target": "es6",
+        "target": "es2020",
         "jsx": "react",
         "paths": {
             "*": [
@@ -17,6 +16,6 @@
         }
     },
     "include": [
-        "./src/**/*"
+        "src/**/*"
     ]
 }

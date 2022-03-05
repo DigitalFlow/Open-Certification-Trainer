@@ -335,7 +335,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
             content = assessmentInProgress ?
             (
               <div>
-                <p style={ { "text-align": "right" } }>Version { this.state.certification.version }</p>
+                <p style={ { "textAlign": "right" } }>Version { this.state.certification.version }</p>
                 <h1>{ this.state.certification.name }</h1>
                 <ProgressBar striped now={ ((this.state.activeQuestion + 1) / this.state.certification.questions.length) * 100 } />
                 <QuestionView checkedAnswers={ this.state.checkedAnswers } onAnswerChange={ this.answerChangedHandler } question={ activeQuestion } key={ activeQuestion.id } highlightCorrectAnswers={ this.state.checkingAnswers } highlightIncorrectAnswers={ this.state.checkingAnswers } answersDisabled={ this.state.checkingAnswers } />
@@ -351,7 +351,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
           else {
             content = (
               <div>
-                <p style={ { "text-align": "right" } }>Version { this.state.certification.version }</p>
+                <p style={ { "textAlign": "right" } }>Version { this.state.certification.version }</p>
                 <h1>{ this.state.certification.name }</h1>
                 <QuestionSelectionList questions={ this.state.certification.questions } onSelectionChange={ this.onSelectionChange } selectedQuestions={ this.state.selectedQuestions } previousSessions={ this.state.previousSessions } />
                 <br />

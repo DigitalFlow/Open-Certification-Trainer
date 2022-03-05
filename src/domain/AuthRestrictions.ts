@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import  pool from "./DbConnection";
+import { pool } from "./DbConnection";
 import DbUser from "../model/DbUser";
 
 export function IsAuthenticated(req: Request, res: Response, next: Function) {

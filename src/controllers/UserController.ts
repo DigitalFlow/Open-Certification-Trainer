@@ -7,7 +7,7 @@ import ValidationResult from "../model/ValidationResult";
 import Token from "../model/Token";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt-nodejs";
-import pool from "../domain/DbConnection";
+import { pool } from "../domain/DbConnection";
 import { escapeSpecialCharacters } from "../domain/StringExtensions";
 
 const validateSignupForm = (payload: UserDetail) => {
@@ -145,7 +145,7 @@ export const postSignup = (req: Request, res: Response) => {
 
 export const postLogin = (req: Request, res: Response) => {
   const auth = req.body as UserDetail;
-
+  console.log("Processing user auth");
   // If already logged in by cookie
   if (req.user) {
     return pool.query("SELECT * FROM open_certification_trainer.user WHERE id = $1", [req.user])

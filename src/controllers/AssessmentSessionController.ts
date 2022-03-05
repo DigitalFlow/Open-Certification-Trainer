@@ -5,7 +5,7 @@ import Question from "../model/Question";
 import Answer from "../model/Answer";
 import Text from "../model/Text";
 import AssessmentSession from "../model/AssessmentSession";
-import pool from "../domain/DbConnection";
+import { pool } from "../domain/DbConnection";
 import { escapeSpecialCharacters } from "../domain/StringExtensions";
 
 export const postAssessmentSession = (req: Request, res: Response) => {

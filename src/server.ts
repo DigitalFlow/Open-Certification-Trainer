@@ -27,11 +27,41 @@ import { Authentication } from "./domain/Authentication";
 import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions";
 
 // Connect to MySQL
-import pool from "./domain/DbConnection";
+import { pool, sequelize, User } from "./domain/DbConnection";
 
-pool.query("set schema 'open_certification_trainer'")
+console.log("Authenticating sequelize 23:38");
+
+sequelize.authenticate({ logging: true })
   .then(() => {
-    console.log("Connected to database.");
+    console.log("Creating scheme using sequelize");
+    return sequelize.createSchema("open_certification_trainer", { logging: true });
+  })
+  .then(() => {
+    console.log("Scheme created");
+    return sequelize.sync({ logging: true });
+  })
+  .then(() => {
+    console.log("Scheme synced");
+    return pool.query("set schema 'open_certification_trainer'");
+  })
+  .then(() => {
+    console.log("Connected to database");
+    return pool.query("SELECT id from open_certification_trainer.user WHERE id = 'f39f13b4-b8c6-4013-ace6-087a45dbd23d'");
+  })
+  .then((result) => {
+    if (result.rows.length) {
+      console.log("Admin user is existing");
+      return;
+    }
+    else {
+      console.log("Admin user is missing, creating it");
+      return pool.query("INSERT INTO open_certification_trainer.user (id, user_name, email, is_admin, password_hash, first_name, last_name) VALUES ('f39f13b4-b8c6-4013-ace6-087a45dbd23d', 'root', 'root@local.domain', true, '$2a$10$covQWp6GhzWOIik3T6oiveFVnIxTVG7X1c9ziHRM3jTiEFPT0cjd2', 'root', 'root')");
+    }
+  })
+  .then((result) => {
+    if (result) {
+      console.log("Admin user created successfully");
+    }
   })
   .catch(err => {
     console.log("Database connection error. Please make sure the database is running and your config in .env.config is correct. Error: " + err.message);

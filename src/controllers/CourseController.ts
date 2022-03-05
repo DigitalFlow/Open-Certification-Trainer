@@ -11,7 +11,7 @@ import Question from "../model/Question";
 import Answer from "../model/Answer";
 import Text from "../model/Text";
 import ValidationResult from "../model/ValidationResult";
-import pool from "../domain/DbConnection";
+import { pool } from "../domain/DbConnection";
 import { escapeSpecialCharacters } from "../domain/StringExtensions";
 
 export const getCourseOverview = (req: Request, res: Response) => {

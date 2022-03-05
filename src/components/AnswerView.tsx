@@ -46,7 +46,7 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
         const style = {
           "color": color,
           "display": "flex",
-          "fontWeight": (this.props.answer.isCorrect && this.props.highlightIfCorrect ? "bold" : "normal") as React.CSSWideKeyword
+          "fontWeight": (this.props.answer.isCorrect && this.props.highlightIfCorrect ? "bold" : "normal")
         };
 
         return (

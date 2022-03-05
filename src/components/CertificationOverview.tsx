@@ -77,7 +77,7 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
       if (this.state.certification) {
         content = (
           <div>
-          <p style={ { "text-align": "right" } }>Version { this.state.certification.version }</p>
+          <p style={ { "textAlign": "right" } }>Version { this.state.certification.version }</p>
             <h1>{ this.state.certification.name }</h1>
             { this.state.certification.questions ? (this.state.certification.questions.map(q =>
               (<QuestionView question={ q } key={ q.id } highlightCorrectAnswers={ true } highlightIncorrectAnswers={ false } answersDisabled={ true } />)

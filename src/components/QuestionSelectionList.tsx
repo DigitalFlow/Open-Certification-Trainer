@@ -117,7 +117,7 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
       <div>
         <p>Please select the questions you want to train during this assessment</p>
 
-        <ButtonToolbar style={ { "padding-bottom": "20px" } }>
+        <ButtonToolbar style={ { "paddingBottom": "20px" } }>
           <ToggleButtonGroup type="radio" name="options" defaultValue={ 1 }>
             <ToggleButton onClick={ this.selectNone } value={ 1 }>None</ToggleButton>
             <ToggleButton onClick={ this.selectAll } value={ 2 }>All</ToggleButton>
@@ -127,8 +127,8 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
         </ButtonToolbar>
 
         { this.state.selectionByQuestionScoreEnabled &&
-          <div style={ { "padding-bottom": "20px" } }>
-            <InputGroup style={ { "padding-bottom": "10px" } }>
+          <div style={ { "paddingBottom": "20px" } }>
+            <InputGroup style={ { "paddingBottom": "10px" } }>
               <DropdownButton defaultValue="1" componentClass={ InputGroup.Button } id="input-dropdown" title={ this.state.filterType === FilterType.LessEqual ? "Less Equal" : "Greater Equal" }>
                 <MenuItem onClick={ this.setFilterToLessEqual } key="1">Less Equal</MenuItem>
                 <MenuItem onClick={ this.setFilterToGreaterEqual } key="2">Greater Equal</MenuItem>

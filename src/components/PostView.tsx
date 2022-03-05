@@ -10,7 +10,7 @@ export interface PostViewProps {
 
 const PostView = ( props: PostViewProps ) => (
   <Panel>
-    <p style={ { "text-align": "right" } }>{ props.post.created_on }</p>
+    <p style={ { "textAlign": "right" } }>{ props.post.created_on }</p>
 
     <ReactMarkdown
       key={ props.post.id }

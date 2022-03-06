@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import * as http from "http";
 import * as https from "https";
 import * as fs from "fs";
+import helmet from "helmet";
 
 // Load environment variables
 dotenv.config({ path: ".env.config" });
@@ -88,6 +89,7 @@ process.on("SIGINT", function() {
  */
 const app = express();
 
+app.use(helmet());
 app.use(cookieParser());
 app.use(Authentication);
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));

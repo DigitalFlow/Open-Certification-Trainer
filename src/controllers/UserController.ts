@@ -184,7 +184,7 @@ export const postLogin = (req: Request, res: Response) => {
 
         const signedToken = jwt.sign(token, process.env.JWT_SECRET, { expiresIn: week });
            res.status(200)
-               .cookie("token", signedToken, { maxAge: week, httpOnly: true, secure: false })
+               .cookie("token", signedToken, { maxAge: week, httpOnly: true, secure: true })
                .json(new ValidationResult({ success: true, userInfo: new UserInfo(user) }));
       }
       else {

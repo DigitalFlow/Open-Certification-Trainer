@@ -4,6 +4,7 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "CommonJS",
+        "esModuleInterop": true,
         "moduleResolution": "node",
         "baseUrl": ".",
         "target": "es2020",

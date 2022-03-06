@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import Token from "../model/Token";
+import Token from "../model/Token.js";
 
 export function Authentication(req: Request, res: Response, next: Function) {
     req.user = undefined;

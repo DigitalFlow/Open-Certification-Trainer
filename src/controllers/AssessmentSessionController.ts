@@ -1,12 +1,6 @@
-import * as React from "react";
 import { Request, Response, NextFunction } from "express";
-import Certification from "../model/Certification";
-import Question from "../model/Question";
-import Answer from "../model/Answer";
-import Text from "../model/Text";
-import AssessmentSession from "../model/AssessmentSession";
-import { pool } from "../domain/DbConnection";
-import { escapeSpecialCharacters } from "../domain/StringExtensions";
+import AssessmentSession from "../model/AssessmentSession.js";
+import { pool } from "../domain/DbConnection.js";
 
 export const postAssessmentSession = (req: Request, res: Response) => {
   const session = req.body as AssessmentSession;

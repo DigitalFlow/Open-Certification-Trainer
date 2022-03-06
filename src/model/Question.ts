@@ -1,5 +1,5 @@
-import Answer from "./Answer";
-import Text from "./Text";
+import Answer from "./Answer.js";
+import Text from "./Text.js";
 
 export interface QuestionProps {
   key?: string;

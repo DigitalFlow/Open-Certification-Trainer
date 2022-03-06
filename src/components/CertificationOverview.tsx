@@ -4,12 +4,13 @@ import Certification from "../model/Certification";
 import QuestionView from "./QuestionView";
 import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
+import { withRouter } from "react-router-dom";
 
 interface CertificationOverviewState {
   certification: Certification;
 }
 
-export default class CertificationOverview extends React.Component<IBaseProps, CertificationOverviewState> {
+class CertificationOverview extends React.Component<IBaseProps, CertificationOverviewState> {
   getDefaultState = () => {
     return {
       certification: undefined
@@ -38,7 +39,7 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
   }
 
   loadCourses(props: IBaseProps) {
-    const courseName = props.match.params.courseName;
+    const courseName = (props.match.params as any).courseName;
 
     if (!courseName) {
       return;
@@ -93,3 +94,5 @@ export default class CertificationOverview extends React.Component<IBaseProps, C
           </div>);
   }
 }
+
+export default withRouter(CertificationOverview);

@@ -2,9 +2,10 @@ import * as React from "react";
 import { Well, ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
 import DbPost from "../model/DbPost";
 import IBaseProps from "../domain/IBaseProps";
-import * as ReactMarkdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import MessageBar from "./MessageBar";
-import * as uuid from "uuid/v4";
+import * as uuid from "uuid";
+import { withRouter } from "react-router-dom";
 
 interface PostEditViewState {
   post: DbPost;
@@ -12,7 +13,7 @@ interface PostEditViewState {
   errors: Array<string>;
 }
 
-export default class PostEditView extends React.PureComponent<IBaseProps, PostEditViewState> {
+class PostEditView extends React.PureComponent<IBaseProps, PostEditViewState> {
     constructor(props: IBaseProps) {
         super(props);
 
@@ -34,11 +35,11 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
     }
 
     retrievePost() {
-      const postId = this.props.match.params.postId;
+      const postId = (this.props.match.params as any).postId;
 
       if (postId === "new") {
         return this.setState({
-          post: { ...this.state.post, id: uuid() }
+          post: { ...this.state.post, id: uuid.v4() }
         });
       }
 
@@ -132,11 +133,12 @@ export default class PostEditView extends React.PureComponent<IBaseProps, PostEd
               <textarea className="col-xs-6" style={ { "height": "100vh" } } value={ this.state.post.content } onChange={ this.markdownChanged } />
               <ReactMarkdown
                 className="result col-xs-6"
-                source={ this.state.post.content }
+                children={ this.state.post.content }
                 skipHtml={ true }
-                escapeHtml={ true }
               />
           </div>
         );
     }
 }
+
+export default withRouter(PostEditView);

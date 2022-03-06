@@ -1,5 +1,4 @@
-import * as exjwt from "express-jwt";
-import * as jwt from "jsonwebtoken";
+import exjwt from "express-jwt";
 
 const jwtMw = exjwt({
   secret: process.env.JWT_SECRET

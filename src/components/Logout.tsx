@@ -3,12 +3,13 @@ import { Well, Jumbotron } from "react-bootstrap";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
+import { withRouter } from "react-router-dom";
 
 export interface LogoutState {
   errors: Array<string>;
 }
 
-export default class Logout extends React.PureComponent<IBaseProps, LogoutState> {
+class Logout extends React.PureComponent<IBaseProps, LogoutState> {
     constructor(props: IBaseProps) {
         super(props);
 
@@ -52,3 +53,5 @@ export default class Logout extends React.PureComponent<IBaseProps, LogoutState>
         );
     }
 }
+
+export default withRouter(Logout);

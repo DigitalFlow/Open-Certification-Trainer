@@ -1,9 +1,9 @@
-import UserInfo from "../model/UserInfo";
+import { RouteComponentProps } from "react-router-dom";
+import UserInfo from "../model/UserInfo.js";
 
-export default interface IBaseProps {
+export interface IBaseProps {
   user?: UserInfo;
   triggerUserReload?: () => void;
-  history?: any;
-  location?: Location;
-  match?: any;
 }
+
+export default interface ExtendedIBaseProps extends IBaseProps, RouteComponentProps { }

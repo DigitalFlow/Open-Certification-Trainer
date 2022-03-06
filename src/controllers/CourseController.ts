@@ -1,18 +1,12 @@
-import * as React from "react";
-import { StaticRouter } from "react-router-dom";
-import { renderToString } from "react-dom/server";
 import { Request, Response, NextFunction } from "express";
-import App from "../components/App";
-import * as path from "path";
-import * as fs from "fs";
-import CourseList from "../model/CourseList";
-import Certification from "../model/Certification";
-import Question from "../model/Question";
-import Answer from "../model/Answer";
-import Text from "../model/Text";
-import ValidationResult from "../model/ValidationResult";
-import { pool } from "../domain/DbConnection";
-import { escapeSpecialCharacters } from "../domain/StringExtensions";
+import CourseList from "../model/CourseList.js";
+import Certification from "../model/Certification.js";
+import Question from "../model/Question.js";
+import Answer from "../model/Answer.js";
+import Text from "../model/Text.js";
+import ValidationResult from "../model/ValidationResult.js";
+import { pool } from "../domain/DbConnection.js";
+import { escapeSpecialCharacters } from "../domain/StringExtensions.js";
 
 export const getCourseOverview = (req: Request, res: Response) => {
   // No sql injection possible, no user data passed

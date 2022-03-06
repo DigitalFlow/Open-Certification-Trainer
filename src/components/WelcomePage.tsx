@@ -3,12 +3,13 @@ import { Well, Jumbotron, Panel } from "react-bootstrap";
 import IBaseProps from "../domain/IBaseProps";
 import DbPost from "../model/DbPost";
 import PostView from "./PostView";
+import { withRouter } from "react-router-dom";
 
 interface WelcomePageState {
   posts: Array<DbPost>;
 }
 
-export default class WelcomePage extends React.PureComponent<IBaseProps, WelcomePageState> {
+class WelcomePage extends React.PureComponent<IBaseProps, WelcomePageState> {
   constructor(props: IBaseProps) {
       super(props);
 
@@ -53,3 +54,5 @@ export default class WelcomePage extends React.PureComponent<IBaseProps, Welcome
     );
   }
 }
+
+export default withRouter(WelcomePage);

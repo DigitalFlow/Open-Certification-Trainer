@@ -1,8 +1,7 @@
 import * as React from "react";
-import { Well, Jumbotron, Panel } from "react-bootstrap";
+import { Panel } from "react-bootstrap";
 import DbPost from "../model/DbPost";
-import IBaseProps from "../domain/IBaseProps";
-import * as ReactMarkdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
 
 export interface PostViewProps {
   post: DbPost;
@@ -15,9 +14,8 @@ const PostView = ( props: PostViewProps ) => (
     <ReactMarkdown
       key={ props.post.id }
       className="result"
-      source={ props.post.content }
+      children={ props.post.content }
       skipHtml={ true }
-      escapeHtml={ true }
     />
   </Panel>
 );

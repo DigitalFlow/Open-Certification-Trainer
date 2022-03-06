@@ -1,14 +1,13 @@
-import { default as DbUser, DbUserProps } from "../model/DbUser";
-import { Request, Response, NextFunction } from "express";
-import * as validator from "validator";
-import UserDetail from "../model/UserDetail";
-import UserInfo from "../model/UserInfo";
-import ValidationResult from "../model/ValidationResult";
-import Token from "../model/Token";
+import * as bcrypt from "bcrypt";
+import validator from "validator";
 import * as jwt from "jsonwebtoken";
-import * as bcrypt from "bcrypt-nodejs";
-import { pool } from "../domain/DbConnection";
-import { escapeSpecialCharacters } from "../domain/StringExtensions";
+import { Request, Response, NextFunction } from "express";
+import { default as DbUser, DbUserProps } from "../model/DbUser.js";
+import UserDetail from "../model/UserDetail.js";
+import UserInfo from "../model/UserInfo.js";
+import ValidationResult from "../model/ValidationResult.js";
+import Token from "../model/Token.js";
+import { pool } from "../domain/DbConnection.js";
 
 const validateSignupForm = (payload: UserDetail) => {
   const errors = new Array<string>();
@@ -103,13 +102,13 @@ const hashPassword = (password: string, callBack: (error: Error, hash: string) =
     if (err) {
       return callBack(err, undefined);
     }
-    bcrypt.hash(password, salt, undefined, (err: Error, hash) => {
-      if (err) {
-        return callBack(err, undefined);
-      }
 
-      callBack(undefined, hash);
-    });
+    bcrypt.hash(password, salt)
+      .then(
+        (hash) => callBack(undefined, hash),
+        (err) => callBack(err, undefined)
+      )
+      .catch((err) => callBack(err, undefined));
   });
 };
 

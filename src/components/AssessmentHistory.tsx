@@ -7,13 +7,14 @@ import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
 import SessionRecap from "./SessionRecap";
 import { Line, Bar } from "react-chartjs-2";
+import { withRouter } from "react-router-dom";
 
 interface AssessmentHistoryState {
   certification: Certification;
   previousSessions: Array<AssessmentSession>;
 }
 
-export default class AssessmentHistory extends React.PureComponent<IBaseProps, AssessmentHistoryState> {
+class AssessmentHistory extends React.PureComponent<IBaseProps, AssessmentHistoryState> {
   getDefaultState = () => {
     return {
       certification: undefined,
@@ -32,7 +33,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
   }
 
   loadCertification(props: IBaseProps) {
-    const courseName = props.match.params.courseName;
+    const courseName = (props.match.params as any).courseName;
 
     if (!courseName) {
       return Promise.resolve({ } as Certification);
@@ -50,7 +51,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
   }
 
   loadSessionCollection (props: IBaseProps, certification: Certification) {
-    const courseName = props.match.params.courseName;
+    const courseName = (props.match.params as any).courseName;
 
     if (!courseName) {
       return Promise.resolve();
@@ -113,10 +114,10 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
 
     sortable = sortable.sort((a, b) => (a[2] as number) - (b[2] as number));
 
-    if (this.props.match.params.courseName) {
+    if ((this.props.match.params as any).courseName) {
       content = (
         <div>
-          <h1>{ this.props.match.params.courseName }: History</h1>
+          <h1>{ (this.props.match.params as any).courseName }: History</h1>
 
           <Panel>
             <h2>Score Progress</h2>
@@ -124,7 +125,7 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
               data={ {
                 labels: this.state.previousSessions.map(s => s.created_on).reverse(),
                 datasets: [{
-                  label: `Score Progress ${ this.props.match.params.courseName }`,
+                  label: `Score Progress ${ (this.props.match.params as any).courseName }`,
                   backgroundColor: "rgba(255,99,132,0.2)",
                   borderColor: "rgba(255,99,132,1)",
                   borderWidth: 1,
@@ -136,13 +137,10 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
               options={ {
                 responsive: true,
                 scales: {
-                  yAxes: [{
+                  y: {
                     display: true,
-                    ticks: {
-                      min: 0,
-                      max: 100
-                    }
-                  }]
+                    beginAtZero: true
+                  }
                 }
               } }/>
           </Panel>
@@ -163,16 +161,12 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
                 }]
               } }
               options={ {
-
                 responsive: true,
                 scales: {
-                  yAxes: [{
+                  y: {
                     display: true,
-                    ticks: {
-                      min: 0,
-                      max: 100
-                    }
-                  }]
+                    beginAtZero: true
+                  }
                 }
               } }/>
           </Panel>
@@ -198,3 +192,5 @@ export default class AssessmentHistory extends React.PureComponent<IBaseProps, A
     );
   }
 }
+
+export default withRouter(AssessmentHistory);

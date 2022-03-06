@@ -4,7 +4,7 @@ import Question from "../model/Question";
 import Answer from "../model/Answer";
 import AnswerView from "./AnswerView";
 import IAssociativeArray from "../domain/IAssociativeArray";
-import * as ReactMarkdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
 
 export interface QuestionViewProps {
     question: Question;
@@ -37,9 +37,8 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
                 <ReactMarkdown
                           key={ this.props.question.id + "_question" }
                           className="result"
-                          source={ this.props.question.text ? this.props.question.text.value : "" }
+                          children={ this.props.question.text ? this.props.question.text.value : "" }
                           skipHtml={ true }
-                          escapeHtml={ true }
                 />
                 <ButtonGroup vertical block>
                   { this.props.question.answers ? (this.props.question.answers.map(a => (
@@ -52,9 +51,8 @@ export default class QuestionView extends React.PureComponent<QuestionViewProps,
                         <ReactMarkdown
                           key={ this.props.question.id + "_explanation" }
                           className="result"
-                          source={ this.props.question.explanation ? this.props.question.explanation.value : "" }
+                          children={ this.props.question.explanation ? this.props.question.explanation.value : "" }
                           skipHtml={ true }
-                          escapeHtml={ true }
                         />
                     </div>)
                 }

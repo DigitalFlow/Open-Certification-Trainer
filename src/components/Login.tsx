@@ -5,9 +5,10 @@ import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
+import { withRouter } from "react-router-dom";
 
 export interface LoginProps extends IBaseProps {
-    redirectComponent: string;
+    redirectComponent?: string;
 }
 
 interface LoginState {
@@ -18,7 +19,7 @@ interface LoginState {
 
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-export default class Login extends React.PureComponent<LoginProps, LoginState> {
+class Login extends React.PureComponent<LoginProps, LoginState> {
     constructor(props: LoginProps) {
         super(props);
 
@@ -98,3 +99,5 @@ export default class Login extends React.PureComponent<LoginProps, LoginState> {
         );
     }
 }
+
+export default withRouter(Login);

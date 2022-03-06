@@ -6,6 +6,7 @@ import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
+import { withRouter } from "react-router-dom";
 
 interface ProfileState {
     userName: string;
@@ -21,7 +22,7 @@ interface ProfileState {
 
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-export default class Profile extends React.PureComponent<IBaseProps, ProfileState> {
+class Profile extends React.PureComponent<IBaseProps, ProfileState> {
     constructor(props: IBaseProps) {
         super(props);
 
@@ -53,7 +54,7 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
     }
 
     retrieveUser() {
-      const userId = this.props.match.params.userId;
+      const userId = (this.props.match.params as any).userId;
 
       fetch(`/retrieveProfile${ userId ? `/${ userId }` : "" }`,
       {
@@ -113,7 +114,7 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
       const headers = new Headers();
       headers.set("Content-Type", "application/json");
 
-      const userId = this.props.match.params.userId;
+      const userId = (this.props.match.params as any).userId;
 
       fetch(`/profile${ userId ? `/${ userId }` : "" }`,
       {
@@ -194,3 +195,5 @@ export default class Profile extends React.PureComponent<IBaseProps, ProfileStat
         );
     }
 }
+
+export default withRouter(Profile);

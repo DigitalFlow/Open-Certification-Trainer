@@ -1,4 +1,4 @@
-import UserInfo from "./UserInfo";
+import UserInfo from "./UserInfo.js";
 
 export interface ValidationResultProps {
   success?: boolean;

@@ -1,7 +1,7 @@
-import Question from "../model/Question";
-import Answer from "../model/Answer";
-import AssessmentSession from "../model/AssessmentSession";
-import IAssociativeArray from "./IAssociativeArray";
+import Question from "../model/Question.js";
+import Answer from "../model/Answer.js";
+import AssessmentSession from "../model/AssessmentSession.js";
+import IAssociativeArray from "./IAssociativeArray.js";
 
 export function checkIfAnsweredCorrectly(answers: Array<Answer>, checkedAnswers: IAssociativeArray<boolean>) {
   let questionAnsweredCorrectly = true;

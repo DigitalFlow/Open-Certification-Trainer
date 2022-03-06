@@ -5,7 +5,7 @@ import AnswerEditView from "./AnswerEditView";
 import Answer from "../model/Answer";
 import Text from "../model/Text";
 import FieldGroup from "./FieldGroup";
-import * as uuid from "uuid/v4";
+import * as uuid from "uuid";
 
 export interface QuestionEditViewProps {
     question: Question;
@@ -97,7 +97,7 @@ export default class QuestionEditView extends React.PureComponent<QuestionEditVi
 
     addAnswer() {
       const question = this.props.question;
-      const update = { ...question, answers: (question.answers || []).concat(new Answer({ id: uuid(), isCorrect: false })) };
+      const update = { ...question, answers: (question.answers || []).concat(new Answer({ id: uuid.v4(), isCorrect: false })) };
 
       this.props.onQuestionChange(update);
     }

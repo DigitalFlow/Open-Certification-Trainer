@@ -1,6 +1,6 @@
-import Certification from "./Certification";
-import Question from "./Question";
-import IAssociativeArray from "../domain/IAssociativeArray";
+import Certification from "./Certification.js";
+import Question from "./Question.js";
+import IAssociativeArray from "../domain/IAssociativeArray.js";
 
 export interface AssessmentSessionProps {
   sessionId: string;

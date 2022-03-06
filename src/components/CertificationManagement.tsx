@@ -9,11 +9,12 @@ import SideNav from "./SideNav";
 import FieldGroup from "./FieldGroup";
 import MessageBar from "./MessageBar";
 import ValidationResult from "../model/ValidationResult";
-import * as uuid from "uuid/v4";
+import * as uuid from "uuid";
 import Question from "../model/Question";
 import Answer from "../model/Answer";
 import { LinkContainer } from "react-router-bootstrap";
 import IBaseProps from "../domain/IBaseProps";
+import { withRouter } from "react-router-dom";
 
 interface CertificationManagementState {
   certification: Certification;
@@ -26,7 +27,7 @@ interface CertificationManagementState {
   regeneratingKeys: boolean;
 }
 
-export default class CertificationManagement extends React.Component<IBaseProps, CertificationManagementState> {
+class CertificationManagement extends React.Component<IBaseProps, CertificationManagementState> {
   getDefaultState = () => {
     return {
       certification: undefined,
@@ -154,21 +155,21 @@ export default class CertificationManagement extends React.Component<IBaseProps,
 
   setIds(cert: Certification) {
     if (!cert.id) {
-      cert.id = uuid();
+      cert.id = uuid.v4();
     }
 
     for (let i = 0; cert.questions && i < cert.questions.length; i++) {
       const question = cert.questions[i];
 
       if (!question.id) {
-        question.id = uuid();
+        question.id = uuid.v4();
       }
 
       for (let j = 0; question.answers && j < question.answers.length; j++) {
         const answer = question.answers[j];
 
         if (!answer.id) {
-          answer.id = uuid();
+          answer.id = uuid.v4();
         }
       }
     }
@@ -177,13 +178,13 @@ export default class CertificationManagement extends React.Component<IBaseProps,
   }
 
   loadCourses(props: IBaseProps) {
-    const courseName = props.match.params.courseName;
+    const courseName = (props.match.params as any).courseName;
 
     if (!courseName) {
       return;
     }
     else if (courseName === "new") {
-      this.setState({ certification: new Certification({ id: uuid() }) });
+      this.setState({ certification: new Certification({ id: uuid.v4() }) });
       return;
     }
 
@@ -316,8 +317,8 @@ export default class CertificationManagement extends React.Component<IBaseProps,
 
   appendQuestion(certification: Certification) {
     const questions = (certification.questions || []).concat(new Question({
-      id: uuid(),
-      answers: [0, 0, 0, 0].map(() => new Answer({ id: uuid(), isCorrect: false }))
+      id: uuid.v4(),
+      answers: [0, 0, 0, 0].map(() => new Answer({ id: uuid.v4(), isCorrect: false }))
     }));
     const update = { ...certification, questions: questions };
 
@@ -393,7 +394,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
             />
             <FieldGroup
               id={ this.state.certification.id + "uniqueName" }
-              control={ { type: "text", disabled: this.props.match.params.courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange } }
+              control={ { type: "text", disabled: (this.props.match.params as any).courseName !== "new", value: this.state.certification.uniqueName, onChange: this.onUniqueNameChange } }
               label="Certification Unique Name"
             />
             <FieldGroup
@@ -426,7 +427,7 @@ export default class CertificationManagement extends React.Component<IBaseProps,
                       { this.state.certification && <Button bsStyle="default" onClick={ this.openMultipleQuestionsModal }>Add Multiple Questions</Button> }
                       { this.state.certification && <Button bsStyle="default" onClick={ this.openKeyRegenerationModal }>Regenerate Keys</Button> }
                       { this.state.certification && <Button bsStyle="default" onClick={ this.save }>Save</Button> }
-                      { this.state.certification && this.props.match.params.courseName !== "new" && <Button bsStyle="danger" onClick={ this.verifyAndDelete }>Delete</Button> }
+                      { this.state.certification && (this.props.match.params as any).courseName !== "new" && <Button bsStyle="danger" onClick={ this.verifyAndDelete }>Delete</Button> }
                     </ButtonGroup>
                   </ButtonToolbar>
                   <MessageBar message={ this.state.message } errors={ this.state.errors } />
@@ -437,3 +438,5 @@ export default class CertificationManagement extends React.Component<IBaseProps,
               </div>);
   }
 }
+
+export default withRouter(CertificationManagement);

@@ -7,13 +7,14 @@ import Question from "../model/Question";
 import QuestionView from "./QuestionView";
 import SideNav from "./SideNav";
 import IBaseProps from "../domain/IBaseProps";
-import * as uuid from "uuid/v4";
+import * as uuid from "uuid";
 import IAssociativeArray from "../domain/IAssociativeArray";
 import UserPromptModal from "./UserPromptModal";
 import { checkIfAnsweredCorrectly } from "../domain/AssessmentLogic";
 import AssessmentResultView from "./AssessmentResultView";
 import shuffle from "../domain/Shuffle";
 import QuestionSelectionList from "./QuestionSelectionList";
+import { withRouter } from "react-router-dom";
 
 interface AssessmentState {
   certification: Certification;
@@ -35,7 +36,7 @@ enum QuestionState {
   Incorrect
 }
 
-export default class Assessment extends React.Component<IBaseProps, AssessmentState> {
+class Assessment extends React.Component<IBaseProps, AssessmentState> {
   getDefaultState = () => {
     return {
       certification: undefined,
@@ -45,7 +46,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
       questionState: QuestionState.Open,
       checkedAnswers: { },
       previousSessions: [],
-      session: new AssessmentSession({ sessionId: uuid(), certification: undefined, answers: { } }),
+      session: new AssessmentSession({ sessionId: uuid.v4(), certification: undefined, answers: { } }),
       restartSessionModal: false,
       selectedQuestions: { },
       selectionTrigger: false
@@ -141,7 +142,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   loadCertification(props: IBaseProps) {
-    const courseName = props.match.params.courseName;
+    const courseName = (props.match.params as any).courseName;
 
     if (!courseName) {
       return;
@@ -159,7 +160,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   loadSession(props: IBaseProps) {
-    const courseName = props.match.params.courseName;
+    const courseName = (props.match.params as any).courseName;
 
     if (!courseName) {
       return Promise.resolve();
@@ -174,7 +175,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
   }
 
   loadSessionCollection (props: IBaseProps) {
-    const courseName = props.match.params.courseName;
+    const courseName = (props.match.params as any).courseName;
 
     if (!courseName) {
       return Promise.resolve();
@@ -281,7 +282,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
     const headers = new Headers();
     headers.set("Content-Type", "application/json");
 
-    fetch("/assessmentSession/" + this.props.match.params.courseName, {
+    fetch("/assessmentSession/" + (this.props.match.params as any).courseName, {
       method: "DELETE",
       headers: headers,
       credentials: "include"
@@ -353,7 +354,7 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
               <div>
                 <p style={ { "textAlign": "right" } }>Version { this.state.certification.version }</p>
                 <h1>{ this.state.certification.name }</h1>
-                <QuestionSelectionList questions={ this.state.certification.questions } onSelectionChange={ this.onSelectionChange } selectedQuestions={ this.state.selectedQuestions } previousSessions={ this.state.previousSessions } />
+                <QuestionSelectionList {...this.props} questions={ this.state.certification.questions } onSelectionChange={ this.onSelectionChange } selectedQuestions={ this.state.selectedQuestions } previousSessions={ this.state.previousSessions } />
                 <br />
                 <Button disabled={ !Object.keys(this.state.selectedQuestions).some(k => this.state.selectedQuestions[k]) } onClick={ this.start }>Start</Button>
               </div>
@@ -378,3 +379,5 @@ export default class Assessment extends React.Component<IBaseProps, AssessmentSt
           </div>);
   }
 }
+
+export default withRouter(Assessment);

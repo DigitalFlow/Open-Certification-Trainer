@@ -140,7 +140,7 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
         }
 
         {
-          this.props.questions.map(q => <QuestionSelection key={ q.id } question={ q } isSelected={ this.props.selectedQuestions[q.id] } onSelectionChange={ this.props.onSelectionChange } />)
+          this.props.questions.map(q => <QuestionSelection {...this.props} key={ q.id } question={ q } isSelected={ this.props.selectedQuestions[q.id] } onSelectionChange={ this.props.onSelectionChange } />)
         }
       </div>
     );

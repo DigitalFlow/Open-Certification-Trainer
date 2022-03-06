@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button, Panel, ButtonToolbar, Checkbox } from "react-bootstrap";
 import Answer from "../model/Answer";
-import * as ReactMarkdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
 
 export interface AnswerViewProps {
     answer: Answer;
@@ -55,9 +55,8 @@ export default class AnswerView extends React.PureComponent<AnswerViewProps, und
                 <ReactMarkdown
                   key={ this.props.answer.id }
                   className="answer"
-                  source={ this.props.answer.text ? this.props.answer.text.value : "" }
+                  children={ this.props.answer.text ? this.props.answer.text.value : "" }
                   skipHtml={ true }
-                  escapeHtml={ true }
                 />
               </span>
             </Checkbox>

@@ -1,10 +1,10 @@
-import * as express from "express";
+import express from "express";
 import * as bodyParser from "body-parser";
 import * as logger from "morgan";
 import * as dotenv from "dotenv";
 import * as path from "path";
-import * as morgan from "morgan";
-import * as cookieParser from "cookie-parser";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import * as http from "http";
 import * as https from "https";
 import * as fs from "fs";
@@ -16,20 +16,20 @@ dotenv.config({ path: ".env.config" });
 const vhost = require("vhost");
 
 // Controllers
-import * as userController from "./controllers/UserController";
-import * as homeController from "./controllers/HomeController";
-import * as courseController from "./controllers/CourseController";
-import * as assessmentSessionController from "./controllers/AssessmentSessionController";
-import * as postController from "./controllers/PostController";
+import * as userController from "./controllers/UserController.js";
+import * as homeController from "./controllers/HomeController.js";
+import * as courseController from "./controllers/CourseController.js";
+import * as assessmentSessionController from "./controllers/AssessmentSessionController.js";
+import * as postController from "./controllers/PostController.js";
 
 // Load authenticator
-import { Authentication } from "./domain/Authentication";
-import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions";
+import { Authentication } from "./domain/Authentication.js";
+import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions.js";
 
 // Connect to MySQL
-import { pool, sequelize, User } from "./domain/DbConnection";
+import { pool, sequelize, User } from "./domain/DbConnection.js";
 
-console.log("Authenticating sequelize 23:38");
+console.log("Authenticating sequelize 05:50");
 
 sequelize.authenticate({ logging: true })
   .then(() => {
@@ -160,4 +160,5 @@ else {
 }
 
 console.log(`App listening on host ${ host } and port ${ PORT }!`);
-module.exports = server;
+
+export default server;

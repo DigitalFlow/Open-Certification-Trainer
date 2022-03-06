@@ -2,7 +2,7 @@ import * as React from "react";
 import { StaticRouter } from "react-router-dom";
 import { renderToString } from "react-dom/server";
 import { Request, Response, NextFunction } from "express";
-import App from "../components/App";
+import App from "../components/App.js";
 
 export const getAll = (req: Request, res: Response) => {
     const props = { location: req.url, context: { } };

@@ -4,9 +4,11 @@ import FieldGroup from "./FieldGroup";
 import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
+import { withRouter } from "react-router-dom";
+import IBaseProps from "../domain/IBaseProps";
 
-export interface SignUpProps {
-    redirectComponent: string;
+export interface SignUpProps extends IBaseProps {
+    redirectComponent?: string;
 }
 
 interface SignUpState {
@@ -22,7 +24,7 @@ interface SignUpState {
 
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-export default class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
+class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
     constructor(props: SignUpProps) {
         super(props);
 
@@ -155,3 +157,5 @@ export default class SignUp extends React.PureComponent<SignUpProps, SignUpState
         );
     }
 }
+
+export default withRouter(SignUp);

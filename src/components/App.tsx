@@ -58,8 +58,8 @@ export default class App extends React.PureComponent<any, AppState> {
   render() {
     return (
       <div>
-        <Header user={ this.state.user } triggerUserReload={ this.triggerUserReload } />
-        <Main user={ this.state.user } triggerUserReload={ this.triggerUserReload }/>
+        <Header {...this.props} user={ this.state.user } triggerUserReload={ this.triggerUserReload } />
+        <Main {...this.props} user={ this.state.user } triggerUserReload={ this.triggerUserReload }/>
       </div>
     );
   }

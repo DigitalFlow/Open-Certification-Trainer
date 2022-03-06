@@ -6,7 +6,7 @@ import Assessment from "./Assessment";
 import Certification from "../model/Certification";
 import UserInfo from "../model/UserInfo";
 import ValidationResult from "../model/ValidationResult";
-import IBaseProps from "../domain/IBaseProps";
+import { IBaseProps } from "../domain/IBaseProps";
 
 export default class Header extends React.PureComponent<IBaseProps, undefined> {
   constructor(props: IBaseProps) {

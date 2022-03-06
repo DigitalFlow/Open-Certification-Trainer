@@ -5,6 +5,7 @@ import DbUser from "../model/DbUser";
 import DbPost from "../model/DbPost";
 import UserListView from "./UserListView";
 import PostListView from "./PostListView";
+import { withRouter } from "react-router-dom";
 
 export class PortalManagementState {
   users: Array<DbUser>;
@@ -12,7 +13,7 @@ export class PortalManagementState {
   postInput: string;
 }
 
-export default class PortalManagement extends React.Component<IBaseProps, PortalManagementState> {
+class PortalManagement extends React.Component<IBaseProps, PortalManagementState> {
     constructor(props: IBaseProps) {
       super(props);
 
@@ -44,13 +45,13 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
               <Well>
                 <Tab.Content animation>
                   <Tab.Pane eventKey="users">
-                    <UserListView />
+                    <UserListView {...this.props} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="groups">
                     <Jumbotron><h2>Groups - In construction</h2></Jumbotron>
                   </Tab.Pane>
                   <Tab.Pane eventKey="posts">
-                    <PostListView />
+                    <PostListView {...this.props} />
                   </Tab.Pane>
                 </Tab.Content>
               </Well>
@@ -59,3 +60,5 @@ export default class PortalManagement extends React.Component<IBaseProps, Portal
       </Tab.Container>);
   }
 }
+
+export default withRouter(PortalManagement);

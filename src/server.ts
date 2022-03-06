@@ -38,6 +38,10 @@ sequelize.authenticate({ logging: true })
     return sequelize.createSchema("open_certification_trainer", { logging: true });
   })
   .then(() => {
+    console.log("Ensuring pgcrypto");
+    return pool.query("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
+  })
+  .then(() => {
     console.log("Scheme created");
     return sequelize.sync({ logging: true });
   })

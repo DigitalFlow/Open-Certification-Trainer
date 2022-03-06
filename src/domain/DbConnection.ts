@@ -31,7 +31,7 @@ export const User = sequelize.define("user", {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: sequelize.literal("public.gen_random_uuid()")
+      defaultValue: sequelize.literal("gen_random_uuid()")
   },
   user_name: {
       type: DataTypes.STRING,
@@ -72,7 +72,7 @@ export const Answer = sequelize.define("answer", {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: sequelize.literal("public.gen_random_uuid()")
+      defaultValue: sequelize.literal("gen_random_uuid()")
   },
   key: {
     type: DataTypes.STRING,
@@ -97,7 +97,7 @@ export const AssessmentSession = sequelize.define("assessment_session", {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: sequelize.literal("public.gen_random_uuid()")
+      defaultValue: sequelize.literal("gen_random_uuid()")
   },
   key: {
     type: DataTypes.STRING,

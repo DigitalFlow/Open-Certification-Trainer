@@ -24,6 +24,7 @@ interface QuestionSelectionListState {
   selectionByQuestionScoreEnabled: boolean;
   filterType: FilterType;
   filterValue: number;
+  category: string;
 }
 
 export default class QuestionSelectionList extends React.PureComponent<QuestionSelectionListProps, QuestionSelectionListState> {
@@ -33,18 +34,21 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
     this.state = {
       selectionByQuestionScoreEnabled: false,
       filterType: FilterType.LessEqual,
-      filterValue: 99
+      filterValue: 99,
+      category: "A"
     };
 
     this.selectNone = this.selectNone.bind(this);
     this.selectAll = this.selectAll.bind(this);
     this.selectAnsweredIncorrectlyLastTime = this.selectAnsweredIncorrectlyLastTime.bind(this);
     this.selectByQuestionScore = this.selectByQuestionScore.bind(this);
+    this.selectCategory = this.selectCategory.bind(this);
     this.showByQuestionScoreFilter = this.showByQuestionScoreFilter.bind(this);
     this.hideByQuestionScoreFilter = this.hideByQuestionScoreFilter.bind(this);
     this.setFilterToLessEqual = this.setFilterToLessEqual.bind(this);
     this.setFilterToGreaterEqual = this.setFilterToGreaterEqual.bind(this);
     this.setFilterValue = this.setFilterValue.bind(this);
+    this.setCategory = this.setCategory.bind(this);
   }
 
   selectNone(e: any) {
@@ -76,6 +80,11 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
     // Sorted by created on descending in SQL query
     const filteredRatios = Object.keys(ratios).filter(key => this.state.filterType === FilterType.LessEqual ? ratios[key] <= this.state.filterValue : ratios[key] >= this.state.filterValue );
     this.props.onSelectionChange(this.props.questions.reduce((acc, val) => { acc[val.id] = filteredRatios.some(q => q === val.id); return acc; }, { } as IAssociativeArray<boolean>));
+  }
+
+  selectCategory(e: any) {
+    this.props.onSelectionChange(this.props.questions.reduce((acc, val) => { acc[val.id] = val.key.startsWith( this.state.category ); return acc; }, { } as IAssociativeArray<boolean>));
+    this.hideByQuestionScoreFilter();
   }
 
   hideByQuestionScoreFilter() {
@@ -112,6 +121,12 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
     });
   }
 
+  setCategory (e: any) {
+    this.setState({
+      category: e.target.value
+    });
+  }
+
   render() {
     return (
       <div>
@@ -123,7 +138,11 @@ export default class QuestionSelectionList extends React.PureComponent<QuestionS
             <ToggleButton onClick={ this.selectAll } value={ 2 }>All</ToggleButton>
             <ToggleButton disabled={ !this.props.previousSessions || !this.props.previousSessions.length } onClick={ this.selectAnsweredIncorrectlyLastTime } value={ 3 }>Answered Incorrectly Last Time</ToggleButton>
             <ToggleButton disabled={ !this.props.previousSessions || !this.props.previousSessions.length } onClick={ this.showByQuestionScoreFilter } value={ 4 }>Filter by Question Score</ToggleButton>
+            <ToggleButton disabled={ !this.props.previousSessions || !this.props.previousSessions.length } onClick={ this.selectCategory } value={ 5 }>Category:</ToggleButton>
           </ToggleButtonGroup>
+          <InputGroup style={ { "paddingBottom": "10px" } }>
+            <FormControl type="text" value={ this.state.category } onChange={ this.setCategory } />
+          </InputGroup>
         </ButtonToolbar>
 
         { this.state.selectionByQuestionScoreEnabled &&
